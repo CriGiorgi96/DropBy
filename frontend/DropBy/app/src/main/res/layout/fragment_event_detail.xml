@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  fragment_event_detail.xml
+  IDs richiesti da EventDetailFragment.java:
+    - eventDetailPoster              (ImageView)
+    - eventDetailTitle               (TextView)
+    - eventDetailCategory            (TextView)
+    - eventDetailDate                (TextView)
+    - eventDetailCity                (TextView)
+    - eventDetailDescription         (TextView)
+    - eventDetailPrice               (TextView)
+    - eventDetailTicketButton        (Button)
+    - eventDetailReplicasLabel       (TextView)
+    - eventDetailReplicasStatus      (TextView)
+    - eventDetailReplicasRecyclerView (RecyclerView)
+-->
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFF8F5FC">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- ── LOCANDINA ── -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="240dp">
+
+            <ImageView
+                android:id="@+id/eventDetailPoster"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/event_poster"
+                android:scaleType="centerCrop" />
+
+            <ImageButton
+                android:id="@+id/btnFavorite"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_gravity="top|end"
+                android:layout_margin="12dp"
+                android:background="@drawable/bg_circle_white"
+                android:contentDescription="Aggiungi ai preferiti"
+                android:padding="8dp"
+                android:src="@drawable/ic_favorite_border"
+                android:visibility="gone" />
+
+        </FrameLayout>
+
+        <!-- ── CORPO ── -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <!-- Categoria -->
+            <TextView
+                android:id="@+id/eventDetailCategory"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#EDE7F6"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="4dp"
+                android:textColor="#7B1FA2"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <!-- Titolo -->
+            <TextView
+                android:id="@+id/eventDetailTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:textColor="#1A1A2E"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+            <!-- Data e orario -->
+            <TextView
+                android:id="@+id/eventDetailDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:drawablePadding="6dp"
+                android:textColor="#6A6274"
+                android:textSize="14sp" />
+
+            <!-- Città -->
+            <TextView
+                android:id="@+id/eventDetailCity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textColor="#6A6274"
+                android:textSize="14sp" />
+
+            <!-- Separatore -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginVertical="14dp"
+                android:background="#E0E0E0" />
+
+            <!-- Descrizione -->
+            <TextView
+                android:id="@+id/eventDetailDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:lineSpacingMultiplier="1.4"
+                android:textColor="#333333"
+                android:textSize="15sp" />
+
+            <!-- Prezzo -->
+            <TextView
+                android:id="@+id/eventDetailPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="#F3E5F5"
+                android:paddingHorizontal="14dp"
+                android:paddingVertical="6dp"
+                android:textColor="#6A1B9A"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <!-- Pulsante biglietti -->
+            <Button
+                android:id="@+id/eventDetailTicketButton"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="20dp"
+                android:backgroundTint="#7B1FA2"
+                android:text="Acquista biglietti"
+                android:textColor="#FFFFFF"
+                android:textSize="15sp"
+                android:visibility="gone" />
+
+            <!-- ── SEZIONE RECENSIONI ── -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginVertical="14dp"
+                android:background="#E0E0E0" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Recensioni"
+                android:textColor="#1A1A2E"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/reviewsRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:nestedScrollingEnabled="false" />
+
+            <TextView
+                android:id="@+id/reviewsStatusText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="8dp"
+                android:textColor="#9E9E9E"
+                android:textSize="13sp"
+                android:visibility="gone" />
+
+            <!-- Form aggiunta recensione (solo per utenti loggati) -->
+            <LinearLayout
+                android:id="@+id/reviewFormLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="#F3E5F5"
+                android:orientation="vertical"
+                android:padding="14dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/write_review"
+                    android:textColor="#6A1B9A"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <RatingBar
+                    android:id="@+id/reviewRatingBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:numStars="5"
+                    android:stepSize="1"
+                    android:rating="3" />
+
+                <EditText
+                    android:id="@+id/reviewCommentInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:hint="@string/comment_hint"
+                    android:inputType="textMultiLine"
+                    android:lines="3"
+                    android:maxLines="5"
+                    android:minLines="2" />
+
+                <Button
+                    android:id="@+id/btnSubmitReview"
+                    android:layout_width="match_parent"
+                    android:layout_height="44dp"
+                    android:layout_marginTop="10dp"
+                    android:backgroundTint="#7B1FA2"
+                    android:text="@string/submit"
+                    android:textColor="@android:color/white" />
+
+            </LinearLayout>
+
+            <!-- ── SEZIONE REPLICHE ── -->
+            <TextView
+                android:id="@+id/eventDetailReplicasLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="28dp"
+                android:text="Altre repliche"
+                android:textColor="#1A1A2E"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/eventDetailReplicasStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textColor="#9E9E9E"
+                android:textSize="13sp"
+                android:visibility="gone" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/eventDetailReplicasRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:nestedScrollingEnabled="false" />
+
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

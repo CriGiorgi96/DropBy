@@ -1,0 +1,1694 @@
+diff --git a/frontend/DropBy/app/src/main/java/com/example/dropby/HomeActivity.java b/frontend/DropBy/app/src/main/java/com/example/dropby/HomeActivity.java
+index 8b5cc57..f208b58 100644
+--- a/frontend/DropBy/app/src/main/java/com/example/dropby/HomeActivity.java
++++ b/frontend/DropBy/app/src/main/java/com/example/dropby/HomeActivity.java
+@@ -3,6 +3,12 @@ package com.example.dropby;
+ import android.content.Intent;
+ import android.content.SharedPreferences;
+ import android.os.Bundle;
++import android.util.DisplayMetrics;
++import android.view.Menu;
++import android.view.View;
++import android.widget.ImageView;
++import android.widget.TextView;
++import android.widget.Toast;
+ 
+ import androidx.activity.OnBackPressedCallback;
+ import androidx.appcompat.app.ActionBarDrawerToggle;
+@@ -15,102 +21,65 @@ import androidx.fragment.app.FragmentManager;
+ 
+ import com.example.dropby.fragments.main.EventsFragment;
+ import com.example.dropby.fragments.main.FaqFragment;
++import com.example.dropby.fragments.main.FavoritesFragment;
++import com.example.dropby.fragments.main.FriendsFragment;
+ import com.example.dropby.fragments.main.HomeFragment;
+ import com.example.dropby.fragments.main.MapFragment;
++import com.example.dropby.fragments.main.NotificationsFragment;
++import com.example.dropby.fragments.main.ProfileFragment;
++import com.example.dropby.fragments.main.ProposalsFragment;
++import com.example.dropby.fragments.main.ReviewsFragment;
+ import com.example.dropby.fragments.main.SettingsFragment;
+ import com.example.dropby.fragments.main.TheatersFragment;
++import com.example.dropby.network.NotificationPoller;
+ import com.google.android.material.navigation.NavigationView;
+ 
+ public class HomeActivity extends AppCompatActivity {
+ 
+     private DrawerLayout drawerLayout;
+-    private ActionBarDrawerToggle toggle;
+-    private NavigationView navigationView;
+-    private String userType;
+-    private String username;
+-    private String gender;
++    private NavigationView navLeft;
++    private NavigationView navRight;
++    private TextView notificationBadge;
++    private NotificationPoller notificationPoller;
+ 
+     @Override
+     protected void onCreate(Bundle savedInstanceState) {
+         super.onCreate(savedInstanceState);
+         setContentView(R.layout.activity_home);
+ 
+-        SharedPreferences prefs = getSharedPreferences("app", MODE_PRIVATE);
+-
+-        userType = prefs.getString("userType", "GUEST");
+-        username = prefs.getString("username", "Spettatore");
+-        gender = prefs.getString("gender", "guest");
+-
+         Toolbar toolbar = findViewById(R.id.toolbar);
+         setSupportActionBar(toolbar);
+ 
+-        drawerLayout = findViewById(R.id.drawer_layout);
+-        navigationView = findViewById(R.id.navigation_view);
++        drawerLayout    = findViewById(R.id.drawer_layout);
++        navLeft         = findViewById(R.id.navigation_view);
++        navRight        = findViewById(R.id.navigation_view_right);
++        notificationBadge = findViewById(R.id.notificationBadge);
++
++        // Imposta larghezza drawer al 50% dello schermo
++        setDrawerWidth(navLeft);
++        setDrawerWidth(navRight);
+ 
+-        toggle = new ActionBarDrawerToggle(
+-                this,
+-                drawerLayout,
+-                toolbar,
+-                R.string.open,
+-                R.string.close
+-        );
++        // Hamburger per drawer sinistro
++        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
++                this, drawerLayout, toolbar, R.string.open, R.string.close);
+         drawerLayout.addDrawerListener(toggle);
+         toggle.syncState();
+ 
+-        navigationView.setNavigationItemSelectedListener(item -> {
+-            int id = item.getItemId();
+-            if (id == R.id.nav_home) {
+-                getSupportFragmentManager()
+-                        .beginTransaction()
+-                        .replace(R.id.fragment_container, new HomeFragment())
+-                        .commit();
+-            } else if (id == R.id.nav_events) {
+-                getSupportFragmentManager()
+-                        .beginTransaction()
+-                        .replace(R.id.fragment_container, new EventsFragment())
+-                        .commit();
+-            } else if (id == R.id.nav_theaters) {
+-                getSupportFragmentManager()
+-                        .beginTransaction()
+-                        .replace(R.id.fragment_container, new TheatersFragment())
+-                        .commit();
+-            } else if (id == R.id.nav_map) {
+-                getSupportFragmentManager()
+-                        .beginTransaction()
+-                        .replace(R.id.fragment_container, new MapFragment())
+-                        .commit();
+-            } else if (id == R.id.nav_settings) {
+-                getSupportFragmentManager()
+-                        .beginTransaction()
+-                        .replace(R.id.fragment_container, new SettingsFragment())
+-                        .commit();
+-            } else if (id == R.id.nav_faq) {
+-                getSupportFragmentManager()
+-                        .beginTransaction()
+-                        .replace(R.id.fragment_container, new FaqFragment())
+-                        .commit();
+-            } else if (id == R.id.nav_logout) {
+-                getSharedPreferences("app", MODE_PRIVATE).edit().remove("userType").apply();
+-                Intent intent = new Intent(this, AuthActivity.class);
+-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+-                startActivity(intent);
+-            } else if (id == R.id.nav_faq) {
+-                getSupportFragmentManager()
+-                        .beginTransaction()
+-                        .replace(R.id.fragment_container, new FaqFragment())
+-                        .commit();
+-            }
++        // Icona utente apre drawer destro
++        findViewById(R.id.toolbarUserButton).setOnClickListener(v ->
++                drawerLayout.openDrawer(GravityCompat.END));
+ 
+-            // BUG FIX: l'elemento selezionato nel drawer non veniva mai aggiornato
+-            // (il segno di spunta visivo rimaneva sempre su "Home")
+-            navigationView.setCheckedItem(id);
+-            drawerLayout.closeDrawer(GravityCompat.START);
+-            return true;
+-        });
++        setupLeftDrawer();
++        setupRightDrawer();
++        updateRightDrawerHeader();
+ 
+         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+             @Override
+             public void handleOnBackPressed() {
++                if (drawerLayout.isDrawerOpen(GravityCompat.END)) {
++                    drawerLayout.closeDrawer(GravityCompat.END);
++                    return;
++                }
+                 if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                     drawerLayout.closeDrawer(GravityCompat.START);
+                     return;
+@@ -125,53 +94,230 @@ public class HomeActivity extends AppCompatActivity {
+         });
+ 
+         if (savedInstanceState == null) {
+-            getSupportFragmentManager()
+-                    .beginTransaction()
+-                    .replace(R.id.fragment_container, new HomeFragment())
+-                    .commit();
+-            navigationView.setCheckedItem(R.id.nav_home);
++            openFragment(new HomeFragment(), false);
++            navLeft.setCheckedItem(R.id.nav_home);
+         }
++
++        startNotificationPoller();
+     }
+ 
++    // ── DRAWER SINISTRO ──────────────────────────────────────────────────────
++
++    private void setupLeftDrawer() {
++        navLeft.setNavigationItemSelectedListener(item -> {
++            int id = item.getItemId();
++            Fragment target = null;
++
++            if (id == R.id.nav_home)     target = new HomeFragment();
++            else if (id == R.id.nav_events)    target = new EventsFragment();
++            else if (id == R.id.nav_theaters)  target = new TheatersFragment();
++            else if (id == R.id.nav_map)       target = new MapFragment();
++            else if (id == R.id.nav_settings)  target = new SettingsFragment();
++            else if (id == R.id.nav_faq)       target = new FaqFragment();
++            else if (id == R.id.nav_logout)    { logout(); return true; }
++
++            if (target != null) {
++                openFragment(target, false);
++                navLeft.setCheckedItem(id);
++            }
++            drawerLayout.closeDrawer(GravityCompat.START);
++            return true;
++        });
++    }
++
++    // ── DRAWER DESTRO ────────────────────────────────────────────────────────
++
++    private void setupRightDrawer() {
++        boolean isLogged = isLoggedIn();
++        Menu menu = navRight.getMenu();
++
++        // Voci visibili solo agli utenti loggati
++        setMenuItemVisible(menu, R.id.nav_right_profile,       isLogged);
++        setMenuItemVisible(menu, R.id.nav_right_favorites,     isLogged);
++        setMenuItemVisible(menu, R.id.nav_right_reviews,       isLogged);
++        setMenuItemVisible(menu, R.id.nav_right_friends,       isLogged);
++        setMenuItemVisible(menu, R.id.nav_right_proposals,     isLogged);
++        setMenuItemVisible(menu, R.id.nav_right_notifications, isLogged);
++        setMenuItemVisible(menu, R.id.nav_right_settings,      isLogged);
++        setMenuItemVisible(menu, R.id.nav_right_logout,        isLogged);
++        // Submenu headers
++        setMenuItemVisible(menu, R.id.nav_right_group_social,  isLogged);
++        setMenuItemVisible(menu, R.id.nav_right_group_account, isLogged);
++
++        // Voci visibili solo agli ospiti
++        setMenuItemVisible(menu, R.id.nav_right_login,    !isLogged);
++        setMenuItemVisible(menu, R.id.nav_right_register, !isLogged);
++        setMenuItemVisible(menu, R.id.nav_right_exit,     !isLogged);
++
++        navRight.setNavigationItemSelectedListener(item -> {
++            int id = item.getItemId();
++            Fragment target = null;
++
++            if (isLogged) {
++                if      (id == R.id.nav_right_profile)       target = new ProfileFragment();
++                else if (id == R.id.nav_right_favorites)     target = new FavoritesFragment();
++                else if (id == R.id.nav_right_reviews)       target = new ReviewsFragment();
++                else if (id == R.id.nav_right_friends)       target = new FriendsFragment();
++                else if (id == R.id.nav_right_proposals)     target = new ProposalsFragment();
++                else if (id == R.id.nav_right_notifications) target = new NotificationsFragment();
++                else if (id == R.id.nav_right_settings)      target = new SettingsFragment();
++                else if (id == R.id.nav_right_logout)        { logout(); return true; }
++            } else {
++                // Guest: solo login, registrazione, esci
++                if      (id == R.id.nav_right_login)    { launchAuth("login");    return true; }
++                else if (id == R.id.nav_right_register) { launchAuth("register"); return true; }
++                else if (id == R.id.nav_right_exit)     { goToStart();            return true; }
++            }
++
++            if (target != null) openFragment(target, true);
++            drawerLayout.closeDrawer(GravityCompat.END);
++            return true;
++        });
++    }
++
++    private void setMenuItemVisible(Menu menu, int itemId, boolean visible) {
++        android.view.MenuItem item = menu.findItem(itemId);
++        if (item != null) item.setVisible(visible).setEnabled(visible);
++    }
++
++    private void launchAuth(String mode) {
++        drawerLayout.closeDrawer(GravityCompat.END);
++        Intent intent = new Intent(this, AuthActivity.class);
++        intent.putExtra("mode", mode);
++        startActivity(intent);
++    }
++
++    private void goToStart() {
++        drawerLayout.closeDrawer(GravityCompat.END);
++        Intent intent = new Intent(this, AuthActivity.class);
++        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
++        startActivity(intent);
++    }
++
++    private void updateRightDrawerHeader() {
++        View header = navRight.getHeaderView(0);
++        if (header == null) return;
++
++        ImageView avatar     = header.findViewById(R.id.headerAvatar);
++        TextView usernameView = header.findViewById(R.id.headerUsername);
++        TextView emailView    = header.findViewById(R.id.headerEmail);
++        View loginButton      = header.findViewById(R.id.headerLoginButton);
++
++        SharedPreferences prefs = getSharedPreferences("app", MODE_PRIVATE);
++        boolean logged = isLoggedIn();
++
++        if (logged) {
++            String username = prefs.getString("username", "Utente");
++            String email    = prefs.getString("email", "");
++            String gender   = prefs.getString("gender", "guest");
++
++            usernameView.setText(username);
++            emailView.setText(email);
++            loginButton.setVisibility(View.GONE);
++
++            int avatarRes = "female".equalsIgnoreCase(gender)
++                    ? R.drawable.default_female
++                    : R.drawable.default_male;
++            avatar.setImageResource(avatarRes);
++        } else {
++            usernameView.setText("Ospite");
++            emailView.setText("");
++            avatar.setImageResource(R.drawable.default_guest);
++            loginButton.setVisibility(View.VISIBLE);
++            loginButton.setOnClickListener(v -> {
++                drawerLayout.closeDrawer(GravityCompat.END);
++                Intent intent = new Intent(this, AuthActivity.class);
++                intent.putExtra("mode", "login");
++                startActivity(intent);
++            });
++        }
++    }
++
++    // ── UTILITY ──────────────────────────────────────────────────────────────
++
+     public void openFragment(Fragment fragment, boolean addToBackStack) {
+-        androidx.fragment.app.FragmentTransaction transaction =
++        androidx.fragment.app.FragmentTransaction tx =
+                 getSupportFragmentManager()
+                         .beginTransaction()
+                         .replace(R.id.fragment_container, fragment);
+-
+-        if (addToBackStack) {
+-            transaction.addToBackStack(null);
+-        }
+-
+-        transaction.commit();
++        if (addToBackStack) tx.addToBackStack(null);
++        tx.commit();
+     }
+ 
+     public void logout() {
+-        SharedPreferences prefs = getSharedPreferences("app", MODE_PRIVATE);
+-        prefs.edit()
+-                .putString("userType", "GUEST")
+-                .remove("username")
+-                .remove("gender")
+-                .apply();
+-
++        if (notificationPoller != null) notificationPoller.stop();
++        // Clear completo delle prefs utente (evita dati precedenti visibili in modalità guest)
++        getSharedPreferences("app", MODE_PRIVATE).edit().clear().apply();
++        com.example.dropby.network.ApiClient.resetClient();
+         Intent intent = new Intent(this, AuthActivity.class);
+-        intent.putExtra("mode", "login");
++        // Nessun "mode" → AuthActivity default su StartFragment
+         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+         startActivity(intent);
+     }
+ 
+-    public String getUserType() {
++    public boolean isLoggedIn() {
+         SharedPreferences prefs = getSharedPreferences("app", MODE_PRIVATE);
+-        return prefs.getString("userType", "GUEST");
++        String token = prefs.getString("token", null);
++        return token != null && !token.isEmpty();
++    }
++
++    public String getUserType() {
++        return getSharedPreferences("app", MODE_PRIVATE).getString("userType", "GUEST");
+     }
+ 
+     public String getUsername() {
+-        SharedPreferences prefs = getSharedPreferences("app", MODE_PRIVATE);
+-        return prefs.getString("username", "Spettatore");
++        return getSharedPreferences("app", MODE_PRIVATE).getString("username", "Spettatore");
+     }
+ 
+     public String getGender() {
+-        SharedPreferences prefs = getSharedPreferences("app", MODE_PRIVATE);
+-        return prefs.getString("gender", "guest");
++        return getSharedPreferences("app", MODE_PRIVATE).getString("gender", "guest");
++    }
++
++    public void updateNotificationBadge(int count) {
++        if (count > 0) {
++            notificationBadge.setText(count > 99 ? "99+" : String.valueOf(count));
++            notificationBadge.setVisibility(View.VISIBLE);
++        } else {
++            notificationBadge.setVisibility(View.GONE);
++        }
++    }
++
++    // ── NOTIFICHE POLLING ────────────────────────────────────────────────────
++
++    private void startNotificationPoller() {
++        if (!isLoggedIn()) return;
++        notificationPoller = new NotificationPoller(count ->
++                runOnUiThread(() -> updateNotificationBadge(count)));
++        notificationPoller.start();
++    }
++
++    @Override
++    protected void onResume() {
++        super.onResume();
++        updateRightDrawerHeader();
++        setupRightDrawer();
++        if (notificationPoller == null && isLoggedIn()) startNotificationPoller();
++    }
++
++    @Override
++    protected void onPause() {
++        super.onPause();
++        if (notificationPoller != null) notificationPoller.stop();
++        notificationPoller = null;
++    }
++
++    // ── LAYOUT ───────────────────────────────────────────────────────────────
++
++    private void setDrawerWidth(View drawer) {
++        DisplayMetrics dm = new DisplayMetrics();
++        getWindowManager().getDefaultDisplay().getMetrics(dm);
++        int halfWidth = dm.widthPixels / 2;
++        DrawerLayout.LayoutParams lp = (DrawerLayout.LayoutParams) drawer.getLayoutParams();
++        lp.width = halfWidth;
++        drawer.setLayoutParams(lp);
++    }
++
++    private void showLoginPrompt() {
++        Toast.makeText(this, "Accedi per usare questa funzione", Toast.LENGTH_SHORT).show();
+     }
+ }
+diff --git a/frontend/DropBy/app/src/main/java/com/example/dropby/fragments/auth/LoginFragment.java b/frontend/DropBy/app/src/main/java/com/example/dropby/fragments/auth/LoginFragment.java
+index 9194c12..a40913c 100644
+--- a/frontend/DropBy/app/src/main/java/com/example/dropby/fragments/auth/LoginFragment.java
++++ b/frontend/DropBy/app/src/main/java/com/example/dropby/fragments/auth/LoginFragment.java
+@@ -75,7 +75,9 @@ public class LoginFragment extends Fragment {
+                             if (response.isSuccessful() && response.body() != null) {
+                                 LoginResponse body = response.body();
+                                 launchHome(body.userId, body.username,
+-                                        body.gender != null ? body.gender : "guest");
++                                        body.gender != null ? body.gender : "guest",
++                                        body.email != null ? body.email : "",
++                                        body.token != null ? body.token : "");
+ 
+                             } else if (response.code() == 403) {
+                                 // Email non verificata — porta al fragment OTP
+@@ -101,16 +103,21 @@ public class LoginFragment extends Fragment {
+         });
+     }
+ 
+-    private void launchHome(int userId, String username, String gender) {
++    private void launchHome(int userId, String username, String gender, String email, String token) {
+         SharedPreferences prefs = requireActivity()
+                 .getSharedPreferences("app", requireContext().MODE_PRIVATE);
+         prefs.edit()
+                 .putString("userType", "LOGGED")
+                 .putString("username", username != null ? username : "Spettatore")
+                 .putString("gender",   gender)
++                .putString("email",    email)
++                .putString("token",    token)
+                 .putInt("userId",      userId)
+                 .apply();
+ 
++        // Resetta il client Retrofit perché l'interceptor ora ha il token
++        com.example.dropby.network.ApiClient.resetClient();
++
+         Intent intent = new Intent(requireActivity(), HomeActivity.class);
+         startActivity(intent);
+         requireActivity().finish();
+diff --git a/frontend/DropBy/app/src/main/java/com/example/dropby/fragments/auth/RegisterFragment.java b/frontend/DropBy/app/src/main/java/com/example/dropby/fragments/auth/RegisterFragment.java
+index 1590267..11348be 100644
+--- a/frontend/DropBy/app/src/main/java/com/example/dropby/fragments/auth/RegisterFragment.java
++++ b/frontend/DropBy/app/src/main/java/com/example/dropby/fragments/auth/RegisterFragment.java
+@@ -1,5 +1,6 @@
+ package com.example.dropby.fragments.auth;
+ 
++import android.app.DatePickerDialog;
+ import android.content.Intent;
+ import android.content.SharedPreferences;
+ import android.graphics.Color;
+@@ -21,6 +22,9 @@ import android.widget.ScrollView;
+ import android.widget.TextView;
+ import android.widget.Toast;
+ 
++import java.util.Calendar;
++import java.util.Locale;
++
+ import androidx.annotation.NonNull;
+ import androidx.appcompat.app.AlertDialog;
+ import androidx.core.content.ContextCompat;
+@@ -43,6 +47,8 @@ import java.nio.charset.StandardCharsets;
+ 
+ public class RegisterFragment extends Fragment {
+ 
++    private String birthdayIso = ""; // YYYY-MM-DD — set by DatePickerDialog
++
+     public RegisterFragment() {
+         super(R.layout.fragment_register);
+     }
+@@ -58,6 +64,21 @@ public class RegisterFragment extends Fragment {
+         EditText etBirthday  = view.findViewById(R.id.etBirthday);
+         EditText etPassword  = view.findViewById(R.id.etPassword);
+ 
++        // DatePickerDialog al tap sul campo data
++        etBirthday.setFocusable(false);
++        etBirthday.setClickable(true);
++        etBirthday.setOnClickListener(v -> {
++            Calendar cal = Calendar.getInstance();
++            int y = cal.get(Calendar.YEAR) - 20;
++            int m = cal.get(Calendar.MONTH);
++            int d = cal.get(Calendar.DAY_OF_MONTH);
++            new DatePickerDialog(requireContext(), (picker, year, month, day) -> {
++                birthdayIso = String.format(Locale.US, "%04d-%02d-%02d", year, month + 1, day);
++                etBirthday.setText(String.format(Locale.ITALY, "%02d/%02d/%04d", day, month + 1, year));
++                etBirthday.setError(null);
++            }, y, m, d).show();
++        });
++
+         RadioGroup rgGender  = view.findViewById(R.id.rgGender);
+ 
+         CheckBox cbPrivacy   = view.findViewById(R.id.cbPrivacy);
+@@ -86,7 +107,6 @@ public class RegisterFragment extends Fragment {
+             String lastName  = etLastName.getText().toString().trim();
+             String username  = etUsername.getText().toString().trim();
+             String email     = etEmail.getText().toString().trim();
+-            String birthday  = etBirthday.getText().toString().trim();
+             String password  = etPassword.getText().toString();
+             int genderId     = rgGender.getCheckedRadioButtonId();
+ 
+@@ -98,7 +118,10 @@ public class RegisterFragment extends Fragment {
+                 etEmail.setError("Email non valida"); return;
+             }
+ 
+-            if (TextUtils.isEmpty(birthday)) { etBirthday.setError("Inserisci la data"); return; }
++            if (birthdayIso.isEmpty()) {
++                etBirthday.setError("Seleziona la data di nascita");
++                return;
++            }
+ 
+             if (TextUtils.isEmpty(password) || password.length() < 6) {
+                 etPassword.setError("Minimo 6 caratteri"); return;
+@@ -126,7 +149,7 @@ public class RegisterFragment extends Fragment {
+ 
+             RegisterRequest req = new RegisterRequest(
+                     username, email, password,
+-                    firstName, lastName, birthday, gender
++                    firstName, lastName, birthdayIso, gender
+             );
+ 
+             ApiClient.getApiService().register(req)
+diff --git a/frontend/DropBy/app/src/main/java/com/example/dropby/fragments/auth/StartFragment.java b/frontend/DropBy/app/src/main/java/com/example/dropby/fragments/auth/StartFragment.java
+index f63dff2..118e3c2 100644
+--- a/frontend/DropBy/app/src/main/java/com/example/dropby/fragments/auth/StartFragment.java
++++ b/frontend/DropBy/app/src/main/java/com/example/dropby/fragments/auth/StartFragment.java
+@@ -45,18 +45,18 @@ public class StartFragment extends Fragment {
+     }
+ 
+     void launchHome(String userType) {
+-        requireActivity()
+-                .getSharedPreferences("app", requireContext().MODE_PRIVATE)
+-                .edit()
++        android.content.SharedPreferences prefs =
++                requireActivity().getSharedPreferences("app", requireContext().MODE_PRIVATE);
++        // Reset completo + imposta solo i valori guest
++        prefs.edit()
++                .clear()
+                 .putString("userType", userType)
+                 .putString("username", "Spettatore")
+-                .putString("gender", "guest")
+-                // BUG FIX: un ospite non deve avere un userId (era hardcoded a 1).
+-                // Rimuoviamo qualsiasi userId precedente per evitare che un ospite
+-                // acceda a endpoint autenticati come /favorites/user/{userId}.
+-                .remove("userId")
++                .putString("gender",   "guest")
+                 .apply();
+ 
++        com.example.dropby.network.ApiClient.resetClient();
++
+         Intent intent = new Intent(requireActivity(), HomeActivity.class);
+         startActivity(intent);
+         requireActivity().finish();
+diff --git a/frontend/DropBy/app/src/main/java/com/example/dropby/fragments/auth/VerificationFragment.java b/frontend/DropBy/app/src/main/java/com/example/dropby/fragments/auth/VerificationFragment.java
+index 607fa9b..ed98a5a 100644
+--- a/frontend/DropBy/app/src/main/java/com/example/dropby/fragments/auth/VerificationFragment.java
++++ b/frontend/DropBy/app/src/main/java/com/example/dropby/fragments/auth/VerificationFragment.java
+@@ -60,7 +60,7 @@ public class VerificationFragment extends Fragment {
+ 
+         tvSubtitle.setText("Abbiamo inviato un codice a " + email);
+ 
+-        // ── Verifica OTP ─────────────────────────────────────────────────
++        // ── Verifica OTP ─────────────────────────────────────────────────────
+         btnVerify.setOnClickListener(v -> {
+             String code = etOtp.getText().toString().trim();
+             if (TextUtils.isEmpty(code) || code.length() != 6) {
+@@ -84,7 +84,10 @@ public class VerificationFragment extends Fragment {
+                                 OtpResponse body = response.body();
+                                 Toast.makeText(getContext(),
+                                         "Account verificato!", Toast.LENGTH_SHORT).show();
+-                                launchHome(body.userId, body.username);
++                                launchHome(body.userId, body.username,
++                                        body.email   != null ? body.email   : "",
++                                        body.gender  != null ? body.gender  : "guest",
++                                        body.token   != null ? body.token   : "");
+                             } else {
+                                 String err = response.code() == 400
+                                         ? "Codice non valido o scaduto"
+@@ -93,6 +96,7 @@ public class VerificationFragment extends Fragment {
+                                 Toast.makeText(getContext(), err, Toast.LENGTH_LONG).show();
+                             }
+                         }
++
+                         @Override
+                         public void onFailure(@NonNull Call<OtpResponse> call, @NonNull Throwable t) {
+                             if (!isAdded()) return;
+@@ -103,7 +107,7 @@ public class VerificationFragment extends Fragment {
+                     });
+         });
+ 
+-        // ── Reinvia OTP ──────────────────────────────────────────────────
++        // ── Reinvia OTP ──────────────────────────────────────────────────────
+         btnResend.setOnClickListener(v -> {
+             progressBar.setVisibility(View.VISIBLE);
+             btnResend.setEnabled(false);
+@@ -123,6 +127,7 @@ public class VerificationFragment extends Fragment {
+                                             : "Errore nell'invio",
+                                     Toast.LENGTH_LONG).show();
+                         }
++
+                         @Override
+                         public void onFailure(@NonNull Call<OtpResponse> call, @NonNull Throwable t) {
+                             if (!isAdded()) return;
+@@ -134,17 +139,22 @@ public class VerificationFragment extends Fragment {
+         });
+     }
+ 
+-    private void launchHome(int userId, String username) {
++    private void launchHome(int userId, String username, String email, String gender, String token) {
+         SharedPreferences prefs = requireActivity()
+                 .getSharedPreferences("app", requireContext().MODE_PRIVATE);
+         prefs.edit()
+                 .putString("userType", "LOGGED")
+                 .putString("username", username != null ? username : "Spettatore")
+-                .putInt("userId", userId)
++                .putString("gender",   gender)
++                .putString("email",    email)
++                .putString("token",    token)
++                .putInt("userId",      userId)
+                 .apply();
+ 
++        ApiClient.resetClient();
++
+         Intent intent = new Intent(requireActivity(), HomeActivity.class);
+         startActivity(intent);
+         requireActivity().finish();
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/frontend/DropBy/app/src/main/java/com/example/dropby/fragments/main/EventDetailFragment.java b/frontend/DropBy/app/src/main/java/com/example/dropby/fragments/main/EventDetailFragment.java
+index fb9fd2b..c4da68d 100644
+--- a/frontend/DropBy/app/src/main/java/com/example/dropby/fragments/main/EventDetailFragment.java
++++ b/frontend/DropBy/app/src/main/java/com/example/dropby/fragments/main/EventDetailFragment.java
+@@ -1,12 +1,16 @@
+ package com.example.dropby.fragments.main;
+ 
++import android.content.SharedPreferences;
+ import android.os.Bundle;
+ import android.view.LayoutInflater;
+ import android.view.View;
+ import android.view.ViewGroup;
+ import android.widget.Button;
++import android.widget.EditText;
+ import android.widget.ImageView;
++import android.widget.RatingBar;
+ import android.widget.TextView;
++import android.widget.Toast;
+ 
+ import androidx.annotation.NonNull;
+ import androidx.annotation.Nullable;
+@@ -17,12 +21,18 @@ import androidx.recyclerview.widget.RecyclerView;
+ import com.bumptech.glide.Glide;
+ import com.example.dropby.R;
+ import com.example.dropby.adapters.EventGroupAdapter;
++import com.example.dropby.adapters.ReviewAdapter;
+ import com.example.dropby.models.Event;
+ import com.example.dropby.models.EventGroup;
+ import com.example.dropby.models.EventsResponse;
++import com.example.dropby.models.GenericResponse;
++import com.example.dropby.models.Review;
++import com.example.dropby.models.ReviewRequest;
+ import com.example.dropby.network.ApiClient;
++import com.example.dropby.network.ApiService;
+ import com.example.dropby.network.GlideHelper;
+ 
++import java.util.ArrayList;
+ import java.util.List;
+ 
+ import retrofit2.Call;
+@@ -67,6 +77,8 @@ public class EventDetailFragment extends Fragment {
+         if (event == null) return;
+ 
+         bindEventData(view);
++        loadReviews(view);
++        setupReviewForm(view);
+         loadOtherReplicas(view);
+     }
+ 
+@@ -110,6 +122,93 @@ public class EventDetailFragment extends Fragment {
+         }
+     }
+ 
++    // ── RECENSIONI ───────────────────────────────────────────────────────────
++
++    private ReviewAdapter reviewAdapter;
++
++    private void loadReviews(View view) {
++        RecyclerView rv = view.findViewById(R.id.reviewsRecyclerView);
++        TextView status = view.findViewById(R.id.reviewsStatusText);
++        if (rv == null) return;
++
++        rv.setLayoutManager(new LinearLayoutManager(requireContext()));
++        rv.setNestedScrollingEnabled(false);
++        reviewAdapter = new ReviewAdapter(new ArrayList<>());
++        rv.setAdapter(reviewAdapter);
++
++        ApiClient.getApiService().getEventReviews(event.getId())
++                .enqueue(new Callback<ApiService.ReviewsWrapper>() {
++                    @Override
++                    public void onResponse(Call<ApiService.ReviewsWrapper> call,
++                                           Response<ApiService.ReviewsWrapper> response) {
++                        if (!isAdded()) return;
++                        if (response.isSuccessful() && response.body() != null
++                                && response.body().reviews != null) {
++                            List<Review> reviews = response.body().reviews;
++                            if (reviews.isEmpty() && status != null) {
++                                status.setText("Nessuna recensione per questo evento");
++                                status.setVisibility(View.VISIBLE);
++                            } else {
++                                reviewAdapter.update(reviews);
++                                if (status != null) status.setVisibility(View.GONE);
++                            }
++                        }
++                    }
++                    @Override
++                    public void onFailure(Call<ApiService.ReviewsWrapper> call, Throwable t) {}
++                });
++    }
++
++    private void setupReviewForm(View view) {
++        View formLayout = view.findViewById(R.id.reviewFormLayout);
++        if (formLayout == null) return;
++
++        SharedPreferences prefs = requireActivity()
++                .getSharedPreferences("app", requireContext().MODE_PRIVATE);
++        boolean isLogged = prefs.getString("token", null) != null;
++
++        if (isLogged) {
++            formLayout.setVisibility(View.VISIBLE);
++            Button submitBtn = view.findViewById(R.id.btnSubmitReview);
++            RatingBar ratingBar = view.findViewById(R.id.reviewRatingBar);
++            EditText commentInput = view.findViewById(R.id.reviewCommentInput);
++
++            submitBtn.setOnClickListener(v -> {
++                int rating = (int) ratingBar.getRating();
++                String comment = commentInput.getText().toString().trim();
++                if (comment.isEmpty()) {
++                    commentInput.setError("Scrivi un commento");
++                    return;
++                }
++                submitBtn.setEnabled(false);
++                ApiClient.getApiService()
++                        .addReview(new ReviewRequest(event.getId(), rating, comment))
++                        .enqueue(new Callback<GenericResponse>() {
++                            @Override
++                            public void onResponse(Call<GenericResponse> call,
++                                                   Response<GenericResponse> response) {
++                                if (!isAdded()) return;
++                                submitBtn.setEnabled(true);
++                                if (response.isSuccessful()) {
++                                    commentInput.setText("");
++                                    ratingBar.setRating(3);
++                                    Toast.makeText(requireContext(),
++                                            "Recensione inviata!", Toast.LENGTH_SHORT).show();
++                                    loadReviews(view);
++                                } else {
++                                    Toast.makeText(requireContext(),
++                                            "Errore invio recensione", Toast.LENGTH_SHORT).show();
++                                }
++                            }
++                            @Override
++                            public void onFailure(Call<GenericResponse> call, Throwable t) {
++                                if (isAdded()) submitBtn.setEnabled(true);
++                            }
++                        });
++            });
++        }
++    }
++
+     // ── ALTRE REPLICHE (cross-referencing) ───────────────────────────────────
+ 
+     /**
+diff --git a/frontend/DropBy/app/src/main/java/com/example/dropby/fragments/main/MapFragment.java b/frontend/DropBy/app/src/main/java/com/example/dropby/fragments/main/MapFragment.java
+index fed4201..5275fd9 100644
+--- a/frontend/DropBy/app/src/main/java/com/example/dropby/fragments/main/MapFragment.java
++++ b/frontend/DropBy/app/src/main/java/com/example/dropby/fragments/main/MapFragment.java
+@@ -1,32 +1,43 @@
+ package com.example.dropby.fragments.main;
+ 
++import android.Manifest;
++import android.content.pm.PackageManager;
++import android.graphics.Bitmap;
++import android.graphics.drawable.Drawable;
+ import android.os.Bundle;
+ import android.view.LayoutInflater;
+ import android.view.View;
+ import android.view.ViewGroup;
+ import android.widget.AdapterView;
+ import android.widget.ArrayAdapter;
+-import android.widget.Button;
++import android.widget.ImageView;
+ import android.widget.SeekBar;
+ import android.widget.Spinner;
+ import android.widget.TextView;
+ 
+ import androidx.annotation.NonNull;
+ import androidx.annotation.Nullable;
++import androidx.core.app.ActivityCompat;
+ import androidx.fragment.app.Fragment;
+ 
++import com.bumptech.glide.Glide;
++import com.bumptech.glide.request.target.CustomTarget;
++import com.bumptech.glide.request.transition.Transition;
+ import com.example.dropby.R;
+ import com.example.dropby.models.Location;
+ import com.example.dropby.models.LocationsResponse;
+ import com.example.dropby.network.ApiClient;
+-
+-import org.osmdroid.config.Configuration;
+-import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+-import org.osmdroid.util.GeoPoint;
+-import org.osmdroid.views.MapView;
+-import org.osmdroid.views.overlay.Marker;
+-import org.osmdroid.views.overlay.Polygon;
+-import org.osmdroid.views.overlay.compass.CompassOverlay;
++import com.example.dropby.network.GlideHelper;
++import com.google.android.gms.maps.CameraUpdateFactory;
++import com.google.android.gms.maps.GoogleMap;
++import com.google.android.gms.maps.OnMapReadyCallback;
++import com.google.android.gms.maps.SupportMapFragment;
++import com.google.android.gms.maps.model.BitmapDescriptorFactory;
++import com.google.android.gms.maps.model.Circle;
++import com.google.android.gms.maps.model.CircleOptions;
++import com.google.android.gms.maps.model.LatLng;
++import com.google.android.gms.maps.model.Marker;
++import com.google.android.gms.maps.model.MarkerOptions;
+ 
+ import java.util.ArrayList;
+ import java.util.HashMap;
+@@ -37,45 +48,52 @@ import retrofit2.Call;
+ import retrofit2.Callback;
+ import retrofit2.Response;
+ 
+-public class MapFragment extends Fragment {
++public class MapFragment extends Fragment implements OnMapReadyCallback {
+ 
+-    // ── CITTÀ CON COORDINATE ─────────────────────────────────────────────────
+-    private static final Map<String, GeoPoint> CITY_COORDS = new HashMap<>();
++    // ── COORDINATE CITTÀ ITALIANE ────────────────────────────────────────────
++    private static final Map<String, LatLng> CITY_COORDS = new HashMap<>();
+     static {
+         CITY_COORDS.put("Tutte le città",      null);
+-        CITY_COORDS.put("Roma",                new GeoPoint(41.9028, 12.4964));
+-        CITY_COORDS.put("Milano",              new GeoPoint(45.4654, 9.1859));
+-        CITY_COORDS.put("Napoli",              new GeoPoint(40.8518, 14.2681));
+-        CITY_COORDS.put("Torino",              new GeoPoint(45.0703, 7.6869));
+-        CITY_COORDS.put("Bologna",             new GeoPoint(44.4949, 11.3426));
+-        CITY_COORDS.put("Firenze",             new GeoPoint(43.7696, 11.2558));
+-        CITY_COORDS.put("Venezia",             new GeoPoint(45.4408, 12.3155));
+-        CITY_COORDS.put("Palermo",             new GeoPoint(38.1157, 13.3615));
+-        CITY_COORDS.put("Verona",              new GeoPoint(45.4384, 10.9916));
+-        CITY_COORDS.put("Trieste",             new GeoPoint(45.6495, 13.7768));
+-        CITY_COORDS.put("Reggio Emilia",       new GeoPoint(44.6989, 10.6297));
+-        CITY_COORDS.put("Modena",              new GeoPoint(44.6471, 10.9252));
+-        CITY_COORDS.put("Parma",               new GeoPoint(44.8015, 10.3279));
+-        CITY_COORDS.put("Carpi",               new GeoPoint(44.7833, 10.8833));
+-        CITY_COORDS.put("Casalecchio di Reno", new GeoPoint(44.4742, 11.2706));
+-        CITY_COORDS.put("Piacenza",            new GeoPoint(45.0526, 9.6930));
+-        CITY_COORDS.put("Ravenna",             new GeoPoint(44.4184, 12.2035));
+-        CITY_COORDS.put("Ferrara",             new GeoPoint(44.8381, 11.6198));
+-        CITY_COORDS.put("Rimini",              new GeoPoint(44.0594, 12.5683));
+-        CITY_COORDS.put("Bari",                new GeoPoint(41.1171, 16.8719));
+-        CITY_COORDS.put("Catania",             new GeoPoint(37.5079, 15.0830));
+-        CITY_COORDS.put("Genova",              new GeoPoint(44.4056, 8.9463));
+-        CITY_COORDS.put("Pesaro",              new GeoPoint(43.9107, 12.9131));
++        CITY_COORDS.put("Roma",                new LatLng(41.9028, 12.4964));
++        CITY_COORDS.put("Milano",              new LatLng(45.4654, 9.1859));
++        CITY_COORDS.put("Napoli",              new LatLng(40.8518, 14.2681));
++        CITY_COORDS.put("Torino",              new LatLng(45.0703, 7.6869));
++        CITY_COORDS.put("Bologna",             new LatLng(44.4949, 11.3426));
++        CITY_COORDS.put("Firenze",             new LatLng(43.7696, 11.2558));
++        CITY_COORDS.put("Venezia",             new LatLng(45.4408, 12.3155));
++        CITY_COORDS.put("Palermo",             new LatLng(38.1157, 13.3615));
++        CITY_COORDS.put("Verona",              new LatLng(45.4384, 10.9916));
++        CITY_COORDS.put("Trieste",             new LatLng(45.6495, 13.7768));
++        CITY_COORDS.put("Reggio Emilia",       new LatLng(44.6989, 10.6297));
++        CITY_COORDS.put("Modena",              new LatLng(44.6471, 10.9252));
++        CITY_COORDS.put("Parma",               new LatLng(44.8015, 10.3279));
++        CITY_COORDS.put("Carpi",               new LatLng(44.7833, 10.8833));
++        CITY_COORDS.put("Casalecchio di Reno", new LatLng(44.4742, 11.2706));
++        CITY_COORDS.put("Piacenza",            new LatLng(45.0526, 9.6930));
++        CITY_COORDS.put("Ravenna",             new LatLng(44.4184, 12.2035));
++        CITY_COORDS.put("Ferrara",             new LatLng(44.8381, 11.6198));
++        CITY_COORDS.put("Rimini",              new LatLng(44.0594, 12.5683));
++        CITY_COORDS.put("Bari",                new LatLng(41.1171, 16.8719));
++        CITY_COORDS.put("Catania",             new LatLng(37.5079, 15.0830));
++        CITY_COORDS.put("Genova",              new LatLng(44.4056, 8.9463));
++        CITY_COORDS.put("Pesaro",              new LatLng(43.9107, 12.9131));
+     }
+ 
+     private static final int[] RADIUS_KM = {10, 25, 50, 100, 200, 500};
+ 
+-    private MapView mapView;
++    // Google Maps
++    private GoogleMap googleMap;
++    private Circle radiusCircle;
++    private final List<Marker> currentMarkers = new ArrayList<>();
++    private final Map<Integer, Bitmap> bitmapCache = new HashMap<>();
++
++    // Filtri UI
+     private Spinner citySpinner;
+     private SeekBar radiusSeekBar;
+     private TextView radiusLabel;
+     private TextView statusText;
+ 
++    // Dati
+     private List<Location> allLocations = new ArrayList<>();
+     private String selectedCity = "Tutte le città";
+     private int selectedRadiusKm = 50;
+@@ -85,9 +103,6 @@ public class MapFragment extends Fragment {
+     public View onCreateView(@NonNull LayoutInflater inflater,
+                              @Nullable ViewGroup container,
+                              @Nullable Bundle savedInstanceState) {
+-        // Imposta user agent (richiesto da OSMDroid)
+-        Configuration.getInstance().setUserAgentValue(
+-                requireActivity().getPackageName());
+         return inflater.inflate(R.layout.fragment_map, container, false);
+     }
+ 
+@@ -95,33 +110,135 @@ public class MapFragment extends Fragment {
+     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+         super.onViewCreated(view, savedInstanceState);
+ 
+-        mapView = view.findViewById(R.id.mapView);
+-        citySpinner  = view.findViewById(R.id.citySpinner);
++        citySpinner   = view.findViewById(R.id.citySpinner);
+         radiusSeekBar = view.findViewById(R.id.radiusSeekBar);
+-        radiusLabel  = view.findViewById(R.id.radiusLabel);
+-        statusText   = view.findViewById(R.id.theatersStatusText);
++        radiusLabel   = view.findViewById(R.id.radiusLabel);
++        statusText    = view.findViewById(R.id.theatersStatusText);
+ 
+-        setupMap();
+         setupCitySpinner();
+         setupRadiusSeekBar();
+ 
+-        view.findViewById(R.id.btnApplyFilter)
+-                .setOnClickListener(v -> applyFilter());
++        view.findViewById(R.id.btnApplyFilter).setOnClickListener(v -> applyFilter());
++
++        // Inizializza Google Maps tramite fragment annidato
++        SupportMapFragment mapFragment = (SupportMapFragment)
++                getChildFragmentManager().findFragmentById(R.id.googleMap);
++        if (mapFragment != null) {
++            mapFragment.getMapAsync(this);
++        }
+ 
+         loadAllTheaters();
+     }
+ 
+-    // ── SETUP MAPPA ───────────────────────────────────────────────────────────
++    // ── GOOGLE MAPS CALLBACK ──────────────────────────────────────────────────
++
++    @Override
++    public void onMapReady(@NonNull GoogleMap map) {
++        googleMap = map;
++        googleMap.getUiSettings().setZoomControlsEnabled(true);
++        googleMap.getUiSettings().setCompassEnabled(true);
++        googleMap.getUiSettings().setMyLocationButtonEnabled(true);
++
++        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
++                new LatLng(42.5, 12.5), 5.5f));
++
++        enableMyLocation();
++
++        googleMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
++            @Override
++            public View getInfoWindow(@NonNull Marker marker) {
++                return buildInfoWindow(marker);
++            }
++            @Override
++            public View getInfoContents(@NonNull Marker marker) {
++                return null;
++            }
++        });
++
++        // Tap su marker: mostra InfoWindow (return false = default behavior) e avvia caricamento immagine
++        googleMap.setOnMarkerClickListener(marker -> {
++            Object tag = marker.getTag();
++            if (tag instanceof Location) {
++                Location loc = (Location) tag;
++                if (!bitmapCache.containsKey(loc.getId())) {
++                    loadMarkerImage(loc, marker);
++                }
++            }
++            return false; // mostra InfoWindow e sposta la camera
++        });
+ 
+-    private void setupMap() {
+-        mapView.setTileSource(TileSourceFactory.MAPNIK); // OpenStreetMap tiles
+-        mapView.setMultiTouchControls(true);
+-        mapView.getController().setZoom(6.0);
+-        mapView.getController().setCenter(new GeoPoint(42.5, 12.5)); // Italia
++        // Tap sull'InfoWindow → apre la scheda teatro
++        googleMap.setOnInfoWindowClickListener(marker -> {
++            Object tag = marker.getTag();
++            if (tag instanceof Location) {
++                openTheaterDetail((Location) tag);
++            }
++        });
+ 
+-        CompassOverlay compass = new CompassOverlay(requireContext(), mapView);
+-        compass.enableCompass();
+-        mapView.getOverlays().add(compass);
++        if (!allLocations.isEmpty()) applyFilter();
++    }
++
++    private View buildInfoWindow(Marker marker) {
++        LayoutInflater inflater = LayoutInflater.from(requireContext());
++        View view = inflater.inflate(R.layout.item_map_infowindow, null);
++
++        Object tag = marker.getTag();
++        if (!(tag instanceof Location)) return view;
++        Location loc = (Location) tag;
++
++        TextView nameView  = view.findViewById(R.id.infoWindowName);
++        TextView cityView  = view.findViewById(R.id.infoWindowCity);
++        ImageView imgView  = view.findViewById(R.id.infoWindowImage);
++
++        nameView.setText(loc.getName());
++        cityView.setText(loc.getCity());
++
++        Bitmap cached = bitmapCache.get(loc.getId());
++        if (cached != null) {
++            imgView.setImageBitmap(cached);
++        } else {
++            imgView.setImageResource(R.drawable.image_placeholder);
++        }
++        return view;
++    }
++
++    private void loadMarkerImage(Location loc, Marker marker) {
++        String url = loc.resolveImageEstUrl();
++        if (url == null || !isAdded()) return;
++
++        Glide.with(this)
++                .asBitmap()
++                .load(GlideHelper.url(url))
++                .into(new CustomTarget<Bitmap>(400, 220) {
++                    @Override
++                    public void onResourceReady(@NonNull Bitmap resource,
++                                                @Nullable Transition<? super Bitmap> transition) {
++                        bitmapCache.put(loc.getId(), resource);
++                        if (marker.isInfoWindowShown()) {
++                            marker.showInfoWindow(); // re-render con immagine caricata
++                        }
++                    }
++                    @Override
++                    public void onLoadCleared(@Nullable Drawable placeholder) {}
++                });
++    }
++
++    private void enableMyLocation() {
++        if (ActivityCompat.checkSelfPermission(requireContext(),
++                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
++            if (googleMap != null) googleMap.setMyLocationEnabled(true);
++        } else {
++            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1001);
++        }
++    }
++
++    @Override
++    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
++                                            @NonNull int[] grantResults) {
++        if (requestCode == 1001 && grantResults.length > 0
++                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
++            enableMyLocation();
++        }
+     }
+ 
+     // ── SPINNER CITTÀ ─────────────────────────────────────────────────────────
+@@ -133,17 +250,15 @@ public class MapFragment extends Fragment {
+         cities.add(0, "Tutte le città");
+ 
+         ArrayAdapter<String> adapter = new ArrayAdapter<>(
+-                requireContext(),
+-                android.R.layout.simple_spinner_item, cities);
+-        adapter.setDropDownViewResource(
+-                android.R.layout.simple_spinner_dropdown_item);
++                requireContext(), android.R.layout.simple_spinner_item, cities);
++        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+         citySpinner.setAdapter(adapter);
+ 
+         citySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+             @Override
+             public void onItemSelected(AdapterView<?> p, View v, int pos, long id) {
+                 selectedCity = (String) p.getItemAtPosition(pos);
+-                boolean showRadius = !selectedCity.equals("Tutte le città");
++                boolean showRadius = !"Tutte le città".equals(selectedCity);
+                 radiusSeekBar.setVisibility(showRadius ? View.VISIBLE : View.GONE);
+                 radiusLabel.setVisibility(showRadius ? View.VISIBLE : View.GONE);
+             }
+@@ -157,7 +272,6 @@ public class MapFragment extends Fragment {
+         radiusSeekBar.setMax(RADIUS_KM.length - 1);
+         radiusSeekBar.setProgress(2);
+         updateRadiusLabel(RADIUS_KM[2]);
+-
+         radiusSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+             @Override
+             public void onProgressChanged(SeekBar sb, int p, boolean fromUser) {
+@@ -177,7 +291,7 @@ public class MapFragment extends Fragment {
+ 
+     private void loadAllTheaters() {
+         statusText.setVisibility(View.VISIBLE);
+-        statusText.setText("Caricamento teatri...");
++        statusText.setText("Caricamento teatri…");
+ 
+         ApiClient.getApiService().getLocations(null, null)
+                 .enqueue(new Callback<LocationsResponse>() {
+@@ -188,16 +302,15 @@ public class MapFragment extends Fragment {
+                         if (response.isSuccessful() && response.body() != null) {
+                             allLocations = response.body().getLocations();
+                             statusText.setVisibility(View.GONE);
+-                            applyFilter();
++                            if (googleMap != null) applyFilter();
+                         } else {
+-                            statusText.setText("Errore caricamento teatri.");
++                            statusText.setText("Errore caricamento teatri");
+                         }
+                     }
+                     @Override
+-                    public void onFailure(@NonNull Call<LocationsResponse> call,
+-                                          @NonNull Throwable t) {
++                    public void onFailure(@NonNull Call<LocationsResponse> call, @NonNull Throwable t) {
+                         if (!isAdded()) return;
+-                        statusText.setText("Rete assente.");
++                        statusText.setText("Rete assente");
+                     }
+                 });
+     }
+@@ -205,90 +318,79 @@ public class MapFragment extends Fragment {
+     // ── FILTRO E MARKER ───────────────────────────────────────────────────────
+ 
+     private void applyFilter() {
+-        // Rimuovi tutti gli overlay tranne la bussola (indice 0)
+-        while (mapView.getOverlays().size() > 1)
+-            mapView.getOverlays().remove(mapView.getOverlays().size() - 1);
++        if (googleMap == null) return;
++
++        // Rimuovi marker e cerchio precedenti
++        for (Marker m : currentMarkers) m.remove();
++        currentMarkers.clear();
++        if (radiusCircle != null) { radiusCircle.remove(); radiusCircle = null; }
+ 
+-        GeoPoint center = CITY_COORDS.get(selectedCity);
++        LatLng center = CITY_COORDS.get(selectedCity);
+         List<Location> filtered = new ArrayList<>();
+ 
+         if (center == null) {
+             filtered.addAll(allLocations);
+-            mapView.getController().animateTo(new GeoPoint(42.5, 12.5));
+-            mapView.getController().setZoom(6.0);
++            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
++                    new LatLng(42.5, 12.5), 5.5f));
+         } else {
+             for (Location loc : allLocations) {
+                 if (loc.getLatitude() == 0 && loc.getLongitude() == 0) continue;
+-                double dist = haversineKm(center.getLatitude(), center.getLongitude(),
++                double dist = haversineKm(center.latitude, center.longitude,
+                         loc.getLatitude(), loc.getLongitude());
+                 if (dist <= selectedRadiusKm) filtered.add(loc);
+             }
+-            // Cerchio raggio
+-            Polygon circle = new Polygon(mapView);
+-            circle.setPoints(Polygon.pointsAsCircle(center, selectedRadiusKm * 1000.0));
+-            circle.getFillPaint().setColor(0x1A7B1FA2);
+-            circle.getOutlinePaint().setColor(0xFF7B1FA2);
+-            circle.getOutlinePaint().setStrokeWidth(3f);
+-            mapView.getOverlays().add(circle);
+-
+-            mapView.getController().animateTo(center);
+-            mapView.getController().setZoom(radiusToZoom(selectedRadiusKm));
++
++            // Disegna cerchio del raggio
++            radiusCircle = googleMap.addCircle(new CircleOptions()
++                    .center(center)
++                    .radius(selectedRadiusKm * 1000.0)
++                    .strokeColor(0xFF7B1FA2)
++                    .fillColor(0x1A7B1FA2)
++                    .strokeWidth(3f));
++
++            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
++                    center, radiusToZoom(selectedRadiusKm)));
+         }
+ 
+         for (Location loc : filtered) {
+             if (loc.getLatitude() == 0 && loc.getLongitude() == 0) continue;
+-            Marker marker = new Marker(mapView);
+-            marker.setPosition(new GeoPoint(loc.getLatitude(), loc.getLongitude()));
+-            marker.setTitle(loc.getName());
+-            marker.setSubDescription(loc.getCity());
+-            marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+-            marker.setOnMarkerClickListener((m, mv) -> {
+-                m.showInfoWindow();
+-                return true;
+-            });
+-            // Tap sulla info window → TheaterDetailFragment
+-            marker.setInfoWindowAnchor(Marker.ANCHOR_CENTER, 0f);
+-            final Location finalLoc = loc;
+-            marker.setOnMarkerClickListener((m, mv) -> {
+-                openTheaterDetail(finalLoc);
+-                return true;
+-            });
+-            mapView.getOverlays().add(marker);
++            Marker marker = googleMap.addMarker(new MarkerOptions()
++                    .position(new LatLng(loc.getLatitude(), loc.getLongitude()))
++                    .title(loc.getName())
++                    .snippet(loc.getCity())
++                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)));
++            if (marker != null) {
++                marker.setTag(loc);
++                currentMarkers.add(marker);
++            }
+         }
+-
+-        mapView.invalidate();
+     }
+ 
+     private void openTheaterDetail(Location location) {
+         requireActivity().getSupportFragmentManager().beginTransaction()
+-                .replace(R.id.fragment_container,
+-                        TheaterDetailFragment.newInstance(location))
+-                .addToBackStack(null).commit();
++                .replace(R.id.fragment_container, TheaterDetailFragment.newInstance(location))
++                .addToBackStack(null)
++                .commit();
+     }
+ 
+-    // ── LIFECYCLE MAPPA ───────────────────────────────────────────────────────
+-
+-    @Override public void onResume()  { super.onResume();  if (mapView != null) mapView.onResume(); }
+-    @Override public void onPause()   { super.onPause();   if (mapView != null) mapView.onPause(); }
+-
+     // ── MATH ─────────────────────────────────────────────────────────────────
+ 
+     private static double haversineKm(double lat1, double lon1,
+                                       double lat2, double lon2) {
+         double dLat = Math.toRadians(lat2 - lat1);
+         double dLon = Math.toRadians(lon2 - lon1);
+-        double a = Math.sin(dLat/2) * Math.sin(dLat/2)
++        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+                 + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+-                * Math.sin(dLon/2) * Math.sin(dLon/2);
+-        return 6371.0 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
++                * Math.sin(dLon / 2) * Math.sin(dLon / 2);
++        return 6371.0 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+     }
+ 
+-    private static double radiusToZoom(int km) {
+-        if (km <= 10)  return 11.0;
+-        if (km <= 25)  return 10.0;
+-        if (km <= 50)  return 9.0;
+-        if (km <= 100) return 8.0;
+-        if (km <= 200) return 7.0;
+-        return 6.0;
++    private static float radiusToZoom(int km) {
++        if (km <= 10)  return 12f;
++        if (km <= 25)  return 11f;
++        if (km <= 50)  return 10f;
++        if (km <= 100) return 9f;
++        if (km <= 200) return 8f;
++        return 7f;
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/frontend/DropBy/app/src/main/java/com/example/dropby/fragments/main/TheaterDetailFragment.java b/frontend/DropBy/app/src/main/java/com/example/dropby/fragments/main/TheaterDetailFragment.java
+index 71df8a7..6e89c82 100644
+--- a/frontend/DropBy/app/src/main/java/com/example/dropby/fragments/main/TheaterDetailFragment.java
++++ b/frontend/DropBy/app/src/main/java/com/example/dropby/fragments/main/TheaterDetailFragment.java
+@@ -1,5 +1,7 @@
+ package com.example.dropby.fragments.main;
+ 
++import android.content.Intent;
++import android.net.Uri;
+ import android.os.Bundle;
+ import android.text.TextUtils;
+ import android.view.LayoutInflater;
+@@ -136,6 +138,30 @@ public class TheaterDetailFragment extends Fragment {
+             if (planUrl != null) btnPlan.setOnClickListener(x -> showFloorPlanDialog(planUrl));
+         }
+ 
++        // Pulsante indicazioni stradali
++        Button btnDirections = v.findViewById(R.id.theaterDirectionsButton);
++        if (btnDirections != null) {
++            boolean hasCoords = location.getLatitude() != 0 || location.getLongitude() != 0;
++            btnDirections.setVisibility(hasCoords ? View.VISIBLE : View.GONE);
++            if (hasCoords) {
++                btnDirections.setOnClickListener(x -> {
++                    double lat = location.getLatitude();
++                    double lon = location.getLongitude();
++                    Uri navUri = Uri.parse("google.navigation:q=" + lat + "," + lon);
++                    Intent navIntent = new Intent(Intent.ACTION_VIEW, navUri);
++                    navIntent.setPackage("com.google.android.apps.maps");
++                    if (navIntent.resolveActivity(requireActivity().getPackageManager()) != null) {
++                        startActivity(navIntent);
++                    } else {
++                        // Fallback: apre Google Maps nel browser
++                        Uri fallback = Uri.parse(
++                                "https://www.google.com/maps/dir/?api=1&destination=" + lat + "," + lon);
++                        startActivity(new Intent(Intent.ACTION_VIEW, fallback));
++                    }
++                });
++            }
++        }
++
+         setupGallery();
+     }
+ 
+diff --git a/frontend/DropBy/app/src/main/java/com/example/dropby/models/LoginResponse.java b/frontend/DropBy/app/src/main/java/com/example/dropby/models/LoginResponse.java
+index a457d3c..11b299b 100644
+--- a/frontend/DropBy/app/src/main/java/com/example/dropby/models/LoginResponse.java
++++ b/frontend/DropBy/app/src/main/java/com/example/dropby/models/LoginResponse.java
+@@ -3,6 +3,7 @@ package com.example.dropby.models;
+ import com.google.gson.annotations.SerializedName;
+ 
+ public class LoginResponse {
++    @SerializedName("token")    public String token;
+     @SerializedName("user_id")  public int userId;
+     @SerializedName("username") public String username;
+     @SerializedName("gender")   public String gender;
+diff --git a/frontend/DropBy/app/src/main/java/com/example/dropby/models/OtpResponse.java b/frontend/DropBy/app/src/main/java/com/example/dropby/models/OtpResponse.java
+index e7dbe88..7a87cbe 100644
+--- a/frontend/DropBy/app/src/main/java/com/example/dropby/models/OtpResponse.java
++++ b/frontend/DropBy/app/src/main/java/com/example/dropby/models/OtpResponse.java
+@@ -4,7 +4,10 @@ import com.google.gson.annotations.SerializedName;
+ 
+ public class OtpResponse {
+     @SerializedName("message")  public String message;
+-    @SerializedName("user_id")  public int userId;
+-    @SerializedName("username") public String username;
+     @SerializedName("error")    public String error;
+-}
+\ No newline at end of file
++    @SerializedName("user_id")  public int    userId;
++    @SerializedName("username") public String username;
++    @SerializedName("email")    public String email;
++    @SerializedName("gender")   public String gender;
++    @SerializedName("token")    public String token;
++}
+diff --git a/frontend/DropBy/app/src/main/java/com/example/dropby/network/ApiClient.java b/frontend/DropBy/app/src/main/java/com/example/dropby/network/ApiClient.java
+index 00cef68..a33b1c5 100644
+--- a/frontend/DropBy/app/src/main/java/com/example/dropby/network/ApiClient.java
++++ b/frontend/DropBy/app/src/main/java/com/example/dropby/network/ApiClient.java
+@@ -2,20 +2,30 @@ package com.example.dropby.network;
+ 
+ import android.content.SharedPreferences;
+ import android.os.Build;
++import android.util.Log;
+ 
+ import com.example.dropby.App;
+ import com.example.dropby.models.Location;
+ 
++import java.io.IOException;
+ import java.util.concurrent.TimeUnit;
+ 
++import okhttp3.Interceptor;
+ import okhttp3.OkHttpClient;
++import okhttp3.Request;
++import okhttp3.Response;
+ import retrofit2.Retrofit;
+ import retrofit2.converter.gson.GsonConverterFactory;
+ 
+ public class ApiClient {
+ 
++    private static final String TAG = "ApiClient";
++    // 10.0.2.2 è l'alias dell'host su emulatore Android standard
+     private static final String EMULATOR_URL = "http://10.0.2.2:5000/";
+-    private static final String DEVICE_URL   = "http://127.0.0.1:5000/";
++    // Su dispositivo fisico va configurato via Impostazioni → URL Backend
++    // (es. http://192.168.1.x:5000/  oppure URL ngrok)
++    private static final String DEVICE_FALLBACK_URL = "http://10.0.2.2:5000/";
++
+     private static Retrofit retrofit;
+ 
+     public static Retrofit getClient() {
+@@ -24,13 +34,8 @@ public class ApiClient {
+                     .connectTimeout(30, TimeUnit.SECONDS)
+                     .readTimeout(120, TimeUnit.SECONDS)
+                     .writeTimeout(30, TimeUnit.SECONDS)
+-                    .addInterceptor(chain -> {
+-                        okhttp3.Request request = chain.request().newBuilder()
+-                                .header("ngrok-skip-browser-warning", "true")
+-                                .header("User-Agent", "AndroidApp/1.0")
+-                                .build();
+-                        return chain.proceed(request);
+-                    })
++                    .addInterceptor(new HeaderInterceptor())
++                    .addInterceptor(new RetryInterceptor(1))
+                     .build();
+ 
+             retrofit = new Retrofit.Builder()
+@@ -46,12 +51,53 @@ public class ApiClient {
+         return getClient().create(ApiService.class);
+     }
+ 
++    // Aggiunge automaticamente header comuni e token JWT (se presente in SharedPreferences)
++    private static class HeaderInterceptor implements Interceptor {
++        @Override
++        public Response intercept(Chain chain) throws IOException {
++            SharedPreferences prefs = App.getContext()
++                    .getSharedPreferences("app", App.getContext().MODE_PRIVATE);
++            String token = prefs.getString("token", null);
++
++            Request.Builder builder = chain.request().newBuilder()
++                    .header("ngrok-skip-browser-warning", "true")
++                    .header("User-Agent", "AndroidApp/1.0");
++
++            if (token != null && !token.isEmpty()) {
++                builder.header("Authorization", "Bearer " + token);
++            }
++
++            return chain.proceed(builder.build());
++        }
++    }
++
++    // Riprova automaticamente in caso di ConnectException o SocketTimeoutException
++    private static class RetryInterceptor implements Interceptor {
++        private final int maxRetries;
++
++        RetryInterceptor(int max) { this.maxRetries = max; }
++
++        @Override
++        public Response intercept(Chain chain) throws IOException {
++            Request request = chain.request();
++            IOException lastEx = null;
++            for (int attempt = 0; attempt <= maxRetries; attempt++) {
++                try {
++                    Response response = chain.proceed(request);
++                    if (response.isSuccessful() || attempt == maxRetries) return response;
++                    response.close();
++                } catch (IOException e) {
++                    lastEx = e;
++                    if (attempt == maxRetries) throw e;
++                    Log.w(TAG, "Retry " + (attempt + 1) + " per " + request.url());
++                }
++            }
++            throw (lastEx != null) ? lastEx : new IOException("Retry fallito");
++        }
++    }
++
+     // ── URL RESOLUTION ───────────────────────────────────────────────────────
+ 
+-    /**
+-     * Converte un URL relativo (es. /assets/events/...) in assoluto.
+-     * Se già assoluto, lo restituisce invariato.
+-     */
+     public static String resolveUrl(String url) {
+         if (url == null || url.isEmpty()) return null;
+         if (url.startsWith("http://") || url.startsWith("https://")) return url;
+@@ -60,33 +106,11 @@ public class ApiClient {
+         return base + path;
+     }
+ 
+-    /**
+-     * Risolve il nome file di un'immagine di una location nel suo URL assoluto,
+-     * usando la sottocartella corretta in base al tipo.
+-     *
+-     * Struttura fisica:
+-     *   static/images/foto_luoghi/foto_teatri/   ← immagini esterne e interne
+-     *   static/images/foto_luoghi/planimetrie/   ← planimetrie
+-     *
+-     * @param filename  solo il nome file, es. "verona_est.jpg" (può essere null)
+-     * @param type      tipo di immagine (EXTERIOR, INTERIOR, FLOOR_PLAN)
+-     * @return URL assoluto o null se filename è null/vuoto
+-     */
+-    public static String resolveLocationImage(String filename,
+-                                              Location.LocationImageType type) {
++    public static String resolveLocationImage(String filename, Location.LocationImageType type) {
+         if (filename == null || filename.trim().isEmpty()) return null;
+-
+-        String subfolder;
+-        switch (type) {
+-            case FLOOR_PLAN:
+-                subfolder = "static/images/foto_luoghi/planimetrie/";
+-                break;
+-            case EXTERIOR:
+-            case INTERIOR:
+-            default:
+-                subfolder = "static/images/foto_luoghi/foto_teatri/";
+-                break;
+-        }
++        String subfolder = (type == Location.LocationImageType.FLOOR_PLAN)
++                ? "static/images/foto_luoghi/planimetrie/"
++                : "static/images/foto_luoghi/foto_teatri/";
+         return getBaseUrl() + subfolder + filename;
+     }
+ 
+@@ -96,7 +120,7 @@ public class ApiClient {
+         SharedPreferences prefs = App.getContext()
+                 .getSharedPreferences("app_settings", App.getContext().MODE_PRIVATE);
+         prefs.edit().putString("base_url", url).apply();
+-        retrofit = null; // forza la ricreazione del client
++        retrofit = null;
+     }
+ 
+     public static String getBaseUrl() {
+@@ -104,7 +128,11 @@ public class ApiClient {
+                 .getSharedPreferences("app_settings", App.getContext().MODE_PRIVATE);
+         String saved = prefs.getString("base_url", null);
+         if (saved != null && !saved.isEmpty()) return saved;
+-        return isProbablyEmulator() ? EMULATOR_URL : DEVICE_URL;
++        return isProbablyEmulator() ? EMULATOR_URL : DEVICE_FALLBACK_URL;
++    }
++
++    public static void resetClient() {
++        retrofit = null;
+     }
+ 
+     private static boolean isProbablyEmulator() {
+diff --git a/frontend/DropBy/app/src/main/java/com/example/dropby/network/ApiService.java b/frontend/DropBy/app/src/main/java/com/example/dropby/network/ApiService.java
+index ea6a3ab..0699745 100644
+--- a/frontend/DropBy/app/src/main/java/com/example/dropby/network/ApiService.java
++++ b/frontend/DropBy/app/src/main/java/com/example/dropby/network/ApiService.java
+@@ -1,42 +1,54 @@
+ package com.example.dropby.network;
+ 
+-import com.example.dropby.models.AuthResponse;
+ import com.example.dropby.models.Event;
+ import com.example.dropby.models.EventsResponse;
++import com.example.dropby.models.FavoriteItem;
++import com.example.dropby.models.Friend;
++import com.example.dropby.models.GenericResponse;
+ import com.example.dropby.models.Location;
+ import com.example.dropby.models.LocationsResponse;
+ import com.example.dropby.models.LoginRequest;
+-import com.example.dropby.models.RegisterRequest;
+-import com.example.dropby.models.LoginRequest;
+ import com.example.dropby.models.LoginResponse;
++import com.example.dropby.models.Notification;
+ import com.example.dropby.models.OtpRequest;
+ import com.example.dropby.models.OtpResponse;
++import com.example.dropby.models.Proposal;
+ import com.example.dropby.models.RegisterRequest;
+ import com.example.dropby.models.RegisterResponse;
++import com.example.dropby.models.Review;
++import com.example.dropby.models.ReviewRequest;
++import com.example.dropby.models.UserSearchResult;
+ 
+ import java.util.List;
++import java.util.Map;
+ 
+ import retrofit2.Call;
+ import retrofit2.http.Body;
++import retrofit2.http.DELETE;
+ import retrofit2.http.GET;
+ import retrofit2.http.POST;
++import retrofit2.http.PUT;
+ import retrofit2.http.Path;
+ import retrofit2.http.Query;
+ 
+ public interface ApiService {
+ 
++    // ── EVENTI ───────────────────────────────────────────────────────────────
++
+     @GET("api/events/search")
+     Call<EventsResponse> searchEvents(
+-            @Query("city") String city,
+-            @Query("category") String category,
+-            @Query("date") String date,
+-            @Query("query") String query,
++            @Query("city")        String city,
++            @Query("category")    String category,
++            @Query("date")        String date,
++            @Query("query")       String query,
+             @Query("location_id") Integer locationId
+     );
+ 
+     @GET("api/events/{eventId}")
+     Call<Event> getEventDetail(@Path("eventId") int eventId);
+ 
++    // ── LOCATION ─────────────────────────────────────────────────────────────
++
+     @GET("api/locations")
+     Call<LocationsResponse> getLocations(
+             @Query("city")   String city,
+@@ -46,6 +58,8 @@ public interface ApiService {
+     @GET("api/locations/{locationId}")
+     Call<Location> getLocationById(@Path("locationId") int locationId);
+ 
++    // ── AUTH ─────────────────────────────────────────────────────────────────
++
+     @POST("api/auth/register")
+     Call<RegisterResponse> register(@Body RegisterRequest request);
+ 
+@@ -53,8 +67,98 @@ public interface ApiService {
+     Call<OtpResponse> verifyOtp(@Body OtpRequest request);
+ 
+     @POST("api/auth/resend-otp")
+-    Call<OtpResponse> resendOtp(@Body OtpRequest request);   // OtpRequest con solo userId, otpCode=""
++    Call<OtpResponse> resendOtp(@Body OtpRequest request);
+ 
+     @POST("api/auth/login")
+     Call<LoginResponse> login(@Body LoginRequest request);
+-}
+\ No newline at end of file
++
++    @GET("api/auth/profile")
++    Call<Map<String, Object>> getProfile();
++
++    @GET("api/auth/search")
++    Call<UserSearchResult.Response> searchUsers(@Query("q") String query);
++
++    // ── AMICIZIE ─────────────────────────────────────────────────────────────
++
++    @POST("api/friends/request")
++    Call<GenericResponse> sendFriendRequest(@Body Map<String, Integer> body);
++
++    @GET("api/friends/requests")
++    Call<FriendRequestsWrapper> getPendingFriendRequests();
++
++    @POST("api/friends/respond")
++    Call<GenericResponse> respondToFriendRequest(@Body Map<String, Object> body);
++
++    @GET("api/friends/list")
++    Call<FriendsWrapper> getFriends();
++
++    // ── RECENSIONI ───────────────────────────────────────────────────────────
++
++    @POST("api/reviews/")
++    Call<GenericResponse> addReview(@Body ReviewRequest body);
++
++    @GET("api/reviews/event/{eventId}")
++    Call<ReviewsWrapper> getEventReviews(@Path("eventId") int eventId);
++
++    @GET("api/reviews/user")
++    Call<ReviewsWrapper> getUserReviews();
++
++    // ── PREFERITI ────────────────────────────────────────────────────────────
++
++    @POST("api/favorites/")
++    Call<GenericResponse> addFavorite(@Body Map<String, Integer> body);
++
++    @GET("api/favorites/")
++    Call<FavoritesWrapper> getFavorites();
++
++    @DELETE("api/favorites/{eventId}")
++    Call<GenericResponse> removeFavorite(@Path("eventId") int eventId);
++
++    // ── NOTIFICHE ────────────────────────────────────────────────────────────
++
++    @GET("api/notifications/")
++    Call<NotificationsWrapper> getNotifications(@Query("unread") Boolean unreadOnly);
++
++    @PUT("api/notifications/{id}/read")
++    Call<GenericResponse> markNotificationRead(@Path("id") int notifId);
++
++    // ── PROPOSTE ─────────────────────────────────────────────────────────────
++
++    @POST("api/proposals/propose")
++    Call<GenericResponse> proposeEvent(@Body Map<String, Integer> body);
++
++    @GET("api/proposals/proposals")
++    Call<ProposalsWrapper> getProposals();
++
++    @POST("api/proposals/proposals/{id}/respond")
++    Call<GenericResponse> respondToProposal(
++            @Path("id") int proposalId,
++            @Body Map<String, String> body
++    );
++
++    // ── WRAPPER CLASSI (risposte lista) ──────────────────────────────────────
++
++    class FriendsWrapper {
++        public List<Friend> friends;
++    }
++
++    class FriendRequestsWrapper {
++        public List<Friend> requests;
++    }
++
++    class ReviewsWrapper {
++        public List<Review> reviews;
++    }
++
++    class FavoritesWrapper {
++        public List<FavoriteItem> favorites;
++    }
++
++    class NotificationsWrapper {
++        public List<Notification> notifications;
++    }
++
++    class ProposalsWrapper {
++        public List<Proposal> proposals;
++    }
++}

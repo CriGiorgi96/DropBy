@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FFF8F5FC">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:text="@string/friends_title"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="#333333" />
+
+    <!-- Barra ricerca utenti -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="12dp"
+        android:paddingBottom="8dp">
+
+        <EditText
+            android:id="@+id/searchUsersInput"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:background="@android:drawable/edit_text"
+            android:hint="@string/search_users_hint"
+            android:imeOptions="actionSearch"
+            android:inputType="text"
+            android:padding="8dp" />
+
+        <Button
+            android:id="@+id/searchUsersButton"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_marginStart="8dp"
+            android:backgroundTint="#7B1FA2"
+            android:text="Cerca"
+            android:textColor="@android:color/white" />
+
+    </LinearLayout>
+
+    <!-- Tab semplici: Amici / Richieste / Risultati ricerca -->
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/friendsTabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF" />
+
+    <!-- Status (caricamento / errore / vuoto) -->
+    <TextView
+        android:id="@+id/friendsStatusText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="16dp"
+        android:textColor="#9E9E9E"
+        android:visibility="gone" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/friendsRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingBottom="16dp" />
+
+</LinearLayout>

@@ -1,0 +1,65 @@
+TERMINI E CONDIZIONI GENERALI DI UTILIZZO
+Applicazione "Drop By" e Piattaforma "Encore Game"
+Ultimo aggiornamento: 12 Maggio 2026
+
+Il presente documento costituisce un accordo legale tra l'Utente e il Team di Sviluppo di Drop By. L’accesso, la navigazione e l’utilizzo dell’applicazione, nonché la partecipazione al software ludico denominato Encore Game, sono soggetti all’accettazione integrale dei presenti termini.
+
+ARTICOLO 1 – DEFINIZIONI
+Per facilitare la comprensione del documento, si definiscono:
+
+App: L’applicazione mobile e/o web "Drop By".
+
+Gioco: Il software integrato "Encore Game".
+
+Utente: Qualsiasi persona fisica che scarica, installa o utilizza l’App.
+
+Punti Encore: Valuta virtuale non convertibile in denaro, ottenuta tramite attività nel Gioco.
+
+Partner: I teatri, le fondazioni liriche e gli organizzatori di eventi presenti nel database.
+
+ARTICOLO 2 – REQUISITI DI REGISTRAZIONE E ACCOUNT
+2.1 Accesso Libero vs Registrazione: La semplice consultazione del palinsesto teatrale è libera. Tuttavia, la partecipazione all'ecosistema premiante richiede la creazione di un account.
+2.2 Obblighi dell'Utente: L'utente è tenuto a fornire un indirizzo e-mail valido e dati anagrafici corretti. È vietata la creazione di account multipli per lo stesso utente al fine di accumulare sconti in modo fraudolento.
+2.3 Responsabilità: L'Utente è l'unico responsabile di ogni attività compiuta tramite il proprio account. In caso di smarrimento delle credenziali, è tenuto a informare tempestivamente il supporto tecnico.
+
+ARTICOLO 3 – MECCANICHE DI GIOCO (ENCORE GAME)
+3.1 Scopo del Gioco: Encore Game ha finalità promozionali e di intrattenimento.
+3.2 Assegnazione Punti: I "Punti Encore" vengono assegnati secondo algoritmi interni basati su abilità, frequenza d'uso e partecipazione a sfide speciali.
+3.3 Divieto di Manomissione: È severamente vietato l'uso di emulatori, bot, tecniche di reverse engineering o manipolazione dei dati di rete per alterare il saldo punti. Qualsiasi violazione comporterà il ban immediato e permanente dall'App.
+
+ARTICOLO 4 – RISCATTO DEI PREMI E BUONI SCONTO
+4.1 Conversione Punti: I punti possono essere convertiti in voucher digitali. Il tasso di conversione è stabilito da Drop By e può variare in base a periodi stagionali (es. sconti maggiori durante la Settimana del Teatro).
+4.2 Limitazioni del Voucher: * Ogni voucher garantisce uno sconto percentuale sul prezzo del biglietto (intero o ridotto) fino a un massimo del 25%.
+
+Il voucher non è applicabile ai diritti di prevendita o alle commissioni di servizio esterne.
+
+I voucher sono nominativi e non cedibili a terzi.
+4.3 Disponibilità: L'applicazione non garantisce che tutti gli eventi presenti in database siano soggetti a sconto. Alcuni teatri partner potrebbero escludere specifiche "Prime" o eventi di gala dalle promozioni.
+
+ARTICOLO 5 – PROPRIETÀ INTELLETTUALE
+Tutti i contenuti presenti su Drop By (loghi, testi, grafiche, animazioni del gioco, suoni e codice sorgente) sono di proprietà esclusiva dei creatori del progetto. È vietata la riproduzione, anche parziale, senza autorizzazione scritta.
+
+ARTICOLO 6 – PRIVACY E TRATTAMENTO DATI
+Il trattamento dei dati personali avviene nel rispetto del Regolamento UE 2016/679 (GDPR).
+
+Dati raccolti: Nome, cognome, e-mail, preferenze teatrali e statistiche di gioco.
+
+Finalità: Gestione del profilo, erogazione sconti e analisi statistica anonima per migliorare l'offerta degli eventi.
+
+Conservazione: I dati saranno conservati fino alla richiesta di cancellazione dell'account da parte dell'utente.
+
+ARTICOLO 7 – MODIFICHE AI SERVIZI
+Drop By si riserva il diritto di modificare, sospendere o interrompere le funzionalità dell'App o del Gioco in qualsiasi momento per esigenze di manutenzione o aggiornamento dei contenuti. I punti accumulati potrebbero essere soggetti a scadenza annuale, previa comunicazione agli utenti con 30 giorni di preavviso.
+
+ARTICOLO 8 – LIMITAZIONE DI RESPONSABILITÀ
+8.1 Servizi di Terzi: Drop By funge da aggregatore. Eventuali disservizi relativi alla qualità dello spettacolo, al posto assegnato in teatro o a variazioni di orario sono di esclusiva responsabilità dell'ente organizzatore (il Teatro).
+8.2 Errori Tecnici: Non ci assumiamo responsabilità per perdite di punti dovute a malfunzionamenti della connessione internet dell'utente o a crash del dispositivo mobile.
+
+ARTICOLO 9 – LEGGE APPLICABILE E FORO COMPETENTE
+I presenti Termini sono regolati dalla legge italiana. Per qualsiasi controversia relativa all'interpretazione o esecuzione del presente contratto, sarà competente il foro della città in cui ha sede il progetto (o il foro di residenza dell'utente consumatore).
+
+ARTICOLO 10 – CONTATTI
+Per segnalazioni, problemi tecnici con Encore Game o domande sulla privacy, è possibile scrivere a: supporto@dropby-app.it.
+
+Dichiarazione di Consenso:
+Cliccando sul tasto "Registrati", confermo di aver letto tutti gli Articoli e di approvare specificamente le clausole limitative della responsabilità.

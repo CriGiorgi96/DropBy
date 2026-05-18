@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:id="@+id/group_authenticated" android:checkableBehavior="none">
+
+        <item
+            android:id="@+id/nav_right_profile"
+            android:icon="@android:drawable/ic_menu_my_calendar"
+            android:title="Il mio profilo" />
+
+        <item
+            android:id="@+id/nav_right_favorites"
+            android:icon="@android:drawable/btn_star_big_on"
+            android:title="Preferiti" />
+
+        <item
+            android:id="@+id/nav_right_reviews"
+            android:icon="@android:drawable/ic_menu_edit"
+            android:title="Le mie recensioni" />
+
+    </group>
+
+    <item android:id="@+id/nav_right_group_social" android:title="Social">
+        <menu>
+            <item
+                android:id="@+id/nav_right_friends"
+                android:icon="@android:drawable/ic_menu_share"
+                android:title="Amici" />
+
+            <item
+                android:id="@+id/nav_right_proposals"
+                android:icon="@android:drawable/ic_menu_send"
+                android:title="Proposte eventi" />
+
+            <item
+                android:id="@+id/nav_right_notifications"
+                android:icon="@android:drawable/ic_dialog_info"
+                android:title="Notifiche" />
+
+            <item
+                android:id="@+id/nav_right_reminders"
+                android:icon="@android:drawable/ic_menu_agenda"
+                android:title="Promemoria" />
+        </menu>
+    </item>
+
+    <item android:id="@+id/nav_right_group_account" android:title="Account">
+        <menu>
+            <item
+                android:id="@+id/nav_right_settings"
+                android:icon="@android:drawable/ic_menu_preferences"
+                android:title="Impostazioni" />
+
+            <item
+                android:id="@+id/nav_right_logout"
+                android:icon="@android:drawable/ic_lock_power_off"
+                android:title="Logout" />
+        </menu>
+    </item>
+
+    <group android:id="@+id/group_guest" android:checkableBehavior="none">
+
+        <item
+            android:id="@+id/nav_right_login"
+            android:icon="@android:drawable/ic_menu_send"
+            android:title="Accedi" />
+
+        <item
+            android:id="@+id/nav_right_register"
+            android:icon="@android:drawable/ic_menu_add"
+            android:title="Registrati" />
+
+        <item
+            android:id="@+id/nav_right_exit"
+            android:icon="@android:drawable/ic_lock_power_off"
+            android:title="Esci" />
+
+    </group>
+
+</menu>

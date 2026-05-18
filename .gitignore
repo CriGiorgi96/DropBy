@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.pyc
+
+# Android Studio
+.gradle/
+.idea/
+local.properties
+build/
+
+# IntelliJ
+*.iml
+
+# Logs
+*.log
+
+node_modules/
+.env
+dist/
+build/
+.DS_Store

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFF8F5FC">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="32dp"
+        android:gravity="center">
+
+        <!-- Icona email -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="✉️"
+            android:textSize="56sp"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Titolo -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Verifica il tuo account"
+            android:textColor="#1A1A2E"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginBottom="10dp" />
+
+        <!-- Sottotitolo (email dinamica) -->
+        <TextView
+            android:id="@+id/tvVerificationSubtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Abbiamo inviato un codice alla tua email"
+            android:textColor="#6A6274"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:layout_marginBottom="32dp" />
+
+        <!-- Input OTP -->
+        <EditText
+            android:id="@+id/etOtpCode"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:hint="Codice a 6 cifre"
+            android:inputType="number"
+            android:maxLength="6"
+            android:textSize="22sp"
+            android:gravity="center"
+            android:letterSpacing="0.3"
+            android:layout_marginBottom="20dp" />
+
+        <!-- ProgressBar -->
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Bottone verifica -->
+        <Button
+            android:id="@+id/btnVerifyOtp"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:text="Verifica"
+            android:backgroundTint="#7B1FA2"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Reinvia codice -->
+        <Button
+            android:id="@+id/btnResendOtp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Non hai ricevuto il codice? Reinvia"
+            android:backgroundTint="@android:color/transparent"
+            android:textColor="#7B1FA2"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+</ScrollView>

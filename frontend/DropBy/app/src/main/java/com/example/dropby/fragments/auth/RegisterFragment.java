@@ -1,0 +1,281 @@
+package com.example.dropby.fragments.auth;
+
+import android.app.DatePickerDialog;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.TextPaint;
+import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.util.Patterns;
+import android.view.View;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.RadioGroup;
+import android.widget.ScrollView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.Calendar;
+import java.util.Locale;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+
+import com.example.dropby.AuthActivity;
+import com.example.dropby.R;
+import com.example.dropby.models.RegisterRequest;
+import com.example.dropby.models.RegisterResponse;
+import com.example.dropby.network.ApiClient;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+
+public class RegisterFragment extends Fragment {
+
+    private String birthdayIso = ""; // YYYY-MM-DD — set by DatePickerDialog
+
+    public RegisterFragment() {
+        super(R.layout.fragment_register);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        EditText etFirstName = view.findViewById(R.id.etFirstName);
+        EditText etLastName  = view.findViewById(R.id.etLastName);
+        EditText etUsername  = view.findViewById(R.id.etUsername);
+        EditText etEmail     = view.findViewById(R.id.etEmail);
+        EditText etBirthday  = view.findViewById(R.id.etBirthday);
+        EditText etPassword  = view.findViewById(R.id.etPassword);
+
+        // DatePickerDialog al tap sul campo data
+        etBirthday.setFocusable(false);
+        etBirthday.setClickable(true);
+        etBirthday.setOnClickListener(v -> {
+            Calendar cal = Calendar.getInstance();
+            int y = cal.get(Calendar.YEAR) - 20;
+            int m = cal.get(Calendar.MONTH);
+            int d = cal.get(Calendar.DAY_OF_MONTH);
+            new DatePickerDialog(requireContext(), (picker, year, month, day) -> {
+                birthdayIso = String.format(Locale.US, "%04d-%02d-%02d", year, month + 1, day);
+                etBirthday.setText(String.format(Locale.ITALY, "%02d/%02d/%04d", day, month + 1, year));
+                etBirthday.setError(null);
+            }, y, m, d).show();
+        });
+
+        RadioGroup rgGender  = view.findViewById(R.id.rgGender);
+
+        CheckBox cbPrivacy   = view.findViewById(R.id.cbPrivacy);
+
+        Button btnRegister    = view.findViewById(R.id.btnRegister);
+        Button btnGoLogin     = view.findViewById(R.id.btnGoLogin);
+        Button btnBackToStart = view.findViewById(R.id.btnBackToStart);
+
+        ProgressBar progressBar = view.findViewById(R.id.progressBar);
+
+        TextView tvPrivacy = view.findViewById(R.id.tvPrivacy);
+        setupPrivacyLink(tvPrivacy);
+
+        btnBackToStart.setOnClickListener(v ->
+                requireActivity().getSupportFragmentManager().popBackStack());
+
+        btnGoLogin.setOnClickListener(v -> {
+            if (getActivity() instanceof AuthActivity) {
+                ((AuthActivity) getActivity()).openLogin();
+            }
+        });
+
+        btnRegister.setOnClickListener(v -> {
+
+            String firstName = etFirstName.getText().toString().trim();
+            String lastName  = etLastName.getText().toString().trim();
+            String username  = etUsername.getText().toString().trim();
+            String email     = etEmail.getText().toString().trim();
+            String password  = etPassword.getText().toString();
+            int genderId     = rgGender.getCheckedRadioButtonId();
+
+            if (TextUtils.isEmpty(firstName)) { etFirstName.setError("Inserisci il nome"); return; }
+            if (TextUtils.isEmpty(lastName))  { etLastName.setError("Inserisci il cognome"); return; }
+            if (TextUtils.isEmpty(username))  { etUsername.setError("Inserisci username"); return; }
+
+            if (TextUtils.isEmpty(email) || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                etEmail.setError("Email non valida"); return;
+            }
+
+            if (birthdayIso.isEmpty()) {
+                etBirthday.setError("Seleziona la data di nascita");
+                return;
+            }
+
+            if (TextUtils.isEmpty(password) || password.length() < 6) {
+                etPassword.setError("Minimo 6 caratteri"); return;
+            }
+
+            if (genderId == -1) {
+                Toast.makeText(getContext(), "Seleziona il genere", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (!cbPrivacy.isChecked()) {
+                cbPrivacy.setError("Accetta i termini");
+                Toast.makeText(getContext(),
+                        "Devi accettare i termini e condizioni",
+                        Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            String gender = genderId == R.id.rbMale ? "male"
+                    : genderId == R.id.rbFemale ? "female"
+                    : "other";
+
+            progressBar.setVisibility(View.VISIBLE);
+            btnRegister.setEnabled(false);
+
+            RegisterRequest req = new RegisterRequest(
+                    username, email, password,
+                    firstName, lastName, birthdayIso, gender
+            );
+
+            ApiClient.getApiService().register(req)
+                    .enqueue(new Callback<RegisterResponse>() {
+                        @Override
+                        public void onResponse(@NonNull Call<RegisterResponse> call,
+                                               @NonNull Response<RegisterResponse> response) {
+
+                            if (!isAdded()) return;
+
+                            progressBar.setVisibility(View.GONE);
+                            btnRegister.setEnabled(true);
+
+                            if (response.isSuccessful() && response.body() != null) {
+                                RegisterResponse body = response.body();
+                                openVerification(body.userId, body.email);
+                            } else {
+                                Toast.makeText(getContext(),
+                                        "Errore registrazione (" + response.code() + ")",
+                                        Toast.LENGTH_LONG).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(@NonNull Call<RegisterResponse> call,
+                                              @NonNull Throwable t) {
+
+                            if (!isAdded()) return;
+
+                            progressBar.setVisibility(View.GONE);
+                            btnRegister.setEnabled(true);
+
+                            Toast.makeText(getContext(),
+                                    "Rete assente o server spento",
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    });
+        });
+    }
+
+    private void openVerification(int userId, String email) {
+        requireActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.auth_fragment_container,
+                        VerificationFragment.newInstance(userId, email))
+                .addToBackStack(null)
+                .commit();
+    }
+
+    private void setupPrivacyLink(TextView textView) {
+        String fullText = getString(R.string.validation);
+        String linkText = "termini e condizioni";
+
+        int start = fullText.indexOf(linkText);
+        int end = start + linkText.length();
+
+        if (start != -1) {
+            SpannableString spannableString = new SpannableString(fullText);
+
+            ClickableSpan clickableSpan = new ClickableSpan() {
+                @Override
+                public void onClick(@NonNull View widget) {
+                    showTermsPopup();
+                }
+
+                @Override
+                public void updateDrawState(@NonNull TextPaint ds) {
+                    ds.setColor(ContextCompat.getColor(
+                            requireContext(),
+                            android.R.color.holo_blue_dark
+                    ));
+                    ds.setUnderlineText(true);
+                }
+            };
+
+            spannableString.setSpan(
+                    clickableSpan,
+                    start,
+                    end,
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            );
+
+            textView.setText(spannableString);
+            textView.setMovementMethod(LinkMovementMethod.getInstance());
+            textView.setHighlightColor(Color.TRANSPARENT);
+        }
+    }
+
+    private void showTermsPopup() {
+        String termsContent = loadTermsFromRaw();
+
+        TextView textView = new TextView(getContext());
+        textView.setText(termsContent);
+        textView.setPadding(40, 40, 40, 40);
+        textView.setTextSize(14);
+
+        ScrollView scrollView = new ScrollView(getContext());
+        scrollView.addView(textView);
+
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Termini e Condizioni")
+                .setView(scrollView)
+                .setPositiveButton("Chiudi", (d, w) -> d.dismiss())
+                .show();
+    }
+
+    private String loadTermsFromRaw() {
+        StringBuilder sb = new StringBuilder();
+
+        try {
+            InputStream is = getResources().openRawResource(R.raw.terms);
+            BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(is, StandardCharsets.UTF_8)
+            );
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line).append("\n");
+            }
+
+            is.close();
+
+        } catch (Exception e) {
+            return "Errore nel caricamento dei termini.";
+        }
+
+        return sb.toString();
+    }
+}

@@ -1,0 +1,30 @@
+- Cos'è Drop By?
+È una piattaforma che aggrega i migliori spettacoli teatrali in un unico posto. Ti aiutiamo a scoprire cosa c'è in scena senza dover consultare decine di siti diversi.
+
+- Posso acquistare i biglietti direttamente qui?
+No, la nostra app si occupa della fase di scoperta. Quando trovi uno spettacolo che ti piace, clicca sul tasto "Acquista sul sito del Teatro": verrai reindirizzato alla pagina ufficiale della biglietteria per completare l'acquisto in totale sicurezza.
+
+- L'uso dell'app è gratuito?
+Assolutamente sì! Non applichiamo alcuna commissione sulla consultazione degli eventi.
+
+- Come posso ottenere uno sconto?
+Mettiti alla prova con il nostro gioco Encore! Gioca, vinci e guadagna punti grazie ai quali potrai sbloccare coupon speciali da utilizzare per il tuo prossimo spettacolo.
+
+- I miei dati personali sono al sicuro?
+Sì. Non trattando transazioni bancarie, non memorizziamo dati sensibili come numeri di carte di credito. La tua email, se inserita per il gioco, viene utilizzata solo per la simulazione dell'invio del coupon.
+
+- Perché non trovo tutti i teatri d'Italia?
+Questo servizio è attualmente un prototipo sviluppato per un corso ITS. Al momento abbiamo selezionato una lista curata di teatri partner per dimostrare le funzionalità dell'app.
+
+- Le date e gli orari sono aggiornati?
+Facciamo del meglio per mantenere i dati sincronizzati con i cartelloni ufficiali. Tuttavia, ti consigliamo sempre di verificare l'orario definitivo sul sito del teatro una volta cliccato il link di acquisto.
+
+- Come posso filtrare gli eventi?
+Puoi usare i filtri in home page per cercare per Genere (Commedia, Dramma, Musical), Data o Città.
+
+- Posso salvare un evento per ricordarmi di acquistare il biglietto più tardi?
+<<<<<<< HEAD
+Sì, basta cliccare sull'icona del cuoricino nella scheda dello spettacolo. L'evento verrà aggiunto alla tua "Wishlist".
+=======
+Sì, basta cliccare sull'icona del cuoricino nella scheda dello spettacolo. L'evento verrà aggiunto alla tua "Wishlist".
+>>>>>>> 40a18d3b4dbc5a1314978dfe5b093d9ba031b441

@@ -1,0 +1,92 @@
+<resources>
+    <string name="app_name">DropBy</string>
+    <string name="open">Apri menu</string>
+    <string name="close">Chiudi menu</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="login_title">Accedi a DropBy</string>
+    <string name="registration_title">Crea un account</string>
+    <string name="login_button">Login</string>
+    <string name="register_button">Crea account</string>
+    <string name="back_button">Indietro</string>
+    <string name="descriptionEventsTop">Il sipario si apre qui: scopri spettacoli, opere e musical nei teatri italiani.</string>
+    <string name="continue_guest">Continua come ospite</string>
+    <string name="name_hint">Nome</string>
+    <string name="last_name_hint">Cognome</string>
+    <string name="username_hint">Nome utente</string>
+    <string name="email_hint">Email</string>
+    <string name="birthday_hint">Data di nascita (tocca per selezionare)</string>
+    <string name="password_hint">Password</string>
+    <string name="go_to_register">Non hai un account? Registrati</string>
+    <string name="go_to_login">Hai già un account? Accedi</string>
+    <string name="validation">Accetto termini e condizioni</string>
+    <string name="greeting">Ciao, Spettatore!</string>
+    <string name="profile_settings">Impostazioni Profilo</string>
+    <string name="logout">Logout</string>
+    <string name="gender_male">M</string>
+    <string name="gender_female">F</string>
+    <string name="gender_other">Altro</string>
+    <string name="event_poster">Locandina evento</string>
+    <string name="theater_exterior">Esterno del teatro</string>
+    <string name="theater_interior">Interno del teatro</string>
+    <string name="theater_photo">Foto del teatro</string>
+    <string name="previous_theater_photo">Foto precedente del teatro</string>
+    <string name="next_theater_photo">Foto successiva del teatro</string>
+    <string name="settings_title">Impostazioni</string>
+    <string name="go_to_general_settings">Generali</string>
+    <string name="go_to_profile_settings">Profilo</string>
+    <string name="go_to_notification_settings">Notifiche</string>
+    <string name="home_navbar">Home</string>
+    <string name="events_navbar">Spettacoli</string>
+    <string name="theaters_navbar">Teatri</string>
+    <string name="map_navbar">Mappa</string>
+    <string name="login_register">Accedi/Registrati</string>
+    <string name="choose_profile_picture">Cambia immagine profilo</string>
+    <string name="save_changes">Salva modifiche</string>
+    <string name="insert_username">Inserisci nome utente</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="search_hint">Ricerca</string>
+    <string name="search_button_desc">Esegui ricerca</string>
+    <string name="eventsStatusText">Caricamento eventi...</string>
+    <string name="faq_title">Come funziona Drop By</string>
+
+    <string name="faq_navbar">F.A.Q.</string>
+    <string name="faq_error_loading">Errore durante il caricamento delle F.A.Q.</string>
+    <string name="faq_error_parsing">Errore durante il parsing delle F.A.Q.</string>
+
+    <!-- Social -->
+    <string name="friends_title">Amici</string>
+    <string name="friends_tab_list">I miei amici</string>
+    <string name="friends_tab_requests">Richieste</string>
+    <string name="friends_tab_search">Cerca</string>
+    <string name="favorites_title">I miei preferiti</string>
+    <string name="notifications_title">Notifiche</string>
+    <string name="proposals_title">Proposte eventi</string>
+    <string name="reviews_title">Le mie recensioni</string>
+    <string name="send_friend_request">Aggiungi amico</string>
+    <string name="accept">Accetta</string>
+    <string name="reject">Rifiuta</string>
+    <string name="no_favorites">Nessun preferito salvato</string>
+    <string name="no_friends">Nessun amico ancora</string>
+    <string name="no_requests">Nessuna richiesta in attesa</string>
+    <string name="no_notifications">Nessuna notifica</string>
+    <string name="no_proposals">Nessuna proposta evento</string>
+    <string name="search_users_hint">Cerca per username…</string>
+    <string name="mark_read">Segna come letto</string>
+    <string name="propose_event">Proponi evento</string>
+    <string name="write_review">Scrivi una recensione</string>
+    <string name="rating_hint">Valutazione (1-5 stelle)</string>
+    <string name="comment_hint">Commento…</string>
+    <string name="submit">Invia</string>
+    <string name="login_required">Devi essere loggato per usare questa funzione</string>
+    <string name="user_area">Area utente</string>
+    <string name="back_to_home">Torna alla home</string>
+
+    <string name="guest_username">Spettatore</string>
+    <string name="general_settings">Impostazioni Generali</string>
+    <string name="default_images">Immagini di default</string>
+    <string name="url_config">Configurazione URL</string>
+
+    <string name="zero_notifications">0</string>
+
+</resources>

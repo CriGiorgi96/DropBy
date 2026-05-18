@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\ifoa\\\\Desktop\\\\Project_work - Copia\\\\backend\" -Recurse -Filter \"*.py\")",
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "PowerShell(New-Item *)"
+    ]
+  }
+}

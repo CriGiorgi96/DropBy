@@ -1,0 +1,160 @@
+package com.example.dropby.fragments.auth;
+
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+
+import com.example.dropby.HomeActivity;
+import com.example.dropby.R;
+import com.example.dropby.models.OtpRequest;
+import com.example.dropby.models.OtpResponse;
+import com.example.dropby.network.ApiClient;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class VerificationFragment extends Fragment {
+
+    private static final String ARG_USER_ID = "user_id";
+    private static final String ARG_EMAIL   = "email";
+
+    private int    userId;
+    private String email;
+
+    public VerificationFragment() { super(R.layout.fragment_verification); }
+
+    public static VerificationFragment newInstance(int userId, String email) {
+        VerificationFragment f = new VerificationFragment();
+        Bundle args = new Bundle();
+        args.putInt(ARG_USER_ID, userId);
+        args.putString(ARG_EMAIL, email);
+        f.setArguments(args);
+        return f;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        if (getArguments() != null) {
+            userId = getArguments().getInt(ARG_USER_ID);
+            email  = getArguments().getString(ARG_EMAIL);
+        }
+
+        TextView    tvSubtitle  = view.findViewById(R.id.tvVerificationSubtitle);
+        EditText    etOtp       = view.findViewById(R.id.etOtpCode);
+        Button      btnVerify   = view.findViewById(R.id.btnVerifyOtp);
+        Button      btnResend   = view.findViewById(R.id.btnResendOtp);
+        ProgressBar progressBar = view.findViewById(R.id.progressBar);
+
+        tvSubtitle.setText("Abbiamo inviato un codice a " + email);
+
+        // ── Verifica OTP ─────────────────────────────────────────────────────
+        btnVerify.setOnClickListener(v -> {
+            String code = etOtp.getText().toString().trim();
+            if (TextUtils.isEmpty(code) || code.length() != 6) {
+                etOtp.setError("Inserisci il codice a 6 cifre");
+                return;
+            }
+            progressBar.setVisibility(View.VISIBLE);
+            btnVerify.setEnabled(false);
+
+            ApiClient.getApiService()
+                    .verifyOtp(new OtpRequest(userId, code))
+                    .enqueue(new Callback<OtpResponse>() {
+                        @Override
+                        public void onResponse(@NonNull Call<OtpResponse> call,
+                                               @NonNull Response<OtpResponse> response) {
+                            if (!isAdded()) return;
+                            progressBar.setVisibility(View.GONE);
+                            btnVerify.setEnabled(true);
+
+                            if (response.isSuccessful() && response.body() != null) {
+                                OtpResponse body = response.body();
+                                Toast.makeText(getContext(),
+                                        "Account verificato!", Toast.LENGTH_SHORT).show();
+                                launchHome(body.userId, body.username,
+                                        body.email   != null ? body.email   : "",
+                                        body.gender  != null ? body.gender  : "guest",
+                                        body.token   != null ? body.token   : "");
+                            } else {
+                                String err = response.code() == 400
+                                        ? "Codice non valido o scaduto"
+                                        : "Errore verifica (" + response.code() + ")";
+                                etOtp.setError(err);
+                                Toast.makeText(getContext(), err, Toast.LENGTH_LONG).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(@NonNull Call<OtpResponse> call, @NonNull Throwable t) {
+                            if (!isAdded()) return;
+                            progressBar.setVisibility(View.GONE);
+                            btnVerify.setEnabled(true);
+                            Toast.makeText(getContext(), "Rete assente", Toast.LENGTH_LONG).show();
+                        }
+                    });
+        });
+
+        // ── Reinvia OTP ──────────────────────────────────────────────────────
+        btnResend.setOnClickListener(v -> {
+            progressBar.setVisibility(View.VISIBLE);
+            btnResend.setEnabled(false);
+
+            ApiClient.getApiService()
+                    .resendOtp(new OtpRequest(userId, ""))
+                    .enqueue(new Callback<OtpResponse>() {
+                        @Override
+                        public void onResponse(@NonNull Call<OtpResponse> call,
+                                               @NonNull Response<OtpResponse> response) {
+                            if (!isAdded()) return;
+                            progressBar.setVisibility(View.GONE);
+                            btnResend.setEnabled(true);
+                            Toast.makeText(getContext(),
+                                    response.isSuccessful()
+                                            ? "Nuovo codice inviato a " + email
+                                            : "Errore nell'invio",
+                                    Toast.LENGTH_LONG).show();
+                        }
+
+                        @Override
+                        public void onFailure(@NonNull Call<OtpResponse> call, @NonNull Throwable t) {
+                            if (!isAdded()) return;
+                            progressBar.setVisibility(View.GONE);
+                            btnResend.setEnabled(true);
+                            Toast.makeText(getContext(), "Rete assente", Toast.LENGTH_LONG).show();
+                        }
+                    });
+        });
+    }
+
+    private void launchHome(int userId, String username, String email, String gender, String token) {
+        SharedPreferences prefs = requireActivity()
+                .getSharedPreferences("app", requireContext().MODE_PRIVATE);
+        prefs.edit()
+                .putString("userType", "LOGGED")
+                .putString("username", username != null ? username : "Spettatore")
+                .putString("gender",   gender)
+                .putString("email",    email)
+                .putString("token",    token)
+                .putInt("userId",      userId)
+                .apply();
+
+
+
+        Intent intent = new Intent(requireActivity(), HomeActivity.class);
+        startActivity(intent);
+        requireActivity().finish();
+    }
+}

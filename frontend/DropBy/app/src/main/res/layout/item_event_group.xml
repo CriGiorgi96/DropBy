@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Layout per una card di produzione raggruppata.
+    Usato da EventGroupAdapter.
+    IDs richiesti dal ViewHolder:
+      - groupPosterImage    (ImageView)
+      - groupTitleText      (TextView)
+      - groupCategoryText   (TextView)
+      - groupDatesContainer (LinearLayout) ← le date vengono aggiunte programmaticamente
+-->
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginBottom="12dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="3dp"
+    app:cardBackgroundColor="#FFFFFF">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp">
+
+        <!-- Locandina -->
+        <ImageView
+            android:id="@+id/groupPosterImage"
+            android:layout_width="80dp"
+            android:layout_height="110dp"
+            android:contentDescription="@string/event_poster"
+            android:scaleType="centerCrop"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Titolo -->
+        <TextView
+            android:id="@+id/groupTitleText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textColor="#1A1A2E"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/groupPosterImage"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Categoria -->
+        <TextView
+            android:id="@+id/groupCategoryText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="4dp"
+            android:textColor="#9C7BB8"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/groupPosterImage"
+            app:layout_constraintTop_toBottomOf="@id/groupTitleText" />
+
+        <!-- Separatore -->
+        <View
+            android:id="@+id/groupDivider"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="8dp"
+            android:background="#E0E0E0"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/groupPosterImage"
+            app:layout_constraintTop_toBottomOf="@id/groupCategoryText" />
+
+        <!-- Container date (riempito programmaticamente dall'adapter) -->
+        <LinearLayout
+            android:id="@+id/groupDatesContainer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="6dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/groupPosterImage"
+            app:layout_constraintTop_toBottomOf="@id/groupDivider" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>
