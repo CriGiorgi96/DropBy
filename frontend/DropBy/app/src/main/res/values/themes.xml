@@ -2,8 +2,9 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.DropBy" parent="Theme.Material3.Light.NoActionBar">
         <item name="actionBarSize">64dp</item>
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/theater_red_dark</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorAccent">@color/theater_red</item>
     </style>
 
     <style name="Theme.DropBy" parent="Base.Theme.DropBy" />

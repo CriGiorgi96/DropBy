@@ -5,7 +5,27 @@
     android:id="@+id/startLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFF8F5FC">
+    android:background="#FF050306">
+
+    <com.example.dropby.views.VideoBackgroundView
+        android:id="@+id/loginBackgroundVideo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:keepScreenOn="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/loginVideoOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/login_video_overlay"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidelineStart"
@@ -21,68 +41,128 @@
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.9" />
 
-    <!-- Logo / immagine titolo -->
-    <ImageView
-        android:id="@+id/imgTitle"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/welcomeContent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:srcCompat="@android:drawable/ic_menu_gallery"
-        app:layout_constraintStart_toStartOf="@id/guidelineStart"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@id/btnGuest"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintVertical_bias="0.23" />
+        app:layout_constraintVertical_bias="0.6">
 
-    <!-- Descrizione app -->
-    <TextView
-        android:id="@+id/presentation"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/descriptionEventsTop"
-        android:textAlignment="center"
-        android:textColor="#FF3F3948"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintStart_toStartOf="@id/guidelineStart"
-        app:layout_constraintTop_toBottomOf="@id/imgTitle" />
+        <ImageView
+            android:id="@+id/titleLogo"
+            android:layout_width="match_parent"
+            android:layout_height="264dp"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/app_name"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/title_intro" />
 
-    <!-- Bottone Login -->
-    <Button
-        android:id="@+id/btnLogin"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:text="@string/login_button"
-        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintStart_toStartOf="@id/guidelineStart"
-        app:layout_constraintTop_toBottomOf="@id/presentation" />
+        <LinearLayout
+            android:id="@+id/masksDivider"
+            android:layout_width="280dp"
+            android:layout_height="38dp"
+            android:layout_marginTop="0dp"
+            android:gravity="center"
+            android:orientation="horizontal">
 
-    <!-- Bottone Registrati -->
-    <Button
-        android:id="@+id/btnRegister"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="@string/register_button"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintStart_toStartOf="@id/guidelineStart"
-        app:layout_constraintTop_toBottomOf="@id/btnLogin" />
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1"
+                android:alpha="0.9"
+                android:background="#D6B56D" />
+
+            <ImageView
+                android:id="@+id/masksIcon"
+                android:layout_width="50dp"
+                android:layout_height="38dp"
+                android:layout_marginStart="14dp"
+                android:layout_marginEnd="14dp"
+                android:contentDescription="@null"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/maschere_intro" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1"
+                android:alpha="0.9"
+                android:background="#D6B56D" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/presentation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:maxWidth="320dp"
+            android:maxLines="3"
+            android:text="@string/descriptionEventsTop"
+            android:textAlignment="center"
+            android:textColor="#FFFFFFFF"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:lineSpacingExtra="1dp"
+            android:shadowColor="#D6000000"
+            android:shadowDx="0"
+            android:shadowDy="2"
+            android:shadowRadius="10" />
+
+        <Button
+            android:id="@+id/btnLogin"
+            android:layout_width="320dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/login_primary_button_bg"
+            android:elevation="8dp"
+            android:text="@string/login_button"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnRegister"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="320dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="10dp"
+            app:backgroundTint="#26000000"
+            app:cornerRadius="999dp"
+            app:strokeColor="#B8FFFFFF"
+            app:strokeWidth="1dp"
+            android:text="@string/register_button"
+            android:textAllCaps="true"
+            android:textColor="#FFFFFFFF"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.12" />
+    </LinearLayout>
 
     <!-- Bottone Continua come ospite -->
-    <Button
+    <TextView
         android:id="@+id/btnGuest"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="44dp"
+        android:gravity="center"
+        android:minHeight="48dp"
         android:text="@string/continue_guest"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:textAllCaps="true"
+        android:textColor="#DDEFE8E8"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:letterSpacing="0.18"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?attr/selectableItemBackground"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
         app:layout_constraintStart_toStartOf="@id/guidelineStart"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btnRegister"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

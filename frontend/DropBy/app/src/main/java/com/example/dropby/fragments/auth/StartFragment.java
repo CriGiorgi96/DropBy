@@ -4,14 +4,18 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.example.dropby.HomeActivity;
 import com.example.dropby.R;
+import com.example.dropby.views.VideoBackgroundView;
 
 public class StartFragment extends Fragment {
+
+    private VideoBackgroundView backgroundVideo;
 
     public StartFragment() {
         super(R.layout.fragment_start);
@@ -23,7 +27,10 @@ public class StartFragment extends Fragment {
 
         Button btnLogin = view.findViewById(R.id.btnLogin);
         Button btnRegister = view.findViewById(R.id.btnRegister);
-        Button btnGuest = view.findViewById(R.id.btnGuest);
+        TextView btnGuest = view.findViewById(R.id.btnGuest);
+        backgroundVideo = view.findViewById(R.id.loginBackgroundVideo);
+
+        setupBackgroundVideo();
 
         btnLogin.setOnClickListener(v ->
                 requireActivity().getSupportFragmentManager()
@@ -44,21 +51,50 @@ public class StartFragment extends Fragment {
         btnGuest.setOnClickListener(v -> launchHome("GUEST"));
     }
 
+    private void setupBackgroundVideo() {
+        backgroundVideo.play(R.raw.dropby_login);
+    }
+
     void launchHome(String userType) {
-        android.content.SharedPreferences prefs =
-                requireActivity().getSharedPreferences("app", requireContext().MODE_PRIVATE);
-        // Reset completo + imposta solo i valori guest
-        prefs.edit()
-                .clear()
+        requireActivity()
+                .getSharedPreferences("app", requireContext().MODE_PRIVATE)
+                .edit()
                 .putString("userType", userType)
                 .putString("username", "Spettatore")
-                .putString("gender",   "guest")
+                .putString("gender", "guest")
+                // BUG FIX: un ospite non deve avere un userId (era hardcoded a 1).
+                // Rimuoviamo qualsiasi userId precedente per evitare che un ospite
+                // acceda a endpoint autenticati come /favorites/user/{userId}.
+                .remove("userId")
                 .apply();
-
-
 
         Intent intent = new Intent(requireActivity(), HomeActivity.class);
         startActivity(intent);
         requireActivity().finish();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (backgroundVideo != null) {
+            backgroundVideo.resumeVideo();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        if (backgroundVideo != null) {
+            backgroundVideo.pauseVideo();
+        }
+        super.onPause();
+    }
+
+    @Override
+    public void onDestroyView() {
+        if (backgroundVideo != null) {
+            backgroundVideo.releaseVideo();
+            backgroundVideo = null;
+        }
+        super.onDestroyView();
     }
 }

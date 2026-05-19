@@ -3,4 +3,9 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="link_color">#0000EE</color>
+    <color name="theater_red">#B11226</color>
+    <color name="theater_red_dark">#6E0F1A</color>
+    <color name="theater_velvet">#8B1020</color>
+    <color name="theater_gold">#D6B56D</color>
+    <color name="theater_surface">#FFFFF8F6</color>
 </resources>

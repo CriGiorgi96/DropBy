@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.dropby.fragments.auth.LoginFragment;
 import com.example.dropby.fragments.auth.RegisterFragment;
 import com.example.dropby.fragments.auth.StartFragment;
+
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -42,6 +43,7 @@ public class AuthActivity extends AppCompatActivity {
             } else if ("login".equals(mode)) {
                 selectedFragment = new LoginFragment();
             } else {
+                // Parte tua: schermata intro con video, titolo e bottoni
                 selectedFragment = new StartFragment();
             }
 
@@ -50,7 +52,6 @@ public class AuthActivity extends AppCompatActivity {
                     .replace(R.id.auth_fragment_container, selectedFragment)
                     .commit();
         }
-
     }
 
     // Helper methods to avoid duplicated code with "new register/login"
@@ -68,5 +69,4 @@ public class AuthActivity extends AppCompatActivity {
                 .addToBackStack(null)
                 .commit();
     }
-
 }
