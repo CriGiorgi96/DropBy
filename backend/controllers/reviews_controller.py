@@ -37,3 +37,12 @@ def get_user_reviews(current_user):
         return jsonify({'reviews': reviews}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+@reviews_bp.route('/<int:review_id>', methods=['DELETE'])
+@token_required
+def delete_review(current_user, review_id):
+    try:
+        result = ReviewsService.delete_review(current_user['user_id'], review_id)
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500

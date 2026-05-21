@@ -99,6 +99,58 @@
             app:layout_constraintStart_toStartOf="@id/guidelineStart"
             app:layout_constraintTop_toBottomOf="@id/tvUsernameTitle" />
 
+        <View
+            android:id="@+id/dividerPassword"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="28dp"
+            android:background="@color/black"
+            app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+            app:layout_constraintStart_toStartOf="@id/guidelineStart"
+            app:layout_constraintTop_toBottomOf="@id/editUsername" />
+
+        <TextView
+            android:id="@+id/tvPasswordTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Cambia password"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+            app:layout_constraintStart_toStartOf="@id/guidelineStart"
+            app:layout_constraintTop_toBottomOf="@id/dividerPassword" />
+
+        <EditText
+            android:id="@+id/editCurrentPassword"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:hint="Password corrente"
+            android:inputType="textPassword"
+            app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+            app:layout_constraintStart_toStartOf="@id/guidelineStart"
+            app:layout_constraintTop_toBottomOf="@id/tvPasswordTitle" />
+
+        <EditText
+            android:id="@+id/editNewPassword"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:hint="Nuova password"
+            android:inputType="textPassword"
+            app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+            app:layout_constraintStart_toStartOf="@id/guidelineStart"
+            app:layout_constraintTop_toBottomOf="@id/editCurrentPassword" />
+
+        <EditText
+            android:id="@+id/editConfirmPassword"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:hint="Conferma nuova password"
+            android:inputType="textPassword"
+            app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+            app:layout_constraintStart_toStartOf="@id/guidelineStart"
+            app:layout_constraintTop_toBottomOf="@id/editNewPassword" />
+
         <Button
             android:id="@+id/btnSaveProfile"
             android:layout_width="@android:dimen/thumbnail_width"
@@ -107,7 +159,7 @@
             android:text="@string/save_changes"
             app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
             app:layout_constraintStart_toStartOf="@id/guidelineStart"
-            app:layout_constraintTop_toBottomOf="@id/editUsername" />
+            app:layout_constraintTop_toBottomOf="@id/editConfirmPassword" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

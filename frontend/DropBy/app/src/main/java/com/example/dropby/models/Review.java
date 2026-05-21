@@ -29,14 +29,26 @@ public class Review implements Serializable {
     @SerializedName("created_at")
     private String createdAt;
 
-    public int getId()           { return id; }
-    public int getUserId()       { return userId; }
-    public String getUsername()  { return username; }
-    public int getEventId()      { return eventId; }
-    public String getEventTitle(){ return eventTitle; }
-    public int getRating()       { return rating; }
-    public String getComment()   { return comment; }
-    public String getCreatedAt() { return createdAt; }
+    @SerializedName("event_date")
+    private String eventDate;
+
+    @SerializedName("event_city")
+    private String eventCity;
+
+    @SerializedName("location_name")
+    private String locationName;
+
+    public int getId()              { return id; }
+    public int getUserId()          { return userId; }
+    public String getUsername()     { return username; }
+    public int getEventId()         { return eventId; }
+    public String getEventTitle()   { return eventTitle; }
+    public int getRating()          { return rating; }
+    public String getComment()      { return comment; }
+    public String getCreatedAt()    { return createdAt; }
+    public String getEventDate()    { return eventDate; }
+    public String getEventCity()    { return eventCity; }
+    public String getLocationName() { return locationName; }
 
     /** Restituisce le stelle come stringa (es. "★★★★☆" per 4/5) */
     public String getStarsString() {

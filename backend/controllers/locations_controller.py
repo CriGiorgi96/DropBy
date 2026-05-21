@@ -45,7 +45,7 @@ def get_locations():
 def get_location(location_id):
     try:
         location = LocationService.get_location_detail(location_id)
-        return jsonify({'location': location}), 200
+        return jsonify(location), 200
 
     except ValueError as e:
         return jsonify({'error': str(e)}), 404

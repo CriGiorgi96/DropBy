@@ -145,3 +145,47 @@ class AuthRepository:
             q=f"%{query}%", lim=limit
         )
         return dict_format(conn, rows)
+
+    @staticmethod
+    def check_username_available(username, exclude_user_id=None):
+        conn = Database().get_connection()
+        if exclude_user_id:
+            rows = conn.run(
+                "SELECT id FROM users WHERE username = :u AND id != :uid",
+                u=username, uid=exclude_user_id
+            )
+        else:
+            rows = conn.run("SELECT id FROM users WHERE username = :u", u=username)
+        return len(rows) == 0
+
+    @staticmethod
+    def update_profile(user_id, username=None, password_hash=None, profile_image=None):
+        conn = Database().get_connection()
+        sets = []
+        params = {"user_id": user_id}
+
+        if username is not None:
+            sets.append("username = :username")
+            params["username"] = username
+        if password_hash is not None:
+            sets.append("password_hash = :password_hash")
+            params["password_hash"] = password_hash
+        if profile_image is not None:
+            sets.append("profile_image = :profile_image")
+            params["profile_image"] = profile_image
+
+        if not sets:
+            return
+
+        conn.run(f"UPDATE users SET {', '.join(sets)} WHERE id = :user_id", **params)
+        conn.run("COMMIT")
+
+    @staticmethod
+    def get_config_password():
+        conn = Database().get_connection()
+        rows = conn.run(
+            "SELECT value FROM app_settings WHERE key = 'config_password'"
+        )
+        if rows:
+            return rows[0][0]
+        return None

@@ -9,12 +9,21 @@ class EventRepository:
         conn = db.get_connection()
         # Query che aggrega le immagini per non dover fare query separate
         sql = """
-            SELECT e.*, 
+            SELECT e.*,
+                   l.name      AS location_name,
+                   l.image_est AS location_image_est,
+                   l.image_int AS location_image_int,
                    COALESCE(
                        (SELECT json_agg(json_build_object('url', ei.url, 'alt', ei.alt) ORDER BY ei.image_order)
                         FROM event_images ei WHERE ei.event_id = e.id), '[]'
-                   ) AS images
-            FROM events e WHERE 1=1
+                   ) AS images,
+                   ROUND(COALESCE(
+                       (SELECT AVG(r.rating)::numeric FROM reviews r WHERE r.event_id = e.id), 0
+                   ), 1) AS avg_rating,
+                   (SELECT COUNT(*) FROM reviews r WHERE r.event_id = e.id) AS review_count
+            FROM events e
+            LEFT JOIN locations l ON l.id = e.location_id
+            WHERE 1=1
         """
         params = {}
         if city:
@@ -39,12 +48,21 @@ class EventRepository:
         conn = db.get_connection()
         # Query per il dettaglio singolo che include già le immagini nel JSON
         sql = """
-            SELECT e.*, 
+            SELECT e.*,
+                   l.name      AS location_name,
+                   l.image_est AS location_image_est,
+                   l.image_int AS location_image_int,
                    COALESCE(
                        (SELECT json_agg(json_build_object('url', ei.url, 'alt', ei.alt) ORDER BY ei.image_order)
                         FROM event_images ei WHERE ei.event_id = e.id), '[]'
-                   ) AS images
-            FROM events e WHERE e.id = :id
+                   ) AS images,
+                   ROUND(COALESCE(
+                       (SELECT AVG(r.rating)::numeric FROM reviews r WHERE r.event_id = e.id), 0
+                   ), 1) AS avg_rating,
+                   (SELECT COUNT(*) FROM reviews r WHERE r.event_id = e.id) AS review_count
+            FROM events e
+            LEFT JOIN locations l ON l.id = e.location_id
+            WHERE e.id = :id
         """
         rows = conn.run(sql, id=event_id)
         return dict_format_single(conn, rows)

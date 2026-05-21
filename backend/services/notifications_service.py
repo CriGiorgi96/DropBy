@@ -12,6 +12,11 @@ class NotificationsService:
         NotificationRepository.mark_as_read(notification_id, user_id)
         return {'message': 'Notifica segnata come letta'}
 
+    @staticmethod
+    def delete_notification(notification_id, user_id):
+        NotificationRepository.delete(notification_id, user_id)
+        return {'message': 'Notifica eliminata'}
+
     # ---- Promemoria eventi ----
 
     @staticmethod

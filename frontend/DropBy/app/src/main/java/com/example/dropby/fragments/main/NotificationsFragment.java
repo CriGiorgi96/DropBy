@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,6 +20,8 @@ import com.example.dropby.network.ApiService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -40,7 +43,7 @@ public class NotificationsFragment extends Fragment {
         statusText   = view.findViewById(R.id.notificationsStatusText);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        adapter = new NotificationAdapter(new ArrayList<>(), this::markRead);
+        adapter = new NotificationAdapter(new ArrayList<>(), this::markRead, this::confirmDelete);
         recyclerView.setAdapter(adapter);
 
         view.findViewById(R.id.markAllReadButton).setOnClickListener(v -> markAllRead());
@@ -53,26 +56,27 @@ public class NotificationsFragment extends Fragment {
         ApiClient.getApiService().getNotifications(false)
                 .enqueue(new Callback<ApiService.NotificationsWrapper>() {
                     @Override
-                    public void onResponse(Call<ApiService.NotificationsWrapper> call,
-                                           Response<ApiService.NotificationsWrapper> response) {
+                    public void onResponse(@NonNull Call<ApiService.NotificationsWrapper> call,
+                                           @NonNull Response<ApiService.NotificationsWrapper> response) {
                         if (!isAdded()) return;
                         if (response.isSuccessful() && response.body() != null
                                 && response.body().notifications != null) {
                             List<Notification> list = response.body().notifications;
+                            updateBadge(list);
                             if (list.isEmpty()) {
                                 setStatus(getString(R.string.no_notifications));
                             } else {
                                 statusText.setVisibility(View.GONE);
                                 adapter.update(list);
                                 recyclerView.setVisibility(View.VISIBLE);
-                                updateBadge(list);
                             }
                         } else {
                             setStatus("Errore caricamento notifiche");
                         }
                     }
                     @Override
-                    public void onFailure(Call<ApiService.NotificationsWrapper> call, Throwable t) {
+                    public void onFailure(@NonNull Call<ApiService.NotificationsWrapper> call,
+                                          @NonNull Throwable t) {
                         if (isAdded()) setStatus("Errore di rete");
                     }
                 });
@@ -82,20 +86,63 @@ public class NotificationsFragment extends Fragment {
         ApiClient.getApiService().markNotificationRead(notif.getId())
                 .enqueue(new Callback<GenericResponse>() {
                     @Override
-                    public void onResponse(Call<GenericResponse> call,
-                                           Response<GenericResponse> response) {
+                    public void onResponse(@NonNull Call<GenericResponse> call,
+                                           @NonNull Response<GenericResponse> response) {
                         if (isAdded()) loadNotifications();
                     }
-                    @Override public void onFailure(Call<GenericResponse> call, Throwable t) {}
+                    @Override public void onFailure(@NonNull Call<GenericResponse> call,
+                                                    @NonNull Throwable t) {}
                 });
     }
 
     private void markAllRead() {
-        // Segna tutte le notifiche non lette
-        List<Notification> current = adapter.getItems();
-        for (Notification n : current) {
-            if (!n.isRead()) markRead(n);
+        List<Notification> unread = adapter.getItems().stream()
+                .filter(n -> !n.isRead())
+                .collect(Collectors.toList());
+
+        if (unread.isEmpty()) return;
+
+        AtomicInteger remaining = new AtomicInteger(unread.size());
+        for (Notification n : unread) {
+            ApiClient.getApiService().markNotificationRead(n.getId())
+                    .enqueue(new Callback<GenericResponse>() {
+                        @Override
+                        public void onResponse(@NonNull Call<GenericResponse> call,
+                                               @NonNull Response<GenericResponse> response) {
+                            if (isAdded() && remaining.decrementAndGet() == 0) {
+                                // Un solo reload dopo che tutte le chiamate sono completate
+                                loadNotifications();
+                            }
+                        }
+                        @Override
+                        public void onFailure(@NonNull Call<GenericResponse> call,
+                                              @NonNull Throwable t) {
+                            remaining.decrementAndGet();
+                        }
+                    });
         }
+    }
+
+    private void confirmDelete(Notification notif) {
+        if (!isAdded()) return;
+        new AlertDialog.Builder(requireContext())
+                .setMessage("Eliminare questa notifica?")
+                .setPositiveButton("Elimina", (d, w) -> deleteNotification(notif))
+                .setNegativeButton("Annulla", null)
+                .show();
+    }
+
+    private void deleteNotification(Notification notif) {
+        ApiClient.getApiService().deleteNotification(notif.getId())
+                .enqueue(new Callback<GenericResponse>() {
+                    @Override
+                    public void onResponse(@NonNull Call<GenericResponse> call,
+                                           @NonNull Response<GenericResponse> response) {
+                        if (isAdded() && response.isSuccessful()) loadNotifications();
+                    }
+                    @Override public void onFailure(@NonNull Call<GenericResponse> call,
+                                                    @NonNull Throwable t) {}
+                });
     }
 
     private void updateBadge(List<Notification> list) {

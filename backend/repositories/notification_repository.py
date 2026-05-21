@@ -51,6 +51,16 @@ class NotificationRepository:
         )
         conn.run("COMMIT")
 
+    @staticmethod
+    def delete(notification_id, user_id):
+        db = Database()
+        conn = db.get_connection()
+        conn.run(
+            "DELETE FROM notifications WHERE id = :id AND user_id = :uid",
+            id=notification_id, uid=user_id
+        )
+        conn.run("COMMIT")
+
     # ---- Promemoria eventi ----
 
     @staticmethod

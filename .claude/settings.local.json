@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\ifoa\\\\Desktop\\\\Project_work - Copia\\\\backend\" -Recurse -Filter \"*.py\")",
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "PowerShell(New-Item *)",
+      "Bash(git -C \"C:\\\\Users\\\\ifoa\\\\Desktop\\\\Project_work - Copia\" status --short)",
+      "Bash(git *)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\ifoa\\\\Desktop\\\\Project_work - Copia\" -Recurse -Directory)",
+      "Bash(Select-Object -First 20)",
+      "Bash(Remove-Item \"C:\\\\Users\\\\ifoa\\\\Desktop\\\\Project_work - Copia\\\\frontend\\\\DropBy\\\\app\\\\src\\\\main\\\\java\\\\com\\\\example\\\\dropby\\\\fragments\\\\main\\\\ProfileFragment.java\" -Force)",
+      "Bash(Remove-Item \"C:\\\\Users\\\\ifoa\\\\Desktop\\\\Project_work - Copia\\\\frontend\\\\DropBy\\\\app\\\\src\\\\main\\\\res\\\\layout\\\\fragment_profile.xml\" -Force)",
+      "Bash(python -c ' *)",
+      "Bash(python3 -m py_compile \"C:/Users/ifoa/Desktop/Project_work - Copia/backend/controllers/auth_controller.py\")",
+      "Bash(python3 -m py_compile \"C:/Users/ifoa/Desktop/Project_work - Copia/backend/services/auth_service.py\")",
+      "Bash(python3 -m py_compile \"C:/Users/ifoa/Desktop/Project_work - Copia/backend/repositories/auth_repository.py\")",
+      "Bash(python3 -m py_compile \"C:/Users/ifoa/Desktop/Project_work - Copia/backend/app.py\")"
+    ]
+  }
+}

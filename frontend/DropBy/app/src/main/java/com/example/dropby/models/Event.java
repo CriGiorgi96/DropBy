@@ -52,6 +52,21 @@ public class Event implements Serializable {
     @SerializedName("images")
     private List<EventImage> images;
 
+    @SerializedName("location_name")
+    private String locationName;
+
+    @SerializedName("location_image_est")
+    private String locationImageEst;
+
+    @SerializedName("location_image_int")
+    private String locationImageInt;
+
+    @SerializedName("avg_rating")
+    private double avgRating;
+
+    @SerializedName("review_count")
+    private int reviewCount;
+
     public int getId() { return id; }
     public String getSlug() { return slug; }
     public int getProductionId() { return productionId; }
@@ -66,6 +81,12 @@ public class Event implements Serializable {
     public String getPrice() { return price; }
     public String getTicketUrl() { return ticketUrl; }
     public String getSourceUrl() { return sourceUrl; }
+
+    public String getLocationName()    { return locationName; }
+    public String getLocationImageEst() { return locationImageEst; }
+    public String getLocationImageInt() { return locationImageInt; }
+    public double getAvgRating()  { return avgRating; }
+    public int    getReviewCount() { return reviewCount; }
 
     public EventImage getMainImage() {
         if (images != null && !images.isEmpty()) return images.get(0);

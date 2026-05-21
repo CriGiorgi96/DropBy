@@ -4,26 +4,36 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.dropby.R;
+import com.example.dropby.models.GenericResponse;
 import com.example.dropby.models.Review;
 import com.example.dropby.network.ApiClient;
 import com.example.dropby.network.ApiService;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ReviewsFragment extends Fragment {
+
+    private RecyclerView rv;
+    private TextView     statusText;
+    private MyReviewAdapter myAdapter;
 
     @Nullable
     @Override
@@ -37,11 +47,14 @@ public class ReviewsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        RecyclerView rv = view.findViewById(R.id.reviewsMyRecyclerView);
-        TextView statusText = view.findViewById(R.id.reviewsMyStatusText);
-
+        rv         = view.findViewById(R.id.reviewsMyRecyclerView);
+        statusText = view.findViewById(R.id.reviewsMyStatusText);
         rv.setLayoutManager(new LinearLayoutManager(requireContext()));
 
+        loadReviews();
+    }
+
+    private void loadReviews() {
         ApiClient.getApiService().getUserReviews()
                 .enqueue(new Callback<ApiService.ReviewsWrapper>() {
                     @Override
@@ -54,9 +67,12 @@ public class ReviewsFragment extends Fragment {
                             if (reviews.isEmpty()) {
                                 statusText.setText("Non hai ancora scritto recensioni.");
                                 statusText.setVisibility(View.VISIBLE);
+                                rv.setVisibility(View.GONE);
                             } else {
                                 statusText.setVisibility(View.GONE);
-                                rv.setAdapter(new MyReviewAdapter(reviews));
+                                rv.setVisibility(View.VISIBLE);
+                                myAdapter = new MyReviewAdapter(reviews, ReviewsFragment.this::confirmDelete);
+                                rv.setAdapter(myAdapter);
                             }
                         } else {
                             statusText.setText("Impossibile caricare le recensioni.");
@@ -74,14 +90,42 @@ public class ReviewsFragment extends Fragment {
                 });
     }
 
+    private void confirmDelete(Review review) {
+        if (!isAdded()) return;
+        new AlertDialog.Builder(requireContext())
+                .setMessage("Eliminare la recensione per \"" + review.getEventTitle() + "\"?")
+                .setPositiveButton("Elimina", (d, w) -> deleteReview(review))
+                .setNegativeButton("Annulla", null)
+                .show();
+    }
+
+    private void deleteReview(Review review) {
+        ApiClient.getApiService().deleteReview(review.getId())
+                .enqueue(new Callback<GenericResponse>() {
+                    @Override
+                    public void onResponse(@NonNull Call<GenericResponse> call,
+                                           @NonNull Response<GenericResponse> response) {
+                        if (isAdded() && response.isSuccessful()) loadReviews();
+                    }
+                    @Override public void onFailure(@NonNull Call<GenericResponse> call,
+                                                    @NonNull Throwable t) {}
+                });
+    }
+
     // ── Adapter inline ────────────────────────────────────────────────────────
 
     private static class MyReviewAdapter
             extends RecyclerView.Adapter<MyReviewAdapter.VH> {
 
-        private final List<Review> items;
+        interface OnDeleteClick { void onDelete(Review review); }
 
-        MyReviewAdapter(List<Review> items) { this.items = items; }
+        private final List<Review>  items;
+        private final OnDeleteClick onDelete;
+
+        MyReviewAdapter(List<Review> items, OnDeleteClick onDelete) {
+            this.items    = items;
+            this.onDelete = onDelete;
+        }
 
         @NonNull
         @Override
@@ -92,24 +136,45 @@ public class ReviewsFragment extends Fragment {
         }
 
         @Override
-        public void onBindViewHolder(@NonNull VH holder, int position) {
-            Review r = items.get(position);
-            holder.eventTitle.setText(
-                    r.getEventTitle() != null ? r.getEventTitle() : "Evento sconosciuto");
-            holder.stars.setText(r.getStarsString());
-            holder.comment.setText(r.getComment() != null ? r.getComment() : "");
+        public void onBindViewHolder(@NonNull VH h, int pos) {
+            Review r = items.get(pos);
+
+            h.eventTitle.setText(r.getEventTitle() != null ? r.getEventTitle() : "Evento sconosciuto");
+            h.stars.setText(r.getStarsString());
+            h.comment.setText(r.getComment() != null ? r.getComment() : "");
+            h.eventDate.setText(formatDate(r.getEventDate()));
+            h.eventCity.setText(r.getEventCity() != null ? r.getEventCity() : "");
+
+            h.btnDelete.setOnClickListener(v -> onDelete.onDelete(r));
         }
 
         @Override
         public int getItemCount() { return items.size(); }
 
+        private String formatDate(String raw) {
+            if (raw == null || raw.isEmpty()) return "";
+            try {
+                String normalized = raw.length() > 10 ? raw.substring(0, 10) : raw;
+                SimpleDateFormat sdfIn  = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+                SimpleDateFormat sdfOut = new SimpleDateFormat("dd MMM yyyy", new Locale("it", "IT"));
+                Date d = sdfIn.parse(normalized);
+                return d != null ? sdfOut.format(d) : raw;
+            } catch (Exception e) {
+                return raw;
+            }
+        }
+
         static class VH extends RecyclerView.ViewHolder {
-            TextView eventTitle, stars, comment;
+            TextView eventTitle, stars, comment, eventDate, eventCity;
+            Button   btnDelete;
             VH(View v) {
                 super(v);
                 eventTitle = v.findViewById(R.id.myReviewEventTitle);
                 stars      = v.findViewById(R.id.myReviewStars);
                 comment    = v.findViewById(R.id.myReviewComment);
+                eventDate  = v.findViewById(R.id.myReviewEventDate);
+                eventCity  = v.findViewById(R.id.myReviewEventCity);
+                btnDelete  = v.findViewById(R.id.btnDeleteReview);
             }
         }
     }

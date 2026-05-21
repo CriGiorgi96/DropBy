@@ -1,9 +1,12 @@
 package com.example.dropby.adapters;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -12,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.dropby.EventActionsHelper;
 import com.example.dropby.R;
 import com.example.dropby.models.EventGroup;
 import com.example.dropby.network.GlideHelper;
@@ -82,6 +86,15 @@ public class EventGroupAdapter extends RecyclerView.Adapter<EventGroupAdapter.Vi
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) listener.onGroupClick(group);
         });
+
+        // Bottone azioni rapide: visibile solo se loggato
+        SharedPreferences prefs = ctx.getSharedPreferences("app", Context.MODE_PRIVATE);
+        boolean isLogged = prefs.getString("token", null) != null;
+        holder.btnActions.setVisibility(isLogged ? View.VISIBLE : View.GONE);
+        holder.btnActions.setOnClickListener(v -> {
+            Activity activity = (Activity) ctx;
+            new EventActionsHelper(activity, group.getRepresentative()).showMenu(v);
+        });
     }
 
     @Override
@@ -91,6 +104,7 @@ public class EventGroupAdapter extends RecyclerView.Adapter<EventGroupAdapter.Vi
         ImageView     poster;
         TextView      title, category;
         LinearLayout  datesContainer;
+        ImageButton   btnActions;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -98,6 +112,7 @@ public class EventGroupAdapter extends RecyclerView.Adapter<EventGroupAdapter.Vi
             title          = itemView.findViewById(R.id.groupTitleText);
             category       = itemView.findViewById(R.id.groupCategoryText);
             datesContainer = itemView.findViewById(R.id.groupDatesContainer);
+            btnActions     = itemView.findViewById(R.id.btnEventGroupActions);
         }
     }
 }

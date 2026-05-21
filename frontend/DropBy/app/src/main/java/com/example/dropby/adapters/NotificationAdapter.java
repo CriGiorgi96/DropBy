@@ -20,10 +20,14 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
     private List<Notification> items;
     private final Consumer<Notification> onMarkRead;
+    private final Consumer<Notification> onDelete;
 
-    public NotificationAdapter(List<Notification> items, Consumer<Notification> onMarkRead) {
+    public NotificationAdapter(List<Notification> items,
+                               Consumer<Notification> onMarkRead,
+                               Consumer<Notification> onDelete) {
         this.items      = new ArrayList<>(items);
         this.onMarkRead = onMarkRead;
+        this.onDelete   = onDelete;
     }
 
     public void update(List<Notification> newItems) {
@@ -53,6 +57,8 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         holder.markReadBtn.setOnClickListener(v -> onMarkRead.accept(n));
         holder.markReadBtn.setEnabled(!n.isRead());
         holder.markReadBtn.setAlpha(n.isRead() ? 0.3f : 1f);
+
+        holder.deleteBtn.setOnClickListener(v -> onDelete.accept(n));
     }
 
     @Override
@@ -60,8 +66,8 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
     static class VH extends RecyclerView.ViewHolder {
         TextView type, content, date;
-        View unreadDot;
-        Button markReadBtn;
+        View     unreadDot;
+        Button   markReadBtn, deleteBtn;
 
         VH(View v) {
             super(v);
@@ -69,7 +75,8 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             content    = v.findViewById(R.id.notifContent);
             date       = v.findViewById(R.id.notifDate);
             unreadDot  = v.findViewById(R.id.unreadDot);
-            markReadBtn= v.findViewById(R.id.btnMarkRead);
+            markReadBtn = v.findViewById(R.id.btnMarkRead);
+            deleteBtn   = v.findViewById(R.id.btnDeleteNotification);
         }
     }
 }

@@ -20,11 +20,4 @@
         android:layout_height="wrap_content"
         android:text="@string/url_config" />
 
-    <Button
-        android:id="@+id/btnProfileSettings"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/profile_settings"
-        android:layout_marginTop="16dp" />
-
 </LinearLayout>

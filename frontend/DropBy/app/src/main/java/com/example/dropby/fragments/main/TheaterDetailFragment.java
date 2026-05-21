@@ -38,7 +38,13 @@ import retrofit2.Response;
 
 public class TheaterDetailFragment extends Fragment {
 
-    private static final String ARG_LOCATION = "location";
+    private static final String ARG_LOCATION  = "location";
+    // Campi singoli usati quando si naviga dalle repliche (evita il Gson round-trip)
+    private static final String ARG_LOC_ID       = "loc_id";
+    private static final String ARG_LOC_NAME     = "loc_name";
+    private static final String ARG_LOC_CITY     = "loc_city";
+    private static final String ARG_LOC_IMG_EST  = "loc_img_est";
+    private static final String ARG_LOC_IMG_INT  = "loc_img_int";
 
     private Location     location;
     private TextView     eventsStatusTextView;
@@ -51,10 +57,25 @@ public class TheaterDetailFragment extends Fragment {
     private int selectedImageIndex = 0;
     private boolean eventsLoaded = false;
 
+    /** Usato dalla lista teatri: Location completa già disponibile. */
     public static TheaterDetailFragment newInstance(Location location) {
         TheaterDetailFragment f = new TheaterDetailFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_LOCATION, location);
+        f.setArguments(args);
+        return f;
+    }
+
+    /** Usato dalla sezione "In scena anche a…": dati parziali da LocationGroup. */
+    public static TheaterDetailFragment newInstance(int locationId, String name, String city,
+                                                    String imageEst, String imageInt) {
+        TheaterDetailFragment f = new TheaterDetailFragment();
+        Bundle args = new Bundle();
+        args.putInt(ARG_LOC_ID,      locationId);
+        args.putString(ARG_LOC_NAME,    name);
+        args.putString(ARG_LOC_CITY,    city);
+        args.putString(ARG_LOC_IMG_EST, imageEst);
+        args.putString(ARG_LOC_IMG_INT, imageInt);
         f.setArguments(args);
         return f;
     }
@@ -70,14 +91,78 @@ public class TheaterDetailFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (getArguments() != null)
-            location = (Location) getArguments().getSerializable(ARG_LOCATION);
-        if (location == null) return;
+        Bundle args = getArguments();
+        if (args == null) return;
+
+        if (args.containsKey(ARG_LOCATION)) {
+            // Percorso normale: Location completa dalla lista teatri
+            location = (Location) args.getSerializable(ARG_LOCATION);
+        } else {
+            // Percorso repliche: dati parziali da Bundle primitivi
+            partialId   = args.getInt(ARG_LOC_ID, 0);
+            partialName = args.getString(ARG_LOC_NAME);
+            partialCity = args.getString(ARG_LOC_CITY);
+            partialImgEst = args.getString(ARG_LOC_IMG_EST);
+            partialImgInt = args.getString(ARG_LOC_IMG_INT);
+        }
 
         initViews(view);
-        buildGalleryUrls();
-        bindLocationData();
-        if (!eventsLoaded) { eventsLoaded = true; loadEventsForTheater(); }
+
+        if (location != null) {
+            // Location completa: mostra subito e poi aggiorna in background
+            buildGalleryUrls();
+            bindLocationData();
+            if (!eventsLoaded) { eventsLoaded = true; loadEventsForTheater(); }
+            loadFullLocation(location.getId());
+        } else if (partialId > 0) {
+            // Dati parziali: mostra nome/città/immagine subito, poi carica il resto dall'API
+            bindPartialData(view);
+            if (!eventsLoaded) { eventsLoaded = true; loadEventsForLocation(partialId); }
+            loadFullLocation(partialId);
+        }
+    }
+
+    // ── Campi temporanei per il percorso "repliche" ─────────────────────────
+    private int    partialId;
+    private String partialName, partialCity, partialImgEst, partialImgInt;
+
+    /** Popola immediatamente nome, città e immagine dai dati parziali del Bundle. */
+    private void bindPartialData(View v) {
+        setText(v, R.id.theaterNameText,    partialName);
+        setText(v, R.id.theaterAddressText, safe(partialCity));
+        setText(v, R.id.theaterDetailsText, "");
+        TextView srv = v.findViewById(R.id.theaterServicesText);
+        if (srv != null) srv.setText("");
+
+        // Galleria con i soli filename parziali
+        String estUrl = com.example.dropby.network.ApiClient
+                .resolveLocationImage(partialImgEst, Location.LocationImageType.EXTERIOR);
+        String intUrl = com.example.dropby.network.ApiClient
+                .resolveLocationImage(partialImgInt, Location.LocationImageType.INTERIOR);
+        if (estUrl != null && intUrl != null)      galleryUrls = new String[]{ estUrl, intUrl };
+        else if (estUrl != null)                   galleryUrls = new String[]{ estUrl };
+        else if (intUrl != null)                   galleryUrls = new String[]{ intUrl };
+        else                                       galleryUrls = new String[0];
+        setupGallery();
+    }
+
+    private void loadFullLocation(int locationId) {
+        if (locationId <= 0) return;
+        ApiClient.getApiService().getLocationById(locationId)
+                .enqueue(new Callback<Location>() {
+                    @Override
+                    public void onResponse(@NonNull Call<Location> call,
+                                           @NonNull Response<Location> response) {
+                        if (!isAdded()) return;
+                        if (response.isSuccessful() && response.body() != null) {
+                            location = response.body();
+                            buildGalleryUrls();
+                            bindLocationData();
+                        }
+                    }
+                    @Override
+                    public void onFailure(@NonNull Call<Location> call, @NonNull Throwable t) {}
+                });
     }
 
     private void initViews(View view) {
@@ -117,17 +202,24 @@ public class TheaterDetailFragment extends Fragment {
         View v = getView();
         if (v == null) return;
 
-        setText(v, R.id.theaterNameText,    location.getName());
-        setText(v, R.id.theaterAddressText,
-                safe(location.getAddress()) + " - " + safe(location.getCity()));
-        setText(v, R.id.theaterDetailsText,
-                "Capienza: " + location.getCapacity() + " posti");
+        // Aggiorna solo se il valore dal server è disponibile (non sovrascrive con null)
+        if (location.getName() != null)
+            setText(v, R.id.theaterNameText, location.getName());
+
+        String addr = safe(location.getAddress());
+        String city = safe(location.getCity());
+        if (!addr.isEmpty() || !city.isEmpty())
+            setText(v, R.id.theaterAddressText,
+                    addr.isEmpty() ? city : (city.isEmpty() ? addr : addr + " - " + city));
+
+        if (location.getCapacity() > 0)
+            setText(v, R.id.theaterDetailsText, "Capienza: " + location.getCapacity() + " posti");
 
         TextView srv = v.findViewById(R.id.theaterServicesText);
-        if (srv != null) {
-            srv.setText(location.getServices() != null && !location.getServices().isEmpty()
-                    ? "Servizi: " + TextUtils.join(", ", location.getServices())
-                    : "Servizi non indicati");
+        if (srv != null && location.getServices() != null) {
+            srv.setText(location.getServices().isEmpty()
+                    ? "Servizi non indicati"
+                    : "Servizi: " + TextUtils.join(", ", location.getServices()));
         }
 
         // Pulsante planimetria
@@ -218,12 +310,16 @@ public class TheaterDetailFragment extends Fragment {
     // ── EVENTI ───────────────────────────────────────────────────────────────
 
     private void loadEventsForTheater() {
-        if (eventsStatusTextView == null) return;
+        loadEventsForLocation(location != null ? location.getId() : 0);
+    }
+
+    private void loadEventsForLocation(int locationId) {
+        if (locationId <= 0 || eventsStatusTextView == null) return;
         eventsStatusTextView.setVisibility(View.VISIBLE);
         eventsStatusTextView.setText("Caricamento eventi...");
 
         ApiClient.getApiService()
-                .searchEvents(null, null, null, null, location.getId())
+                .searchEvents(null, null, null, null, locationId)
                 .enqueue(new Callback<EventsResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<EventsResponse> call,

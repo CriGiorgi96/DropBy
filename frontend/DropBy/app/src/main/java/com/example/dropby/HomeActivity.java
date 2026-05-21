@@ -30,7 +30,7 @@ import com.example.dropby.fragments.main.HomeFragment;
 import com.example.dropby.fragments.main.MapFragment;
 import com.example.dropby.fragments.main.NotificationManagementFragment; // Mantenuto per i tuoi Promemoria
 import com.example.dropby.fragments.main.NotificationsFragment;
-import com.example.dropby.fragments.main.ProfileFragment;
+import com.example.dropby.fragments.main.set.ProfileSettingsFragment;
 import com.example.dropby.fragments.main.ProposalsFragment;
 import com.example.dropby.fragments.main.ReviewsFragment;
 import com.example.dropby.fragments.main.SettingsFragment;
@@ -230,7 +230,7 @@ public class HomeActivity extends AppCompatActivity {
             Fragment target = null;
 
             if (isLogged) {
-                if      (id == R.id.nav_right_profile)       target = new ProfileFragment();
+                if      (id == R.id.nav_right_profile)       target = new ProfileSettingsFragment();
                 else if (id == R.id.nav_right_favorites)     target = new FavoritesFragment();
                 else if (id == R.id.nav_right_reviews)       target = new ReviewsFragment();
                 else if (id == R.id.nav_right_friends)       target = new FriendsFragment();
@@ -424,9 +424,16 @@ public class HomeActivity extends AppCompatActivity {
         if (avatar == null) return;
         SharedPreferences prefs = getSharedPreferences("app", MODE_PRIVATE);
 
-        String imageType = prefs.getString("profileImageType", "");
+        String imageType  = prefs.getString("profileImageType", "");
         String imageValue = prefs.getString("profileImageValue", "");
-        String gender = prefs.getString("gender", "guest");
+        String gender     = prefs.getString("gender", "guest");
+
+        if ("server".equals(imageType) && !imageValue.isEmpty()) {
+            String url = com.example.dropby.network.ApiClient.getBaseUrl()
+                    + "assets/avatars/" + imageValue;
+            loadAvatarFromUrl(avatar, url);
+            return;
+        }
 
         if ("custom".equals(imageType) && !imageValue.isEmpty()) {
             avatar.setImageURI(Uri.parse(imageValue));
@@ -434,25 +441,32 @@ public class HomeActivity extends AppCompatActivity {
         }
 
         if ("default".equals(imageType) && !imageValue.isEmpty()) {
-            int resId = getResources().getIdentifier(
-                    imageValue,
-                    "drawable",
-                    getPackageName()
-            );
-
+            int resId = getResources().getIdentifier(imageValue, "drawable", getPackageName());
             if (resId != 0) {
                 avatar.setImageResource(resId);
                 return;
             }
         }
 
-        if ("male".equalsIgnoreCase(gender)) {
-            avatar.setImageResource(R.drawable.default_male);
-        } else if ("female".equalsIgnoreCase(gender)) {
-            avatar.setImageResource(R.drawable.default_female);
-        } else {
-            avatar.setImageResource(R.drawable.default_guest);
-        }
+        if ("male".equalsIgnoreCase(gender))        avatar.setImageResource(R.drawable.default_male);
+        else if ("female".equalsIgnoreCase(gender)) avatar.setImageResource(R.drawable.default_female);
+        else                                        avatar.setImageResource(R.drawable.default_guest);
+    }
+
+    private void loadAvatarFromUrl(ImageView avatar, String url) {
+        new Thread(() -> {
+            try {
+                java.net.URL imageUrl = new java.net.URL(url);
+                java.net.HttpURLConnection conn = (java.net.HttpURLConnection) imageUrl.openConnection();
+                conn.setDoInput(true);
+                conn.connect();
+                android.graphics.Bitmap bitmap =
+                        android.graphics.BitmapFactory.decodeStream(conn.getInputStream());
+                if (bitmap != null) {
+                    runOnUiThread(() -> avatar.setImageBitmap(bitmap));
+                }
+            } catch (java.io.IOException ignored) { }
+        }).start();
     }
 
     // Chiamato da ProfileSettingsFragment per aggiornare all'istante

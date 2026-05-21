@@ -37,6 +37,16 @@
         android:textSize="13sp"
         android:textColor="#555555" />
 
+    <!-- Location e data della replica recensita -->
+    <TextView
+        android:id="@+id/reviewLocationDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:textSize="12sp"
+        android:textColor="#9C7BB8"
+        android:visibility="gone" />
+
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"

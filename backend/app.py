@@ -28,6 +28,11 @@ def serve_deep_assets(subdir, filename):
     path = os.path.join(app.static_folder, 'images', 'foto_luoghi', subdir)
     return send_from_directory(path, filename)
 
+@app.route('/assets/avatars/<filename>')
+def serve_avatar(filename):
+    path = os.path.join(app.static_folder, 'images', 'avatars')
+    return send_from_directory(path, filename)
+
 # --- CONFIGURAZIONE ---
 
 app.config['SECRET_KEY'] = Config.SECRET_KEY

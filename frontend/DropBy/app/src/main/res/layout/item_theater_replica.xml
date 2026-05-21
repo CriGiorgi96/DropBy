@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginBottom="12dp"
+    app:cardBackgroundColor="#FFFFFF"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="3dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp">
+
+        <!-- Foto del teatro -->
+        <ImageView
+            android:id="@+id/theaterReplicaImage"
+            android:layout_width="88dp"
+            android:layout_height="88dp"
+            android:contentDescription="@string/theater_photo"
+            android:scaleType="centerCrop"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Bottone azioni rapide (⋮) -->
+        <ImageButton
+            android:id="@+id/btnTheaterReplicaActions"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Azioni evento"
+            android:padding="4dp"
+            android:src="@drawable/ic_more_vert_24"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Nome teatro -->
+        <TextView
+            android:id="@+id/theaterReplicaName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="4dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textColor="#1A1A2E"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@id/btnTheaterReplicaActions"
+            app:layout_constraintStart_toEndOf="@id/theaterReplicaImage"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Città -->
+        <TextView
+            android:id="@+id/theaterReplicaCity"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="3dp"
+            android:textColor="#7B1FA2"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/theaterReplicaImage"
+            app:layout_constraintTop_toBottomOf="@id/theaterReplicaName" />
+
+        <!-- Separatore -->
+        <View
+            android:id="@+id/theaterReplicaDivider"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="8dp"
+            android:background="#E0E0E0"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/theaterReplicaImage"
+            app:layout_constraintTop_toBottomOf="@id/theaterReplicaCity" />
+
+        <!-- Container date (righe aggiunte programmaticamente dall'adapter) -->
+        <LinearLayout
+            android:id="@+id/theaterReplicaDates"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="6dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/theaterReplicaImage"
+            app:layout_constraintTop_toBottomOf="@id/theaterReplicaDivider" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>

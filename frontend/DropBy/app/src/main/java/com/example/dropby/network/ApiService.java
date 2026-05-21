@@ -27,8 +27,10 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
+import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -79,6 +81,19 @@ public interface ApiService {
     @GET("api/auth/search")
     Call<UserSearchResult.Response> searchUsers(@Query("q") String query);
 
+    @GET("api/auth/check-username")
+    Call<Map<String, Object>> checkUsername(@Query("username") String username);
+
+    @PUT("api/auth/update-profile")
+    Call<Map<String, Object>> updateProfile(@Body Map<String, String> body);
+
+    @Multipart
+    @POST("api/auth/upload-avatar")
+    Call<Map<String, Object>> uploadAvatar(@Part okhttp3.MultipartBody.Part file);
+
+    @POST("api/auth/verify-config-password")
+    Call<Map<String, Object>> verifyConfigPassword(@Body Map<String, String> body);
+
     // ── AMICIZIE ─────────────────────────────────────────────────────────────
 
     @POST("api/friends/request")
@@ -104,6 +119,9 @@ public interface ApiService {
     @GET("api/reviews/user")
     Call<ReviewsWrapper> getUserReviews();
 
+    @DELETE("api/reviews/{reviewId}")
+    Call<GenericResponse> deleteReview(@Path("reviewId") int reviewId);
+
     // ── PREFERITI ────────────────────────────────────────────────────────────
 
     @POST("api/favorites/")
@@ -122,6 +140,9 @@ public interface ApiService {
 
     @PUT("api/notifications/{id}/read")
     Call<GenericResponse> markNotificationRead(@Path("id") int notifId);
+
+    @DELETE("api/notifications/{id}")
+    Call<GenericResponse> deleteNotification(@Path("id") int notifId);
 
     // ── PROMEMORIA ───────────────────────────────────────────────────────────
 

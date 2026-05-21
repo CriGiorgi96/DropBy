@@ -233,6 +233,72 @@ class AuthService:
         }
 
     # ----------------------------
+    # CHECK USERNAME AVAILABILITY
+    # ----------------------------
+    @staticmethod
+    def check_username_available(username, user_id):
+        from helpers.user_helper import is_valid_username
+        if not username or not is_valid_username(username):
+            raise ValueError("Username non valido (3-30 caratteri, solo lettere/cifre/._-)")
+        return AuthRepository.check_username_available(username, exclude_user_id=user_id)
+
+    # ----------------------------
+    # UPDATE PROFILE
+    # ----------------------------
+    @staticmethod
+    def update_user_profile(user_id, data):
+        user = AuthRepository.find_by_id(user_id)
+        if not user:
+            raise ValueError("Utente non trovato")
+
+        username = data.get("username")
+        current_password = data.get("current_password")
+        new_password = data.get("new_password")
+        profile_image = data.get("profile_image")
+
+        update_kwargs = {}
+
+        if username and username != user["username"]:
+            from helpers.user_helper import is_valid_username
+            if not is_valid_username(username):
+                raise ValueError("Username non valido")
+            if not AuthRepository.check_username_available(username, exclude_user_id=user_id):
+                raise ValueError("Username già in uso")
+            update_kwargs["username"] = username
+
+        if new_password:
+            if not current_password:
+                raise ValueError("Password corrente obbligatoria per cambiare la password")
+            if not check_password_hash(user["password_hash"], current_password):
+                raise ValueError("Password corrente errata")
+            if len(new_password) < 6:
+                raise ValueError("La nuova password deve avere almeno 6 caratteri")
+            update_kwargs["password_hash"] = generate_password_hash(new_password)
+
+        if profile_image is not None:
+            update_kwargs["profile_image"] = profile_image
+
+        if update_kwargs:
+            AuthRepository.update_profile(user_id, **update_kwargs)
+
+        updated_user = AuthRepository.find_by_id(user_id)
+        return {
+            "message": "Profilo aggiornato",
+            "username": updated_user["username"],
+            "profile_image": updated_user.get("profile_image")
+        }
+
+    # ----------------------------
+    # VERIFY CONFIG PASSWORD
+    # ----------------------------
+    @staticmethod
+    def verify_config_password(password):
+        stored = AuthRepository.get_config_password()
+        if stored is None:
+            raise ValueError("Configurazione non disponibile")
+        return password == stored
+
+    # ----------------------------
     # SEARCH USERS
     # ----------------------------
     @staticmethod

@@ -16,6 +16,15 @@ def get_notifications(current_user):
         traceback.print_exc()
         return jsonify({'error': str(e)}), 500
 
+@notifications_bp.route('/<int:notif_id>', methods=['DELETE'])
+@token_required
+def delete_notification(current_user, notif_id):
+    try:
+        result = NotificationsService.delete_notification(notif_id, current_user['user_id'])
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 @notifications_bp.route('/<int:notif_id>/read', methods=['PUT'])
 @token_required
 def mark_read(current_user, notif_id):
