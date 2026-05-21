@@ -48,7 +48,7 @@ public interface ApiService {
     );
 
     @GET("api/events/{eventId}")
-    Call<Event> getEventDetail(@Path("eventId") int eventId);
+    Call<EventWrapper> getEventDetail(@Path("eventId") int eventId);
 
     // ── LOCATION ─────────────────────────────────────────────────────────────
 
@@ -91,8 +91,16 @@ public interface ApiService {
     @POST("api/auth/upload-avatar")
     Call<Map<String, Object>> uploadAvatar(@Part okhttp3.MultipartBody.Part file);
 
-    @POST("api/auth/verify-config-password")
-    Call<Map<String, Object>> verifyConfigPassword(@Body Map<String, String> body);
+    // ── PROFILI PUBBLICI UTENTE ───────────────────────────────────────────────
+
+    @GET("api/users/{userId}/profile")
+    Call<Map<String, Object>> getUserPublicProfile(@Path("userId") int userId);
+
+    @GET("api/users/{userId}/favorites")
+    Call<FavoritesWrapper> getUserFavorites(@Path("userId") int userId);
+
+    @GET("api/users/{userId}/reviews")
+    Call<ReviewsWrapper> getUserReviews(@Path("userId") int userId);
 
     // ── AMICIZIE ─────────────────────────────────────────────────────────────
 
@@ -174,6 +182,11 @@ public interface ApiService {
     Call<ProposalsWrapper> getReceivedProposals();
 
     // ── WRAPPER CLASSI (risposte lista) ──────────────────────────────────────
+
+    class EventWrapper {
+        @com.google.gson.annotations.SerializedName("event")
+        public Event event;
+    }
 
     class FriendsWrapper {
         public List<Friend> friends;

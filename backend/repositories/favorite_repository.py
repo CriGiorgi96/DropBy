@@ -22,7 +22,11 @@ class FavoriteRepository:
         conn = db.get_connection()
         rows = conn.run(
             """SELECT f.id AS favorite_id, f.created_at, f.event_id,
-                      e.title, e.category, e.city, e.event_date, e.price
+                      e.title, e.category, e.city, e.event_date, e.price,
+                      (SELECT ei.url FROM event_images ei
+                       WHERE ei.event_id = e.id
+                       ORDER BY ei.image_order
+                       LIMIT 1) AS image_url
                FROM favorites f
                JOIN events e ON f.event_id = e.id
                WHERE f.user_id = :user_id

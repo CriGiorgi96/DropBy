@@ -10,21 +10,29 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.dropby.R;
 import com.example.dropby.models.FavoriteItem;
-import com.example.dropby.network.ImageLoader;
+import com.example.dropby.network.GlideHelper;
 
 import java.util.List;
 import java.util.function.Consumer;
 
 public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.VH> {
 
+    public interface OnFavoriteClickListener {
+        void onFavoriteClick(int eventId);
+    }
+
     private List<FavoriteItem> items;
     private final Consumer<FavoriteItem> onRemove;
+    private final OnFavoriteClickListener clickListener;
 
-    public FavoriteAdapter(List<FavoriteItem> items, Consumer<FavoriteItem> onRemove) {
-        this.items    = items;
-        this.onRemove = onRemove;
+    public FavoriteAdapter(List<FavoriteItem> items, Consumer<FavoriteItem> onRemove,
+                           OnFavoriteClickListener clickListener) {
+        this.items         = items;
+        this.onRemove      = onRemove;
+        this.clickListener = clickListener;
     }
 
     public void update(List<FavoriteItem> newItems) {
@@ -52,9 +60,29 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.VH> {
         if (item.getEventDate() != null) meta.append(" · ").append(item.getEventDate());
         holder.meta.setText(meta.toString());
 
-        ImageLoader.loadInto(holder.image, item.getMainImageUrl());
+        String imgUrl = item.getMainImageUrl();
+        if (imgUrl != null && !imgUrl.isEmpty()) {
+            Glide.with(holder.image.getContext())
+                    .load(GlideHelper.url(imgUrl))
+                    .placeholder(R.drawable.image_placeholder)
+                    .centerCrop()
+                    .into(holder.image);
+        } else {
+            holder.image.setImageResource(R.drawable.image_placeholder);
+        }
 
-        holder.removeBtn.setOnClickListener(v -> onRemove.accept(item));
+        if (clickListener != null) {
+            holder.itemView.setOnClickListener(v -> clickListener.onFavoriteClick(item.getEventId()));
+        } else {
+            holder.itemView.setOnClickListener(null);
+        }
+
+        if (onRemove != null) {
+            holder.removeBtn.setVisibility(View.VISIBLE);
+            holder.removeBtn.setOnClickListener(v -> onRemove.accept(item));
+        } else {
+            holder.removeBtn.setVisibility(View.GONE);
+        }
     }
 
     @Override

@@ -31,7 +31,7 @@ class ReviewRepository:
         # 2. Carica recensioni per tutte le repliche della stessa produzione
         #    (o solo questo evento se production_id è assente)
         _REVIEW_SELECT = """
-            SELECT r.*, u.username,
+            SELECT r.*, u.username, u.profile_image,
                    e.event_date, e.city AS event_city,
                    l.name AS location_name
             FROM reviews r
@@ -56,11 +56,13 @@ class ReviewRepository:
         db = Database()
         conn = db.get_connection()
         rows = conn.run(
-            """SELECT r.id, r.rating, r.comment, r.created_at,
+            """SELECT r.id, r.user_id, r.rating, r.comment, r.created_at,
                       e.id AS event_id, e.title AS event_title,
-                      e.event_date, e.city AS event_city
+                      e.event_date, e.city AS event_city,
+                      u.username, u.profile_image
                FROM reviews r
                JOIN events e ON r.event_id = e.id
+               JOIN users u  ON r.user_id  = u.id
                WHERE r.user_id = :user_id
                ORDER BY r.created_at DESC""",
             user_id=user_id

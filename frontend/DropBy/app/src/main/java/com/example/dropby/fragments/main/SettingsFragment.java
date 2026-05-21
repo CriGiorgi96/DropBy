@@ -12,17 +12,10 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import com.example.dropby.R;
-import com.example.dropby.fragments.main.UrlConfigFragment;
-import com.example.dropby.network.ApiClient;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class SettingsFragment extends Fragment {
+
+    private static final String CONFIG_PASSWORD = "Admin1234";
 
     public SettingsFragment() {
         super(R.layout.fragment_settings);
@@ -56,46 +49,19 @@ public class SettingsFragment extends Fragment {
                     passwordInput.setError("Password obbligatoria");
                     return;
                 }
-                verifyPassword(password, dialog);
+                if (CONFIG_PASSWORD.equals(password)) {
+                    dialog.dismiss();
+                    requireActivity().getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.fragment_container, new UrlConfigFragment())
+                            .addToBackStack(null)
+                            .commit();
+                } else {
+                    Toast.makeText(requireContext(), "Password errata", Toast.LENGTH_SHORT).show();
+                }
             });
         });
 
         dialog.show();
-    }
-
-    private void verifyPassword(String password, AlertDialog dialog) {
-        Map<String, String> body = new HashMap<>();
-        body.put("password", password);
-
-        ApiClient.getApiService().verifyConfigPassword(body)
-                .enqueue(new Callback<Map<String, Object>>() {
-                    @Override
-                    public void onResponse(@NonNull Call<Map<String, Object>> call,
-                                           @NonNull Response<Map<String, Object>> response) {
-                        if (!isAdded()) return;
-                        if (response.isSuccessful() && response.body() != null) {
-                            Object valid = response.body().get("valid");
-                            if (Boolean.TRUE.equals(valid)) {
-                                dialog.dismiss();
-                                requireActivity().getSupportFragmentManager()
-                                        .beginTransaction()
-                                        .replace(R.id.fragment_container, new UrlConfigFragment())
-                                        .addToBackStack(null)
-                                        .commit();
-                            } else {
-                                Toast.makeText(requireContext(), "Password errata", Toast.LENGTH_SHORT).show();
-                            }
-                        } else {
-                            Toast.makeText(requireContext(), "Password errata", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(@NonNull Call<Map<String, Object>> call, @NonNull Throwable t) {
-                        if (isAdded()) {
-                            Toast.makeText(requireContext(), "Errore di rete", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
     }
 }

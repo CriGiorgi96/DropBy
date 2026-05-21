@@ -159,7 +159,8 @@ class AuthRepository:
         return len(rows) == 0
 
     @staticmethod
-    def update_profile(user_id, username=None, password_hash=None, profile_image=None):
+    def update_profile(user_id, username=None, password_hash=None, profile_image=None,
+                       private_favorites=None, private_reviews=None):
         conn = Database().get_connection()
         sets = []
         params = {"user_id": user_id}
@@ -173,19 +174,15 @@ class AuthRepository:
         if profile_image is not None:
             sets.append("profile_image = :profile_image")
             params["profile_image"] = profile_image
+        if private_favorites is not None:
+            sets.append("private_favorites = :private_favorites")
+            params["private_favorites"] = private_favorites
+        if private_reviews is not None:
+            sets.append("private_reviews = :private_reviews")
+            params["private_reviews"] = private_reviews
 
         if not sets:
             return
 
         conn.run(f"UPDATE users SET {', '.join(sets)} WHERE id = :user_id", **params)
         conn.run("COMMIT")
-
-    @staticmethod
-    def get_config_password():
-        conn = Database().get_connection()
-        rows = conn.run(
-            "SELECT value FROM app_settings WHERE key = 'config_password'"
-        )
-        if rows:
-            return rows[0][0]
-        return None

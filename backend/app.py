@@ -72,6 +72,9 @@ app.register_blueprint(proposals_bp, url_prefix='/api/proposals')
 from controllers.reminders_controller import reminders_bp
 app.register_blueprint(reminders_bp, url_prefix='/api/reminders')
 
+from controllers.users_controller import users_bp
+app.register_blueprint(users_bp, url_prefix='/api/users')
+
 @app.route('/')
 def home():
     return jsonify({

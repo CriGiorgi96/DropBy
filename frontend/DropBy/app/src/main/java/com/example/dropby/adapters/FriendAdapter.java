@@ -4,17 +4,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.dropby.R;
 import com.example.dropby.models.Friend;
 import com.example.dropby.models.UserSearchResult;
+import com.example.dropby.network.ApiClient;
+import com.example.dropby.network.GlideHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
 
@@ -25,13 +30,20 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
         void onAction(Action action, Object item);
     }
 
+    public interface OnAvatarClickListener {
+        void onAvatarClick(int userId);
+    }
+
     private List<Object> items = new ArrayList<>();
     private Mode mode = Mode.FRIENDS;
     private final ActionListener listener;
+    private final OnAvatarClickListener avatarClickListener;
 
-    public FriendAdapter(List<Friend> friends, ActionListener listener) {
+    public FriendAdapter(List<Friend> friends, ActionListener listener,
+                         OnAvatarClickListener avatarClickListener) {
         this.items.addAll(friends);
-        this.listener = listener;
+        this.listener            = listener;
+        this.avatarClickListener = avatarClickListener;
     }
 
     public void update(List<Friend> friends, Mode newMode) {
@@ -67,6 +79,8 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
             holder.actionButtons.setVisibility(View.GONE);
             holder.sendRequestBtn.setVisibility(View.VISIBLE);
             holder.sendRequestBtn.setOnClickListener(v -> listener.onAction(Action.SEND_REQUEST, u));
+            holder.avatar.setImageResource(R.drawable.default_guest);
+            holder.avatar.setOnClickListener(null);
         } else if (item instanceof Friend) {
             Friend f = (Friend) item;
             holder.username.setText(f.getUsername());
@@ -81,19 +95,58 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
                 holder.status.setText("Amico");
                 holder.actionButtons.setVisibility(View.GONE);
             }
+
+            loadAvatar(holder, f.getProfileImage());
+
+            int uid = f.getUserId();
+            if (avatarClickListener != null && uid > 0) {
+                holder.avatar.setOnClickListener(v -> avatarClickListener.onAvatarClick(uid));
+            } else {
+                holder.avatar.setOnClickListener(null);
+            }
         }
+    }
+
+    private void loadAvatar(VH holder, String profileImage) {
+        android.content.Context ctx = holder.avatar.getContext();
+        Object loadSource;
+        if (isServerFilename(profileImage)) {
+            String url = ApiClient.getBaseUrl() + "assets/avatars/" + profileImage;
+            loadSource = GlideHelper.url(url);
+        } else if (profileImage != null && !profileImage.isEmpty()) {
+            int resId = ctx.getResources().getIdentifier(
+                    profileImage, "drawable", ctx.getPackageName());
+            loadSource = resId != 0 ? resId : R.drawable.default_guest;
+        } else {
+            loadSource = R.drawable.default_guest;
+        }
+        Glide.with(ctx)
+                .load(loadSource)
+                .placeholder(R.drawable.default_guest)
+                .circleCrop()
+                .into(holder.avatar);
+    }
+
+    private static boolean isServerFilename(String s) {
+        if (s == null || s.isEmpty()) return false;
+        String lower = s.toLowerCase(Locale.US);
+        return lower.endsWith(".jpg") || lower.endsWith(".jpeg")
+            || lower.endsWith(".png") || lower.endsWith(".webp")
+            || lower.endsWith(".gif");
     }
 
     @Override
     public int getItemCount() { return items.size(); }
 
     static class VH extends RecyclerView.ViewHolder {
+        ImageView avatar;
         TextView username, status;
         View actionButtons;
         Button acceptBtn, rejectBtn, sendRequestBtn;
 
         VH(View v) {
             super(v);
+            avatar         = v.findViewById(R.id.friendAvatar);
             username       = v.findViewById(R.id.friendUsername);
             status         = v.findViewById(R.id.friendStatus);
             actionButtons  = v.findViewById(R.id.friendActionButtons);

@@ -87,7 +87,9 @@ public class VerificationFragment extends Fragment {
                                 launchHome(body.userId, body.username,
                                         body.email   != null ? body.email   : "",
                                         body.gender  != null ? body.gender  : "guest",
-                                        body.token   != null ? body.token   : "");
+                                        body.token   != null ? body.token   : "",
+                                        body.profileImage,
+                                        body.privateFavorites, body.privateReviews);
                             } else {
                                 String err = response.code() == 400
                                         ? "Codice non valido o scaduto"
@@ -139,16 +141,31 @@ public class VerificationFragment extends Fragment {
         });
     }
 
-    private void launchHome(int userId, String username, String email, String gender, String token) {
+    private void launchHome(int userId, String username, String email, String gender, String token,
+                            String profileImage,
+                            boolean privateFavorites, boolean privateReviews) {
+        String imgType  = "";
+        String imgValue = "";
+        if (profileImage != null && !profileImage.isEmpty()) {
+            String lp = profileImage.toLowerCase(java.util.Locale.US);
+            imgType  = (lp.endsWith(".jpg") || lp.endsWith(".jpeg") || lp.endsWith(".png")
+                     || lp.endsWith(".webp") || lp.endsWith(".gif")) ? "server" : "default";
+            imgValue = profileImage;
+        }
+
         SharedPreferences prefs = requireActivity()
                 .getSharedPreferences("app", requireContext().MODE_PRIVATE);
         prefs.edit()
-                .putString("userType", "LOGGED")
-                .putString("username", username != null ? username : "Spettatore")
-                .putString("gender",   gender)
-                .putString("email",    email)
-                .putString("token",    token)
-                .putInt("userId",      userId)
+                .putString("userType",           "LOGGED")
+                .putString("username",            username != null ? username : "Spettatore")
+                .putString("gender",              gender)
+                .putString("email",               email)
+                .putString("token",               token)
+                .putInt("userId",                 userId)
+                .putString("profileImageType",    imgType)
+                .putString("profileImageValue",   imgValue)
+                .putBoolean("privateFavorites",   privateFavorites)
+                .putBoolean("privateReviews",     privateReviews)
                 .apply();
 
 

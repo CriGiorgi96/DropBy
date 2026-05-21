@@ -14,7 +14,13 @@
       "Bash(python3 -m py_compile \"C:/Users/ifoa/Desktop/Project_work - Copia/backend/controllers/auth_controller.py\")",
       "Bash(python3 -m py_compile \"C:/Users/ifoa/Desktop/Project_work - Copia/backend/services/auth_service.py\")",
       "Bash(python3 -m py_compile \"C:/Users/ifoa/Desktop/Project_work - Copia/backend/repositories/auth_repository.py\")",
-      "Bash(python3 -m py_compile \"C:/Users/ifoa/Desktop/Project_work - Copia/backend/app.py\")"
+      "Bash(python3 -m py_compile \"C:/Users/ifoa/Desktop/Project_work - Copia/backend/app.py\")",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\ifoa\\\\Desktop\\\\Project_work - Copia\\\\frontend\" -Recurse -Filter \"*.java\" -Name)",
+      "Bash(Select-String \"ReviewAdapter|EventGroupAdapter|FavoriteItem|Review|ReviewsFragment|FavoritesFragment|GlideHelper\")",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\ifoa\\\\Desktop\\\\Project_work - Copia\\\\backend\" -Recurse -File -Name)",
+      "Bash(Sort-Object)",
+      "Bash(python3 -m py_compile \"C:/Users/ifoa/Desktop/Project_work - Copia/backend/repositories/review_repository.py\")",
+      "Bash(python3 -m py_compile \"C:/Users/ifoa/Desktop/Project_work - Copia/backend/controllers/users_controller.py\")"
     ]
   }
 }

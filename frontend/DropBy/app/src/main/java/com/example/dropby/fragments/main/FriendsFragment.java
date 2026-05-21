@@ -59,7 +59,7 @@ public class FriendsFragment extends Fragment {
         searchInput  = view.findViewById(R.id.searchUsersInput);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        adapter = new FriendAdapter(new ArrayList<>(), this::onFriendAction);
+        adapter = new FriendAdapter(new ArrayList<>(), this::onFriendAction, this::openUserProfile);
         recyclerView.setAdapter(adapter);
 
         TabLayout tabs = view.findViewById(R.id.friendsTabLayout);
@@ -216,6 +216,19 @@ public class FriendsFragment extends Fragment {
                         @Override public void onFailure(Call<GenericResponse> call, Throwable t) {}
                     });
         }
+    }
+
+    private void openUserProfile(int userId) {
+        if (!isAdded()) return;
+        Bundle bundle = new Bundle();
+        bundle.putInt("user_id", userId);
+        UserDetailsFragment udf = new UserDetailsFragment();
+        udf.setArguments(bundle);
+        requireActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, udf)
+                .addToBackStack(null)
+                .commit();
     }
 
     private void setStatus(String msg) {

@@ -3,13 +3,17 @@ package com.example.dropby.adapters;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.dropby.R;
 import com.example.dropby.models.Review;
+import com.example.dropby.network.ApiClient;
+import com.example.dropby.network.GlideHelper;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -18,9 +22,27 @@ import java.util.Locale;
 
 public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.VH> {
 
-    private List<Review> items;
+    public interface OnAvatarClickListener {
+        void onAvatarClick(int userId);
+    }
 
-    public ReviewAdapter(List<Review> items) { this.items = items; }
+    public interface OnReviewClickListener {
+        void onReviewClick(int eventId);
+    }
+
+    private List<Review> items;
+    private final int currentUserId;
+    private final OnAvatarClickListener avatarClickListener;
+    private final OnReviewClickListener reviewClickListener;
+
+    public ReviewAdapter(List<Review> items, int currentUserId,
+                         OnAvatarClickListener avatarClickListener,
+                         OnReviewClickListener reviewClickListener) {
+        this.items               = items;
+        this.currentUserId       = currentUserId;
+        this.avatarClickListener = avatarClickListener;
+        this.reviewClickListener = reviewClickListener;
+    }
 
     public void update(List<Review> newItems) {
         this.items = newItems;
@@ -38,9 +60,25 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.VH> {
     @Override
     public void onBindViewHolder(@NonNull VH holder, int position) {
         Review r = items.get(position);
+
         holder.username.setText(r.getUsername() != null ? r.getUsername() : "Anonimo");
         holder.stars.setText(r.getStarsString());
         holder.comment.setText(r.getComment() != null ? r.getComment() : "");
+
+        bindAvatar(holder, r);
+
+        if (r.getEventTitle() != null && !r.getEventTitle().isEmpty()) {
+            holder.eventTitle.setText(r.getEventTitle());
+            holder.eventTitle.setVisibility(View.VISIBLE);
+        } else {
+            holder.eventTitle.setVisibility(View.GONE);
+        }
+
+        if (reviewClickListener != null && r.getEventId() > 0) {
+            holder.itemView.setOnClickListener(v -> reviewClickListener.onReviewClick(r.getEventId()));
+        } else {
+            holder.itemView.setOnClickListener(null);
+        }
 
         String loc  = r.getLocationName();
         String date = formatDate(r.getEventDate());
@@ -53,6 +91,46 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.VH> {
             holder.locationDate.setVisibility(View.VISIBLE);
         } else {
             holder.locationDate.setVisibility(View.GONE);
+        }
+    }
+
+    private static boolean isServerFilename(String s) {
+        if (s == null || s.isEmpty()) return false;
+        String lower = s.toLowerCase(Locale.US);
+        return lower.endsWith(".jpg") || lower.endsWith(".jpeg")
+            || lower.endsWith(".png") || lower.endsWith(".webp")
+            || lower.endsWith(".gif");
+    }
+
+    private void bindAvatar(VH holder, Review r) {
+        String profileImage = r.getProfileImage();
+        android.content.Context ctx = holder.avatar.getContext();
+
+        Object loadSource;
+        if (isServerFilename(profileImage)) {
+            String url = ApiClient.getBaseUrl() + "assets/avatars/" + profileImage;
+            loadSource = GlideHelper.url(url);
+        } else if (profileImage != null && !profileImage.isEmpty()) {
+            int resId = ctx.getResources().getIdentifier(
+                    profileImage, "drawable", ctx.getPackageName());
+            loadSource = resId != 0 ? resId : R.drawable.default_guest;
+        } else {
+            loadSource = R.drawable.default_guest;
+        }
+
+        Glide.with(ctx)
+                .load(loadSource)
+                .placeholder(R.drawable.default_guest)
+                .circleCrop()
+                .into(holder.avatar);
+
+        boolean isOtherUser = avatarClickListener != null && r.getUserId() != currentUserId;
+        if (isOtherUser) {
+            holder.avatar.setOnClickListener(v -> avatarClickListener.onAvatarClick(r.getUserId()));
+            holder.avatar.setAlpha(1.0f);
+        } else {
+            holder.avatar.setOnClickListener(null);
+            holder.avatar.setAlpha(0.75f);
         }
     }
 
@@ -73,12 +151,16 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.VH> {
     }
 
     static class VH extends RecyclerView.ViewHolder {
-        TextView username, stars, comment, locationDate;
+        ImageView avatar;
+        TextView  username, stars, comment, eventTitle, locationDate;
+
         VH(View v) {
             super(v);
+            avatar       = v.findViewById(R.id.reviewAvatar);
             username     = v.findViewById(R.id.reviewUsername);
             stars        = v.findViewById(R.id.reviewStars);
             comment      = v.findViewById(R.id.reviewComment);
+            eventTitle   = v.findViewById(R.id.reviewEventTitle);
             locationDate = v.findViewById(R.id.reviewLocationDate);
         }
     }

@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.ViewGroup;
 import android.view.Menu;
 import android.view.View;
@@ -327,19 +328,28 @@ public class HomeActivity extends AppCompatActivity {
         if (notificationPoller != null) notificationPoller.stop();
 
         SharedPreferences prefs = getSharedPreferences("app", MODE_PRIVATE);
-        String profileImageType = prefs.getString("profileImageType", "");
-        String profileImageValue = prefs.getString("profileImageValue", "");
-        String gender = prefs.getString("gender", "guest");
 
-        // Rimuove solo le credenziali lasciando intatte le preferenze grafiche locali
+        // ── DEBUG LOG: stato prefs PRIMA del logout ──────────────────────────
+        Log.d("DEBUG_PREFS", "[LOGOUT] userId="      + prefs.getInt("userId", -1)
+                + " | imageType="  + prefs.getString("profileImageType", "")
+                + " | imageValue=" + prefs.getString("profileImageValue", "")
+                + " | username="   + prefs.getString("username", ""));
+        // ─────────────────────────────────────────────────────────────────────
+
         prefs.edit()
                 .remove("token")
                 .remove("userType")
                 .remove("email")
-                .putString("profileImageType", profileImageType)
-                .putString("profileImageValue", profileImageValue)
-                .putString("gender", gender)
+                .remove("username")
+                .remove("userId")
+                .remove("profileImageType")
+                .remove("profileImageValue")
+                .remove("gender")
+                .remove("privateFavorites")
+                .remove("privateReviews")
                 .apply();
+
+        Log.d("DEBUG_PREFS", "[LOGOUT] SharedPreferences azzerate completamente");
 
         com.example.dropby.network.ApiClient.setCustomBaseUrl(com.example.dropby.network.ApiClient.getBaseUrl());
 
@@ -428,7 +438,12 @@ public class HomeActivity extends AppCompatActivity {
         String imageValue = prefs.getString("profileImageValue", "");
         String gender     = prefs.getString("gender", "guest");
 
-        if ("server".equals(imageType) && !imageValue.isEmpty()) {
+        // ── DEBUG LOG: avatar letto ───────────────────────────────────────────
+        Log.d("DEBUG_PREFS", "[TOOLBAR] userId=" + prefs.getInt("userId", -1)
+                + " | imageType="  + imageType
+                + " | imageValue=" + imageValue);
+
+        if ("server".equals(imageType) && isServerFilename(imageValue)) {
             String url = com.example.dropby.network.ApiClient.getBaseUrl()
                     + "assets/avatars/" + imageValue;
             loadAvatarFromUrl(avatar, url);
@@ -451,6 +466,14 @@ public class HomeActivity extends AppCompatActivity {
         if ("male".equalsIgnoreCase(gender))        avatar.setImageResource(R.drawable.default_male);
         else if ("female".equalsIgnoreCase(gender)) avatar.setImageResource(R.drawable.default_female);
         else                                        avatar.setImageResource(R.drawable.default_guest);
+    }
+
+    private static boolean isServerFilename(String s) {
+        if (s == null || s.isEmpty()) return false;
+        String lower = s.toLowerCase(java.util.Locale.US);
+        return lower.endsWith(".jpg") || lower.endsWith(".jpeg")
+            || lower.endsWith(".png") || lower.endsWith(".webp")
+            || lower.endsWith(".gif");
     }
 
     private void loadAvatarFromUrl(ImageView avatar, String url) {

@@ -31,7 +31,7 @@ class FriendshipRepository:
         conn = db.get_connection()
         rows = conn.run(
             """SELECT f.id AS friendship_id, f.status,
-                      u.id AS user_id, u.username, u.email
+                      u.id AS user_id, u.username, u.email, u.profile_image
                FROM friendships f
                JOIN users u ON f.user_id_1 = u.id
                WHERE f.user_id_2 = :uid AND f.status = 'pending'""",
@@ -45,7 +45,7 @@ class FriendshipRepository:
         conn = db.get_connection()
         rows = conn.run(
             """SELECT f.id AS friendship_id, f.status,
-                      u.id AS user_id, u.username, u.email
+                      u.id AS user_id, u.username, u.email, u.profile_image
                FROM friendships f
                JOIN users u ON (CASE WHEN f.user_id_1 = :uid
                                      THEN f.user_id_2 ELSE f.user_id_1 END) = u.id

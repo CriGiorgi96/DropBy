@@ -278,6 +278,16 @@ class AuthService:
         if profile_image is not None:
             update_kwargs["profile_image"] = profile_image
 
+        if "private_favorites" in data:
+            val = data["private_favorites"]
+            update_kwargs["private_favorites"] = (val if isinstance(val, bool)
+                                                  else str(val).lower() == "true")
+
+        if "private_reviews" in data:
+            val = data["private_reviews"]
+            update_kwargs["private_reviews"] = (val if isinstance(val, bool)
+                                                else str(val).lower() == "true")
+
         if update_kwargs:
             AuthRepository.update_profile(user_id, **update_kwargs)
 
@@ -287,16 +297,6 @@ class AuthService:
             "username": updated_user["username"],
             "profile_image": updated_user.get("profile_image")
         }
-
-    # ----------------------------
-    # VERIFY CONFIG PASSWORD
-    # ----------------------------
-    @staticmethod
-    def verify_config_password(password):
-        stored = AuthRepository.get_config_password()
-        if stored is None:
-            raise ValueError("Configurazione non disponibile")
-        return password == stored
 
     # ----------------------------
     # SEARCH USERS
@@ -335,5 +335,8 @@ class AuthService:
             "user_id": user["id"],
             "username": user["username"],
             "email": user["email"],
-            "gender": user.get("gender", "guest")
+            "gender": user.get("gender", "guest"),
+            "profile_image": user.get("profile_image"),
+            "private_favorites": bool(user.get("private_favorites") or False),
+            "private_reviews":   bool(user.get("private_reviews")   or False)
         }

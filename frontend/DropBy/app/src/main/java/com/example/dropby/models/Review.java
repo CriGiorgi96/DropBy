@@ -38,9 +38,13 @@ public class Review implements Serializable {
     @SerializedName("location_name")
     private String locationName;
 
+    @SerializedName("profile_image")
+    private String profileImage;
+
     public int getId()              { return id; }
     public int getUserId()          { return userId; }
     public String getUsername()     { return username; }
+    public String getProfileImage() { return profileImage; }
     public int getEventId()         { return eventId; }
     public String getEventTitle()   { return eventTitle; }
     public int getRating()          { return rating; }

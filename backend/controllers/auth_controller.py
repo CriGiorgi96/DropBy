@@ -179,19 +179,3 @@ def upload_avatar(current_user):
         traceback.print_exc()
         return jsonify({'error': 'Errore upload avatar'}), 500
 
-
-@auth_bp.route('/verify-config-password', methods=['POST'])
-def verify_config_password():
-    try:
-        data = request.get_json()
-        if not data or not data.get('password'):
-            return jsonify({'error': 'Password obbligatoria'}), 400
-        valid = AuthService.verify_config_password(data['password'])
-        if valid:
-            return jsonify({'valid': True}), 200
-        return jsonify({'valid': False, 'error': 'Password errata'}), 401
-    except ValueError as e:
-        return jsonify({'error': str(e)}), 400
-    except Exception:
-        traceback.print_exc()
-        return jsonify({'error': 'Errore server'}), 500

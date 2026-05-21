@@ -1,5 +1,7 @@
 package com.example.dropby.fragments.main.set;
 
+
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -8,6 +10,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -22,6 +25,7 @@ import com.example.dropby.HomeActivity;
 import com.example.dropby.R;
 import com.example.dropby.network.ApiClient;
 
+import android.util.Log;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,10 +42,12 @@ import retrofit2.Response;
 public class ProfileSettingsFragment extends Fragment {
 
     private ImageView imgProfilePreview;
-    private EditText editUsername;
-    private EditText editCurrentPassword;
-    private EditText editNewPassword;
-    private EditText editConfirmPassword;
+    private EditText  editUsername;
+    private EditText  editCurrentPassword;
+    private EditText  editNewPassword;
+    private EditText  editConfirmPassword;
+    private CheckBox  checkPrivateFavorites;
+    private CheckBox  checkPrivateReviews;
 
     private String selectedImageType = "";
     private String selectedImageValue = "";
@@ -84,16 +90,27 @@ public class ProfileSettingsFragment extends Fragment {
         editCurrentPassword    = view.findViewById(R.id.editCurrentPassword);
         editNewPassword        = view.findViewById(R.id.editNewPassword);
         editConfirmPassword    = view.findViewById(R.id.editConfirmPassword);
-        Button btnChangeImg    = view.findViewById(R.id.btnChangeProfileImg);
-        Button btnSave         = view.findViewById(R.id.btnSaveProfile);
-        Button btnBack         = view.findViewById(R.id.btnBackToSettings);
+        Button btnChangeImg       = view.findViewById(R.id.btnChangeProfileImg);
+        Button btnSave            = view.findViewById(R.id.btnSaveProfile);
+        Button btnBack            = view.findViewById(R.id.btnBackToSettings);
+        checkPrivateFavorites     = view.findViewById(R.id.checkPrivateFavorites);
+        checkPrivateReviews       = view.findViewById(R.id.checkPrivateReviews);
 
         editUsername.setText(prefs.getString("username", ""));
+        checkPrivateFavorites.setChecked(prefs.getBoolean("privateFavorites", false));
+        checkPrivateReviews.setChecked(prefs.getBoolean("privateReviews", false));
 
         if (selectedImageType.isEmpty()) {
             selectedImageType  = prefs.getString("profileImageType", "");
             selectedImageValue = prefs.getString("profileImageValue", "");
         }
+
+        // ── DEBUG LOG: avatar letto all'apertura del fragment ─────────────────
+        Log.d("DEBUG_PREFS", "[PROFILE_SETTINGS onViewCreated]"
+                + " userId="     + prefs.getInt("userId", -1)
+                + " | username=" + prefs.getString("username", "")
+                + " | imageType=" + selectedImageType
+                + " | imageValue=" + selectedImageValue);
 
         loadProfileImagePreview(prefs);
 
@@ -106,8 +123,13 @@ public class ProfileSettingsFragment extends Fragment {
     public void onResume() {
         super.onResume();
         SharedPreferences prefs = requireActivity().getSharedPreferences("app", Context.MODE_PRIVATE);
-        selectedImageType  = prefs.getString("profileImageType", "");
-        selectedImageValue = prefs.getString("profileImageValue", "");
+        // Sync prefs solo se non c'è un upload dal dispositivo in attesa.
+        // Questo gestisce il ritorno da DefaultImagesFragment senza sovrascrivere
+        // una foto dal dispositivo già selezionata (il cui callback arriva dopo onResume).
+        if (pendingUploadUri == null) {
+            selectedImageType  = prefs.getString("profileImageType", "");
+            selectedImageValue = prefs.getString("profileImageValue", "");
+        }
         if (imgProfilePreview != null) loadProfileImagePreview(prefs);
     }
 
@@ -253,6 +275,8 @@ public class ProfileSettingsFragment extends Fragment {
         if (profileImage != null) {
             body.put("profile_image", profileImage);
         }
+        body.put("private_favorites", String.valueOf(checkPrivateFavorites.isChecked()));
+        body.put("private_reviews",   String.valueOf(checkPrivateReviews.isChecked()));
 
         ApiClient.getApiService().updateProfile(body)
                 .enqueue(new Callback<Map<String, Object>>() {
@@ -288,15 +312,29 @@ public class ProfileSettingsFragment extends Fragment {
         SharedPreferences.Editor editor = prefs.edit()
                 .putString("username", username)
                 .putString("profileImageType", selectedImageType)
-                .putString("profileImageValue", selectedImageValue);
+                .putString("profileImageValue", selectedImageValue)
+                .putBoolean("privateFavorites", checkPrivateFavorites.isChecked())
+                .putBoolean("privateReviews",   checkPrivateReviews.isChecked());
 
+        // Sovrascrivi con "server" SOLO se il backend ha risposto con un filename reale (con estensione).
+        // Se profile_image è un drawable predefinito (es. "male_01"), i valori in memoria
+        // (selectedImageType="default", selectedImageValue="male_01") sono già corretti.
         String serverFilename = (String) responseBody.get("profile_image");
-        if (serverFilename != null && !serverFilename.isEmpty()) {
+        if (isServerFilename(serverFilename)) {
             editor.putString("profileImageType", "server")
                   .putString("profileImageValue", serverFilename);
         }
 
         editor.apply();
+
+        // ── DEBUG LOG: avatar scritto dopo il salvataggio ─────────────────────
+        SharedPreferences fresh = requireActivity().getSharedPreferences("app", Context.MODE_PRIVATE);
+        Log.d("DEBUG_PREFS", "[PROFILE_SETTINGS SAVED]"
+                + " userId="      + fresh.getInt("userId", -1)
+                + " | username="  + fresh.getString("username", "")
+                + " | imageType=" + fresh.getString("profileImageType", "")
+                + " | imageValue=" + fresh.getString("profileImageValue", "")
+                + " | serverFilename=" + serverFilename);
 
         if (requireActivity() instanceof HomeActivity) {
             ((HomeActivity) requireActivity()).refreshProfileUi();
@@ -320,6 +358,7 @@ public class ProfileSettingsFragment extends Fragment {
     }
 
     private void openDefaultImagePicker() {
+        pendingUploadUri = null;   // la scelta predefinita annulla qualsiasi upload pendente
         requireActivity().getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.fragment_container, new DefaultImagesFragment())
@@ -332,7 +371,16 @@ public class ProfileSettingsFragment extends Fragment {
     }
 
     private void loadProfileImagePreview(SharedPreferences prefs) {
-        if ("server".equals(selectedImageType) && !selectedImageValue.isEmpty()) {
+        // Heal corrupted prefs written by old code: type="server" was incorrectly set
+        // for drawable names (no image extension). Reclassify as "default" and persist.
+        if ("server".equals(selectedImageType)
+                && !selectedImageValue.isEmpty()
+                && !isServerFilename(selectedImageValue)) {
+            selectedImageType = "default";
+            prefs.edit().putString("profileImageType", "default").apply();
+        }
+
+        if ("server".equals(selectedImageType) && isServerFilename(selectedImageValue)) {
             String url = ApiClient.getBaseUrl() + "assets/avatars/" + selectedImageValue;
             loadImageFromUrl(url);
             return;
@@ -381,6 +429,14 @@ public class ProfileSettingsFragment extends Fragment {
     }
 
     // ── UTILITY ──────────────────────────────────────────────────────────────
+
+    private static boolean isServerFilename(String s) {
+        if (s == null || s.isEmpty()) return false;
+        String lower = s.toLowerCase(java.util.Locale.US);
+        return lower.endsWith(".jpg") || lower.endsWith(".jpeg")
+            || lower.endsWith(".png") || lower.endsWith(".webp")
+            || lower.endsWith(".gif");
+    }
 
     private byte[] readBytes(Uri uri) throws IOException {
         try (InputStream is = requireContext().getContentResolver().openInputStream(uri);

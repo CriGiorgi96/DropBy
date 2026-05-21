@@ -151,6 +151,50 @@
             app:layout_constraintStart_toStartOf="@id/guidelineStart"
             app:layout_constraintTop_toBottomOf="@id/editNewPassword" />
 
+        <View
+            android:id="@+id/dividerPrivacy"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="28dp"
+            android:background="@color/black"
+            app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+            app:layout_constraintStart_toStartOf="@id/guidelineStart"
+            app:layout_constraintTop_toBottomOf="@id/editConfirmPassword" />
+
+        <TextView
+            android:id="@+id/tvPrivacyTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Privacy"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+            app:layout_constraintStart_toStartOf="@id/guidelineStart"
+            app:layout_constraintTop_toBottomOf="@id/dividerPrivacy" />
+
+        <CheckBox
+            android:id="@+id/checkPrivateFavorites"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Mantieni privati i miei preferiti"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+            app:layout_constraintStart_toStartOf="@id/guidelineStart"
+            app:layout_constraintTop_toBottomOf="@id/tvPrivacyTitle" />
+
+        <CheckBox
+            android:id="@+id/checkPrivateReviews"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Mantieni private le mie recensioni"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+            app:layout_constraintStart_toStartOf="@id/guidelineStart"
+            app:layout_constraintTop_toBottomOf="@id/checkPrivateFavorites" />
+
         <Button
             android:id="@+id/btnSaveProfile"
             android:layout_width="@android:dimen/thumbnail_width"
@@ -159,7 +203,7 @@
             android:text="@string/save_changes"
             app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
             app:layout_constraintStart_toStartOf="@id/guidelineStart"
-            app:layout_constraintTop_toBottomOf="@id/editConfirmPassword" />
+            app:layout_constraintTop_toBottomOf="@id/checkPrivateReviews" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

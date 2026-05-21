@@ -151,7 +151,23 @@ public class EventDetailFragment extends Fragment {
 
         rv.setLayoutManager(new LinearLayoutManager(requireContext()));
         rv.setNestedScrollingEnabled(false);
-        reviewAdapter = new ReviewAdapter(new ArrayList<>());
+
+        SharedPreferences prefs = requireActivity().getSharedPreferences("app", requireContext().MODE_PRIVATE);
+        int currentUserId = prefs.getInt("userId", -1);
+
+        reviewAdapter = new ReviewAdapter(new ArrayList<>(), currentUserId, authorUserId -> {
+            if (!isAdded()) return;
+            android.os.Bundle bundle = new android.os.Bundle();
+            bundle.putInt("user_id", authorUserId);
+            com.example.dropby.fragments.main.UserDetailsFragment udf =
+                    new com.example.dropby.fragments.main.UserDetailsFragment();
+            udf.setArguments(bundle);
+            requireActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, udf)
+                    .addToBackStack(null)
+                    .commit();
+        }, null);
         rv.setAdapter(reviewAdapter);
 
         ApiClient.getApiService().getEventReviews(event.getId())
@@ -160,9 +176,28 @@ public class EventDetailFragment extends Fragment {
                     public void onResponse(Call<ApiService.ReviewsWrapper> call,
                                            Response<ApiService.ReviewsWrapper> response) {
                         if (!isAdded()) return;
+
+                        // ── DEBUG LOG: JSON grezzo delle recensioni ───────────────────────
+                        android.util.Log.d("DEBUG_REVIEW_JSON",
+                                "HTTP " + response.code()
+                                + " | body=" + new com.google.gson.Gson().toJson(response.body()));
+                        // ─────────────────────────────────────────────────────────────────
+
                         if (response.isSuccessful() && response.body() != null
                                 && response.body().reviews != null) {
                             List<Review> reviews = response.body().reviews;
+
+                            // ── DEBUG LOG: prima recensione ricevuta ───────────────────────
+                            if (!reviews.isEmpty()) {
+                                Review first = reviews.get(0);
+                                android.util.Log.d("DEBUG_REVIEW_JSON",
+                                        "Review[0] userId="       + first.getUserId()
+                                        + " | username="          + first.getUsername()
+                                        + " | profileImage="      + first.getProfileImage()
+                                        + " | rating="            + first.getRating());
+                            }
+                            // ─────────────────────────────────────────────────────────────
+
                             if (reviews.isEmpty() && status != null) {
                                 status.setText("Nessuna recensione per questo evento");
                                 status.setVisibility(View.VISIBLE);
@@ -173,7 +208,9 @@ public class EventDetailFragment extends Fragment {
                         }
                     }
                     @Override
-                    public void onFailure(Call<ApiService.ReviewsWrapper> call, Throwable t) {}
+                    public void onFailure(Call<ApiService.ReviewsWrapper> call, Throwable t) {
+                        android.util.Log.e("DEBUG_REVIEW_JSON", "Chiamata fallita: " + t.getMessage());
+                    }
                 });
     }
 

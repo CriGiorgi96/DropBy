@@ -23,10 +23,14 @@ public class Friend implements Serializable {
     @SerializedName("created_at")
     private String createdAt;
 
-    public int getFriendshipId() { return friendshipId; }
-    public int getUserId()       { return userId; }
-    public String getUsername()  { return username; }
-    public String getEmail()     { return email; }
-    public String getStatus()    { return status; }
-    public String getCreatedAt() { return createdAt; }
+    @SerializedName("profile_image")
+    private String profileImage;
+
+    public int getFriendshipId()    { return friendshipId; }
+    public int getUserId()          { return userId; }
+    public String getUsername()     { return username; }
+    public String getEmail()        { return email; }
+    public String getStatus()       { return status; }
+    public String getCreatedAt()    { return createdAt; }
+    public String getProfileImage() { return profileImage; }
 }
