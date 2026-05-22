@@ -180,7 +180,13 @@ def delete_location(location_id):
     """Dashboard — elimina una location (CASCADE su eventi e immagini associati)."""
     try:
         conn = Database().get_connection()
-        # Prima azzera location_id sugli eventi (SET NULL) oppure eliminali in cascata
+        # event_proposals non ha CASCADE: va eliminata prima degli eventi
+        conn.run(
+            "DELETE FROM event_proposals WHERE event_id IN "
+            "(SELECT id FROM events WHERE location_id = :id)",
+            id=location_id
+        )
+        # reviews, favorites, event_reminders, event_images hanno CASCADE → auto
         conn.run("DELETE FROM events WHERE location_id = :id", id=location_id)
         conn.run("DELETE FROM locations WHERE id = :id", id=location_id)
         conn.run("COMMIT")

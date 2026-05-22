@@ -319,7 +319,7 @@ public class TheaterDetailFragment extends Fragment {
         eventsStatusTextView.setText("Caricamento eventi...");
 
         ApiClient.getApiService()
-                .searchEvents(null, null, null, null, locationId)
+                .searchEvents(null, null, null, null, locationId, null, null, null)
                 .enqueue(new Callback<EventsResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<EventsResponse> call,

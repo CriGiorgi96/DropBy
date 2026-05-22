@@ -4,10 +4,10 @@ from helpers.format_helper import dict_format, dict_format_single
 
 class EventRepository:
     @staticmethod
-    def search(city=None, category=None, date=None, query=None, location_id=None):
+    def search(city=None, category=None, date=None, query=None, location_id=None,
+               only_upcoming=False, start_date=None, end_date=None):
         db = Database()
         conn = db.get_connection()
-        # Query che aggrega le immagini per non dover fare query separate
         sql = """
             SELECT e.*,
                    l.name      AS location_name,
@@ -26,19 +26,25 @@ class EventRepository:
             WHERE 1=1
         """
         params = {}
+        if only_upcoming:
+            sql += " AND e.event_date >= CURRENT_DATE AND e.location_id IS NOT NULL"
         if city:
             sql += " AND LOWER(e.city) = LOWER(:city)"; params['city'] = city
         if category:
             sql += " AND LOWER(e.category) = LOWER(:cat)"; params['cat'] = category
         if date:
             sql += " AND e.event_date = :date"; params['date'] = date
+        if start_date:
+            sql += " AND e.event_date >= :start_date"; params['start_date'] = start_date
+        if end_date:
+            sql += " AND e.event_date <= :end_date"; params['end_date'] = end_date
         if query:
             sql += " AND (LOWER(e.title) LIKE LOWER(:q) OR LOWER(e.description) LIKE LOWER(:q))"
             params['q'] = f"%{query}%"
         if location_id:
             sql += " AND e.location_id = :loc_id"; params['loc_id'] = location_id
-        
-        sql += " ORDER BY e.event_date DESC"
+
+        sql += " ORDER BY e.event_date " + ("ASC" if only_upcoming else "DESC")
         rows = conn.run(sql, **params)
         return dict_format(conn, rows)
 

@@ -114,9 +114,12 @@ public class ProfileSettingsFragment extends Fragment {
 
         loadProfileImagePreview(prefs);
 
+        Button btnDeleteAccount = view.findViewById(R.id.btnDeleteAccount);
+
         btnChangeImg.setOnClickListener(v -> showImageChoiceMenu());
         btnBack.setOnClickListener(v -> requireActivity().getSupportFragmentManager().popBackStack());
         btnSave.setOnClickListener(v -> onSaveClicked(prefs));
+        btnDeleteAccount.setOnClickListener(v -> showDeleteAccountDialog(prefs));
     }
 
     @Override
@@ -342,6 +345,74 @@ public class ProfileSettingsFragment extends Fragment {
 
         Toast.makeText(requireContext(), "Profilo aggiornato", Toast.LENGTH_SHORT).show();
         requireActivity().getSupportFragmentManager().popBackStack();
+    }
+
+    // ── ELIMINAZIONE ACCOUNT ─────────────────────────────────────────────────
+
+    private void showDeleteAccountDialog(SharedPreferences prefs) {
+        android.view.LayoutInflater inflater = android.view.LayoutInflater.from(requireContext());
+        android.view.View dialogView = inflater.inflate(R.layout.dialog_delete_account, null);
+
+        EditText etConfirm = dialogView.findViewById(R.id.etDeleteConfirm);
+
+        AlertDialog dialog = new AlertDialog.Builder(requireContext())
+                .setView(dialogView)
+                .setCancelable(false)
+                .create();
+
+        dialogView.findViewById(R.id.btnDeleteCancel).setOnClickListener(v -> dialog.dismiss());
+
+        dialogView.findViewById(R.id.btnDeleteConfirm).setOnClickListener(v -> {
+            String input = etConfirm.getText().toString().trim();
+            if (!"CONFERMA".equals(input)) {
+                Toast.makeText(requireContext(), "Parola di conferma errata", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            int userId = prefs.getInt("userId", -1);
+            if (userId == -1) {
+                Toast.makeText(requireContext(), "Sessione non valida", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            performDeleteAccount(userId, prefs, dialog);
+        });
+
+        dialog.show();
+    }
+
+    private void performDeleteAccount(int userId, SharedPreferences prefs, AlertDialog dialog) {
+        ApiClient.getApiService().deleteAccount(userId)
+                .enqueue(new Callback<com.example.dropby.models.GenericResponse>() {
+                    @Override
+                    public void onResponse(@NonNull Call<com.example.dropby.models.GenericResponse> call,
+                                           @NonNull Response<com.example.dropby.models.GenericResponse> response) {
+                        if (!isAdded()) return;
+                        if (response.isSuccessful()) {
+                            dialog.dismiss();
+                            prefs.edit().clear().apply();
+                            requireActivity()
+                                    .getSharedPreferences("app_settings", Context.MODE_PRIVATE)
+                                    .edit().clear().apply();
+                            Intent intent = new Intent(requireContext(),
+                                    com.example.dropby.AuthActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                                    | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(intent);
+                            requireActivity().finish();
+                        } else {
+                            Toast.makeText(requireContext(),
+                                    "Errore durante l'eliminazione dell'account",
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<com.example.dropby.models.GenericResponse> call,
+                                          @NonNull Throwable t) {
+                        if (isAdded()) {
+                            Toast.makeText(requireContext(), "Errore di rete", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 
     // ── IMMAGINE PROFILO ─────────────────────────────────────────────────────

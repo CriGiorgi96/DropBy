@@ -13,6 +13,11 @@ class NotificationsService:
         return {'message': 'Notifica segnata come letta'}
 
     @staticmethod
+    def mark_all_read(user_id):
+        NotificationRepository.mark_all_read(user_id)
+        return {'message': 'Tutte le notifiche segnate come lette'}
+
+    @staticmethod
     def delete_notification(notification_id, user_id):
         NotificationRepository.delete(notification_id, user_id)
         return {'message': 'Notifica eliminata'}

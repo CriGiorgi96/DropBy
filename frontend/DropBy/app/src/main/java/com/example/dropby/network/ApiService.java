@@ -40,11 +40,14 @@ public interface ApiService {
 
     @GET("api/events/search")
     Call<EventsResponse> searchEvents(
-            @Query("city")        String city,
-            @Query("category")    String category,
-            @Query("date")        String date,
-            @Query("query")       String query,
-            @Query("location_id") Integer locationId
+            @Query("city")          String city,
+            @Query("category")      String category,
+            @Query("date")          String date,
+            @Query("query")         String query,
+            @Query("location_id")   Integer locationId,
+            @Query("only_upcoming") Boolean onlyUpcoming,
+            @Query("start_date")    String startDate,
+            @Query("end_date")      String endDate
     );
 
     @GET("api/events/{eventId}")
@@ -90,6 +93,11 @@ public interface ApiService {
     @Multipart
     @POST("api/auth/upload-avatar")
     Call<Map<String, Object>> uploadAvatar(@Part okhttp3.MultipartBody.Part file);
+
+    // ── ACCOUNT ──────────────────────────────────────────────────────────────
+
+    @DELETE("api/users/{userId}")
+    Call<GenericResponse> deleteAccount(@Path("userId") int userId);
 
     // ── PROFILI PUBBLICI UTENTE ───────────────────────────────────────────────
 

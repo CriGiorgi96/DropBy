@@ -167,7 +167,7 @@ public class HomeFragment extends Fragment {
 
         ApiService apiService = ApiClient.getApiService();
         // AGGIUNTO IL QUINTO PARAMETRO (null) PER location_id
-        apiService.searchEvents(null, null, null, null, null)
+        apiService.searchEvents(null, null, null, null, null, null, null, null)
                 .enqueue(new Callback<EventsResponse>() {
                     @Override
                     public void onResponse(Call<EventsResponse> call, Response<EventsResponse> response) {

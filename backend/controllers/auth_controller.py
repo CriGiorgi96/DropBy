@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify, current_app
 from services.auth_service import AuthService
+from repositories.auth_repository import AuthRepository
 from utils.decorators import token_required
 import traceback
 import os
@@ -167,9 +168,20 @@ def upload_avatar(current_user):
         if ext not in ('.jpg', '.jpeg', '.png', '.webp', '.gif'):
             return jsonify({'error': 'Formato file non supportato'}), 400
 
-        filename = f"avatar_{current_user['user_id']}_{uuid.uuid4().hex[:8]}{ext}"
         avatars_dir = os.path.join(current_app.static_folder, 'images', 'avatars')
         os.makedirs(avatars_dir, exist_ok=True)
+
+        # Elimina il vecchio avatar caricato dal server (se presente)
+        old_user = AuthRepository.find_by_id(current_user['user_id'])
+        if old_user:
+            old_image = old_user.get('profile_image') or ''
+            if any(old_image.lower().endswith(e)
+                   for e in ('.jpg', '.jpeg', '.png', '.webp', '.gif')):
+                old_path = os.path.join(avatars_dir, old_image)
+                if os.path.exists(old_path):
+                    os.remove(old_path)
+
+        filename = f"avatar_{current_user['user_id']}_{uuid.uuid4().hex[:8]}{ext}"
         file.save(os.path.join(avatars_dir, filename))
 
         AuthService.update_user_profile(current_user['user_id'], {'profile_image': filename})

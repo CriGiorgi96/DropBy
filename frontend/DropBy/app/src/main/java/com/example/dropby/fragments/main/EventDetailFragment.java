@@ -314,7 +314,7 @@ public class EventDetailFragment extends Fragment {
     private void loadReplicasForSpinners(Spinner locationSpinner, Spinner dateSpinner,
                                          View dateLabel, int[] selectedEventId, Button submitBtn) {
         ApiClient.getApiService()
-                .searchEvents(null, null, null, event.getTitle(), null)
+                .searchEvents(null, null, null, event.getTitle(), null, null, null, null)
                 .enqueue(new Callback<EventsResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<EventsResponse> call,
@@ -493,7 +493,7 @@ public class EventDetailFragment extends Fragment {
         }
 
         ApiClient.getApiService()
-                .searchEvents(null, null, null, event.getTitle(), null)
+                .searchEvents(null, null, null, event.getTitle(), null, null, null, null)
                 .enqueue(new Callback<EventsResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<EventsResponse> call,

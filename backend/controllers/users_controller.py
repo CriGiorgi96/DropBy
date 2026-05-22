@@ -180,6 +180,13 @@ def delete_user(user_id):
     """Dashboard — elimina un utente (CASCADE su favoriti, recensioni, ecc.)."""
     try:
         conn = Database().get_connection()
+        conn.run("DELETE FROM friendships WHERE user_id_1 = :id OR user_id_2 = :id", id=user_id)
+        conn.run("DELETE FROM reviews WHERE user_id = :id", id=user_id)
+        conn.run("DELETE FROM favorites WHERE user_id = :id", id=user_id)
+        conn.run("DELETE FROM event_responses WHERE user_id = :id", id=user_id)
+        conn.run("DELETE FROM event_reminders WHERE user_id = :id", id=user_id)
+        conn.run("DELETE FROM notifications WHERE user_id = :id", id=user_id)
+        conn.run("DELETE FROM event_proposals WHERE from_user_id = :id OR to_user_id = :id", id=user_id)
         conn.run("DELETE FROM users WHERE id = :id", id=user_id)
         conn.run("COMMIT")
         return jsonify({'message': 'Utente eliminato'}), 200

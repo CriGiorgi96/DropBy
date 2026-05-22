@@ -171,9 +171,12 @@ def update_event(event_id):
 
 @events_bp.route('/<int:event_id>', methods=['DELETE'])
 def delete_event(event_id):
-    """Dashboard — elimina un evento (CASCADE su event_images, favorites, reviews)."""
+    """Dashboard — elimina un evento con pulizia manuale delle tabelle senza CASCADE."""
     try:
         conn = Database().get_connection()
+        # event_proposals non ha ON DELETE CASCADE su events(id)
+        conn.run("DELETE FROM event_proposals WHERE event_id = :id", id=event_id)
+        # reviews, favorites, event_reminders, event_images hanno CASCADE → auto
         conn.run("DELETE FROM events WHERE id = :id", id=event_id)
         conn.run("COMMIT")
         return jsonify({'message': 'Evento eliminato'}), 200
@@ -185,14 +188,20 @@ def delete_event(event_id):
 @events_bp.route('/search', methods=['GET'])
 def search_events():
     try:
-        city        = request.args.get('city')
-        category    = request.args.get('category')
-        date        = request.args.get('date')
-        query       = request.args.get('query')
-        loc_raw     = request.args.get('location_id')
-        location_id = int(loc_raw) if loc_raw and loc_raw.isdigit() else None
+        city          = request.args.get('city')
+        category      = request.args.get('category')
+        date          = request.args.get('date')
+        query         = request.args.get('query')
+        loc_raw       = request.args.get('location_id')
+        location_id   = int(loc_raw) if loc_raw and loc_raw.isdigit() else None
+        only_upcoming = request.args.get('only_upcoming', 'false').lower() == 'true'
+        start_date    = request.args.get('start_date') or None
+        end_date      = request.args.get('end_date') or None
 
-        events = EventService.search_events(city, category, date, query, location_id)
+        events = EventService.search_events(
+            city, category, date, query, location_id,
+            only_upcoming, start_date, end_date
+        )
         return jsonify({'events': events}), 200
     except Exception:
         traceback.print_exc()

@@ -24,16 +24,30 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Barra di Ricerca -->
+    <!-- CheckBox sopra la barra di ricerca, attivo di default -->
+    <CheckBox
+        android:id="@+id/checkOnlyUpcoming"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:checked="true"
+        android:text="Mostra solo gli eventi in programma"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_events" />
+
+    <!-- Barra di ricerca -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/searchContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="12dp"
         android:background="@android:drawable/editbox_background_normal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_events">
+        app:layout_constraintTop_toBottomOf="@id/checkOnlyUpcoming">
 
         <EditText
             android:id="@+id/editSearch"
@@ -64,6 +78,59 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <!-- Pannello filtri: si espande in base alla selezione -->
+    <LinearLayout
+        android:id="@+id/filterPanel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/searchContainer">
+
+        <Spinner
+            android:id="@+id/spinnerFilterType"
+            android:layout_width="match_parent"
+            android:layout_height="48dp" />
+
+        <!-- Spinner generi, visibile solo con "Cerca per genere" -->
+        <Spinner
+            android:id="@+id/spinnerGenre"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="4dp"
+            android:visibility="gone" />
+
+        <!-- Pulsanti data, visibili solo con "Cerca per data" -->
+        <LinearLayout
+            android:id="@+id/dateContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <Button
+                android:id="@+id/btnDateFrom"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
+                android:layout_weight="1"
+                android:text="Da: --" />
+
+            <Button
+                android:id="@+id/btnDateTo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_weight="1"
+                android:text="A: --" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
     <TextView
         android:id="@+id/eventsStatusText"
         android:layout_width="0dp"
@@ -76,7 +143,7 @@
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/searchContainer"
+        app:layout_constraintTop_toBottomOf="@id/filterPanel"
         tools:text="Backend non raggiungibile" />
 
     <androidx.recyclerview.widget.RecyclerView

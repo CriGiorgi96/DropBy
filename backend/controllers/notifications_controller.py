@@ -32,6 +32,17 @@ def mark_read(current_user, notif_id):
         result = NotificationsService.mark_read(notif_id, current_user['user_id'])
         return jsonify(result), 200
     except Exception as e:
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
+
+@notifications_bp.route('/read-all', methods=['PUT'])
+@token_required
+def mark_all_read(current_user):
+    try:
+        result = NotificationsService.mark_all_read(current_user['user_id'])
+        return jsonify(result), 200
+    except Exception as e:
+        traceback.print_exc()
         return jsonify({'error': str(e)}), 500
 
 # ---- Promemoria eventi ----
