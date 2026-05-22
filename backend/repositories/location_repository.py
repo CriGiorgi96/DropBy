@@ -27,13 +27,16 @@ class LocationRepository:
     """
 
     @staticmethod
-    def find_all(city=None, region=None):
+    def find_all(city=None, region=None, name=None):
         db   = Database()
         conn = db.get_connection()
 
         query  = LocationRepository._BASE_SELECT
         params = {}
 
+        if name:
+            query += " AND LOWER(l.name) LIKE LOWER(:name)"
+            params['name'] = f'%{name}%'
         if city:
             query += " AND LOWER(l.city) = LOWER(:city)"
             params['city'] = city

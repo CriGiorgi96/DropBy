@@ -4,8 +4,8 @@ from repositories.location_repository import LocationRepository
 class LocationService:
 
     @staticmethod
-    def get_locations(city=None, region=None):
-        return LocationRepository.find_all(city, region)
+    def get_locations(city=None, region=None, name=None):
+        return LocationRepository.find_all(city, region, name=name)
 
     @staticmethod
     def get_location_detail(location_id):

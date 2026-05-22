@@ -75,7 +75,7 @@ app.register_blueprint(reminders_bp, url_prefix='/api/reminders')
 from controllers.users_controller import users_bp
 app.register_blueprint(users_bp, url_prefix='/api/users')
 
-@app.route('/')
+@app.route('/api/endpoints')
 def home():
     return jsonify({
         "status": "online",
@@ -97,6 +97,11 @@ def home():
 def health():
     return jsonify({"status": "healthy"})
 
+@app.route('/')
+def index():
+    return app.send_static_file('dashboard.html')
+
 if __name__ == '__main__':
     print("🚀 Server avviato con tutti i moduli")
     app.run(host='0.0.0.0', port=5000, debug=True)
+    
