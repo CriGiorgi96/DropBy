@@ -9,7 +9,7 @@
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingTop="?attr/actionBarSize" />
+        android:paddingTop="@dimen/toolbar_height" />
 
     <FrameLayout
         android:id="@+id/leftDrawerPanel"
@@ -23,6 +23,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@android:color/transparent"
+            android:paddingTop="100dp"
+            android:clipToPadding="false"
             app:menu="@menu/drawer_menu" />
 
     </FrameLayout>
@@ -41,6 +43,11 @@
             android:layoutDirection="rtl"
             android:textDirection="ltr"
             android:background="@android:color/transparent"
+            android:paddingTop="100dp"
+            android:clipToPadding="false"
+            android:theme="@style/DropBy.RightNavTheme"
+            app:itemIconSize="20dp"
+            app:itemTextAppearance="@style/DropBy.NavItemText"
             app:headerLayout="@layout/nav_header_right"
             app:menu="@menu/drawer_right_menu" />
     </FrameLayout>
@@ -51,6 +58,7 @@
         android:layout_height="@dimen/toolbar_height"
         android:padding="0dp"
         android:background="@drawable/toolbar"
+        app:elevation="0dp"
         app:contentInsetStart="0dp"
         app:contentInsetEnd="0dp"
         app:contentInsetLeft="0dp"
@@ -78,7 +86,7 @@
             <ImageView
                 android:id="@+id/toolbarLogo"
                 android:layout_width="wrap_content"
-                android:layout_height="50dp"
+                android:layout_height="42dp"
                 android:adjustViewBounds="true"
                 android:clickable="true"
                 android:focusable="true"

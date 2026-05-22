@@ -1,8 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!-- Preesistente: avatar circolare -->
     <style name="CircleImage">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
+    </style>
+
+    <!-- Card standard: contrasto scuro fa il lavoro, elevazione minima -->
+    <style name="DropBy.Card" parent="Widget.MaterialComponents.CardView">
+        <item name="cardCornerRadius">@dimen/card_corner_radius</item>
+        <item name="cardElevation">@dimen/card_elevation</item>
+        <item name="cardBackgroundColor">@color/db_surface</item>
+    </style>
+
+    <!-- Card hero / banner con angoli più ampi -->
+    <style name="DropBy.Card.Large">
+        <item name="cardCornerRadius">@dimen/card_corner_radius_large</item>
+    </style>
+
+    <!-- Pulsante primario: oro morbido con testo quasi-nero (contrasto 7:1) -->
+    <style name="DropBy.Button.Primary" parent="Widget.MaterialComponents.Button">
+        <item name="cornerRadius">@dimen/btn_corner_radius</item>
+        <item name="backgroundTint">@color/db_accent</item>
+        <item name="android:textColor">@color/db_background</item>
+        <item name="android:letterSpacing">0.02</item>
+    </style>
+
+    <!-- Pulsante outline su sfondo scuro -->
+    <style name="DropBy.Button.Outline" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="cornerRadius">@dimen/btn_corner_radius</item>
+        <item name="strokeColor">@color/db_accent</item>
+        <item name="android:textColor">@color/db_accent</item>
+    </style>
+
+    <!-- Stili di testo -->
+    <style name="DropBy.TextAppearance.Title" parent="TextAppearance.AppCompat.Large">
+        <item name="android:textColor">@color/db_text_primary</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="DropBy.TextAppearance.Subtitle" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:textColor">@color/db_text_secondary</item>
+    </style>
+
+    <style name="DropBy.TextAppearance.Caption" parent="TextAppearance.AppCompat.Small">
+        <item name="android:textColor">@color/db_text_hint</item>
+    </style>
+
+    <!-- ThemeOverlay per Spinner: forza testo crema su sfondo scuro -->
+    <style name="DropBy.SpinnerTheme" parent="ThemeOverlay.MaterialComponents">
+        <item name="android:textColorPrimary">@color/db_text_primary</item>
+        <item name="android:textColorSecondary">@color/db_text_secondary</item>
+        <item name="android:textColor">@color/db_text_primary</item>
+    </style>
+
+    <!-- Testo voci del drawer destro: 14sp crema -->
+    <style name="DropBy.NavItemText">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/db_text_primary</item>
+    </style>
+
+    <!-- Titoli sezione drawer (Account, Social): 11sp grigio ALL_CAPS -->
+    <style name="DropBy.NavSubheader">
+        <item name="android:textSize">11sp</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">@color/db_text_secondary</item>
+        <item name="android:letterSpacing">0.08</item>
+    </style>
+
+    <!-- ThemeOverlay per NavigationView destra: sovrascrive textAppearanceOverline per subheader -->
+    <style name="DropBy.RightNavTheme" parent="ThemeOverlay.MaterialComponents">
+        <item name="textAppearanceOverline">@style/DropBy.NavSubheader</item>
+        <item name="android:textColorSecondary">@color/db_text_secondary</item>
     </style>
 
 </resources>

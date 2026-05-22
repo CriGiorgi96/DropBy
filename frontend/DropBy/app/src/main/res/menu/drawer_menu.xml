@@ -31,8 +31,5 @@
         android:icon="@android:drawable/ic_menu_help"
         android:title="@string/faq_navbar" />
 
-    <item android:id="@+id/nav_logout"
-        android:title="@string/logout" />
-
 
 </menu>

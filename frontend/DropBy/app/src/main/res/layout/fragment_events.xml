@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFF8F5FC"
+    android:background="@color/db_background"
     android:paddingStart="16dp"
     android:paddingEnd="16dp"
     android:paddingBottom="16dp">
@@ -17,7 +17,7 @@
         android:layout_marginTop="24dp"
         android:text="Prossimi spettacoli"
         android:textAlignment="viewStart"
-        android:textColor="@color/black"
+        android:textColor="@color/db_text_primary"
         android:textSize="26sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -32,7 +32,7 @@
         android:layout_marginTop="12dp"
         android:checked="true"
         android:text="Mostra solo gli eventi in programma"
-        android:textColor="@color/black"
+        android:textColor="@color/db_text_secondary"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -44,7 +44,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:background="@android:drawable/editbox_background_normal"
+        android:background="@drawable/bg_search_bar"
+        android:clipToOutline="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/checkOnlyUpcoming">
@@ -60,6 +61,8 @@
             android:paddingStart="12dp"
             android:paddingEnd="8dp"
             android:singleLine="true"
+            android:textColor="#F5F5DC"
+            android:textColorHint="#9E9E9E"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/btnSearch"
             app:layout_constraintStart_toStartOf="parent"
@@ -71,6 +74,7 @@
             android:layout_height="48dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/search_button_desc"
+            android:tint="@color/db_text_secondary"
             android:src="@drawable/ic_search"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -92,7 +96,12 @@
         <Spinner
             android:id="@+id/spinnerFilterType"
             android:layout_width="match_parent"
-            android:layout_height="48dp" />
+            android:layout_height="48dp"
+            android:background="@drawable/bg_spinner_dark"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:popupBackground="@color/db_surface_variant"
+            android:theme="@style/DropBy.SpinnerTheme" />
 
         <!-- Spinner generi, visibile solo con "Cerca per genere" -->
         <Spinner
@@ -100,6 +109,11 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_marginTop="4dp"
+            android:background="@drawable/bg_spinner_dark"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:popupBackground="@color/db_surface_variant"
+            android:theme="@style/DropBy.SpinnerTheme"
             android:visibility="gone" />
 
         <!-- Pulsanti data, visibili solo con "Cerca per data" -->
@@ -113,6 +127,7 @@
 
             <Button
                 android:id="@+id/btnDateFrom"
+                style="@style/DropBy.Button.Outline"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="4dp"
@@ -121,6 +136,7 @@
 
             <Button
                 android:id="@+id/btnDateTo"
+                style="@style/DropBy.Button.Outline"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
@@ -138,7 +154,7 @@
         android:layout_marginTop="8dp"
         android:text="Caricamento eventi..."
         android:textAlignment="viewStart"
-        android:textColor="#FF6A6274"
+        android:textColor="@color/db_text_secondary"
         android:textSize="14sp"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"

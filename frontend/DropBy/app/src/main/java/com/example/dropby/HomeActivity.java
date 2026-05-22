@@ -173,7 +173,6 @@ public class HomeActivity extends AppCompatActivity {
             else if (id == R.id.nav_map)       target = new MapFragment();
             else if (id == R.id.nav_settings)  target = new SettingsFragment();
             else if (id == R.id.nav_faq)       target = new FaqFragment();
-            else if (id == R.id.nav_logout)    { logout(); return true; }
 
             if (target != null) {
                 openFragment(target, false);
@@ -214,7 +213,6 @@ public class HomeActivity extends AppCompatActivity {
         setMenuItemVisible(menu, R.id.nav_right_proposals,     isLogged);
         setMenuItemVisible(menu, R.id.nav_right_notifications, isLogged);
         setMenuItemVisible(menu, R.id.nav_right_reminders,     isLogged); // <--- Salvato!
-        setMenuItemVisible(menu, R.id.nav_right_settings,      isLogged);
         setMenuItemVisible(menu, R.id.nav_right_logout,        isLogged);
 
         // Submenu headers
@@ -238,7 +236,6 @@ public class HomeActivity extends AppCompatActivity {
                 else if (id == R.id.nav_right_proposals)     target = new ProposalsFragment();
                 else if (id == R.id.nav_right_notifications) target = new NotificationsFragment();
                 else if (id == R.id.nav_right_reminders)     target = new NotificationManagementFragment(); // <--- Salvato!
-                else if (id == R.id.nav_right_settings)      target = new SettingsFragment();
                 else if (id == R.id.nav_right_logout)        { logout(); return true; }
             } else {
                 if      (id == R.id.nav_right_login)    { launchAuth("login");    return true; }

@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!-- ── Colori ereditati — NON rimuovere, usati nei layout esistenti ──────── -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="link_color">#0000EE</color>
@@ -8,4 +10,29 @@
     <color name="theater_velvet">#8B1020</color>
     <color name="theater_gold">#D6B56D</color>
     <color name="theater_surface">#FFFFF8F6</color>
+
+    <!-- ── Palette DropBy — Gala Teatrale Notturno ───────────────────────────
+         Nero profondo + oro ambrato: fa risaltare i drappeggi rossi e il logo. -->
+
+    <!-- Sfondi -->
+    <color name="db_background">#121212</color>      <!-- antracite profondo, stile Spotify    -->
+    <color name="db_surface">#1E1E1E</color>          <!-- card, dialog: si stacca dallo sfondo -->
+    <color name="db_surface_variant">#252525</color>  <!-- input, chip, tag                     -->
+
+    <!-- Testi -->
+    <color name="db_text_primary">#F5F5DC</color>    <!-- crema/avorio: morbido, elegante       -->
+    <color name="db_text_secondary">#9E9E9E</color>  <!-- grigio medio per metadati             -->
+    <color name="db_text_hint">#616161</color>        <!-- placeholder / hint                    -->
+
+    <!-- Accent — oro morbido del logo: elegante su sfondo nero -->
+    <color name="db_accent">#DFB76C</color>           <!-- oro caldo: pulsanti, badge, link      -->
+    <color name="db_accent_dark">#C89A4E</color>      <!-- oro scuro: pressed / variante         -->
+    <color name="db_accent_light">#231800</color>     <!-- badge/chip: sfondo oro molto scuro    -->
+
+    <!-- Utility -->
+    <color name="db_divider">#2C2C2C</color>          <!-- separatori quasi invisibili           -->
+    <color name="db_error">#CF6679</color>            <!-- rosso attenuato per dark mode         -->
+    <color name="db_success">#81C784</color>          <!-- verde attenuato per dark mode         -->
+    <color name="db_ripple">#1ADFB76C</color>         <!-- ripple oro, 10 % opacità              -->
+
 </resources>
