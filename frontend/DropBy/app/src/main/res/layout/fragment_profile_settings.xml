@@ -13,6 +13,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/toolbar_height"
         android:padding="16dp">
 
         <androidx.constraintlayout.widget.Guideline
@@ -29,12 +30,15 @@
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.9" />
 
-        <Button
+        <ImageButton
             android:id="@+id/btnBackToSettings"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/back_button"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:scaleType="fitCenter"
+            android:src="@drawable/x"
 
+            android:contentDescription="@string/back_button"
             app:layout_constraintStart_toStartOf="@id/guidelineStart"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -114,7 +118,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Cambia password"
+            android:text="@string/change_password"
             android:textColor="@color/black"
             android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
@@ -125,7 +129,7 @@
             android:id="@+id/editCurrentPassword"
             android:layout_width="0dp"
             android:layout_height="50dp"
-            android:hint="Password corrente"
+            android:hint="@string/current_password"
             android:inputType="textPassword"
             app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
             app:layout_constraintStart_toStartOf="@id/guidelineStart"
@@ -135,7 +139,7 @@
             android:id="@+id/editNewPassword"
             android:layout_width="0dp"
             android:layout_height="50dp"
-            android:hint="Nuova password"
+            android:hint="@string/new_password"
             android:inputType="textPassword"
             app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
             app:layout_constraintStart_toStartOf="@id/guidelineStart"
@@ -145,7 +149,7 @@
             android:id="@+id/editConfirmPassword"
             android:layout_width="0dp"
             android:layout_height="50dp"
-            android:hint="Conferma nuova password"
+            android:hint="@string/confirm_password"
             android:inputType="textPassword"
             app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
             app:layout_constraintStart_toStartOf="@id/guidelineStart"
@@ -166,7 +170,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Privacy"
+            android:text="@string/privacy"
             android:textColor="@color/black"
             android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
@@ -178,7 +182,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:text="Mantieni privati i miei preferiti"
+            android:text="@string/keep_favourites_private"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
             app:layout_constraintStart_toStartOf="@id/guidelineStart"
@@ -189,7 +193,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Mantieni private le mie recensioni"
+            android:text="@string/keep_reviews_private"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
             app:layout_constraintStart_toStartOf="@id/guidelineStart"
@@ -221,7 +225,11 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="24dp"
+<<<<<<< HEAD
+            android:text="@string/delete_account"
+=======
             android:text="Elimina Account"
+>>>>>>> 38f240ef1fd1bc20962ad511f9663bda2303afa6
             app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
             app:layout_constraintStart_toStartOf="@id/guidelineStart"
             app:layout_constraintTop_toBottomOf="@id/dividerDeleteAccount" />

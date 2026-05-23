@@ -14,8 +14,8 @@
         android:id="@+id/text_events"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="Prossimi spettacoli"
+        android:layout_marginTop="@dimen/toolbar_height"
+        android:text="@string/next_shows"
         android:textAlignment="viewStart"
         android:textColor="@color/db_text_primary"
         android:textSize="26sp"
@@ -31,21 +31,34 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:checked="true"
+<<<<<<< HEAD
+        android:text="@string/show_only_upcoming"
+=======
         android:text="Mostra solo gli eventi in programma"
+>>>>>>> 38f240ef1fd1bc20962ad511f9663bda2303afa6
         android:textColor="@color/db_text_secondary"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/text_events" />
 
+<<<<<<< HEAD
+    <!-- Barra di Ricerca -->
+=======
     <!-- Barra di ricerca -->
+>>>>>>> 38f240ef1fd1bc20962ad511f9663bda2303afa6
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/searchContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+<<<<<<< HEAD
+        android:layout_marginTop="16dp"
+        android:background="@drawable/bg_search_bar"
+=======
         android:layout_marginTop="12dp"
         android:background="@drawable/bg_search_bar"
         android:clipToOutline="true"
+>>>>>>> 38f240ef1fd1bc20962ad511f9663bda2303afa6
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/checkOnlyUpcoming">
@@ -152,15 +165,20 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="Caricamento eventi..."
+        android:text="@string/eventsStatusText"
         android:textAlignment="viewStart"
         android:textColor="@color/db_text_secondary"
         android:textSize="14sp"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+<<<<<<< HEAD
+        app:layout_constraintTop_toBottomOf="@+id/searchContainer"
+        tools:text="@string/backend_not_reachable" />
+=======
         app:layout_constraintTop_toBottomOf="@id/filterPanel"
         tools:text="Backend non raggiungibile" />
+>>>>>>> 38f240ef1fd1bc20962ad511f9663bda2303afa6
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
