@@ -82,7 +82,7 @@
             android:layout_width="wrap_content"
             android:layout_height="36dp"
             android:backgroundTint="#7B1FA2"
-            android:text="+ Aggiungi"
+            android:text="@string/add"
             android:textColor="@android:color/white"
             android:textSize="12sp"
             android:visibility="gone" />

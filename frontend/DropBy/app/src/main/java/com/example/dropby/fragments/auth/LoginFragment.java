@@ -8,6 +8,7 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -37,7 +38,7 @@ public class LoginFragment extends Fragment {
         EditText    etPassword     = view.findViewById(R.id.etPassword);
         Button      btnLogin       = view.findViewById(R.id.btnLogin);
         Button      btnGoRegister  = view.findViewById(R.id.btnGoRegister);
-        Button      btnBackToStart = view.findViewById(R.id.btnBackToStart);
+        ImageButton btnBackToStart = view.findViewById(R.id.btnBackToStart);
         ProgressBar progressBar    = view.findViewById(R.id.progressBar);
 
         btnBackToStart.setOnClickListener(v ->

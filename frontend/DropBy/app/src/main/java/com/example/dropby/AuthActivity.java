@@ -3,6 +3,7 @@ package com.example.dropby;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -10,14 +11,17 @@ import com.example.dropby.fragments.auth.LoginFragment;
 import com.example.dropby.fragments.auth.RegisterFragment;
 import com.example.dropby.fragments.auth.StartFragment;
 
+import androidx.core.splashscreen.SplashScreen;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 public class AuthActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SplashScreen.installSplashScreen(this);
+
         super.onCreate(savedInstanceState);
 
         // Auto-login: se il token è già salvato salta la schermata di autenticazione
@@ -30,6 +34,21 @@ public class AuthActivity extends AppCompatActivity {
         }
 
         setContentView(R.layout.activity_auth);
+
+        View authContainer = findViewById(R.id.auth_fragment_container);
+
+        ViewCompat.setOnApplyWindowInsetsListener(authContainer, (view, insets) -> {
+            int statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top;
+
+            view.setPadding(
+                    view.getPaddingLeft(),
+                    statusBarHeight,
+                    view.getPaddingRight(),
+                    view.getPaddingBottom()
+            );
+
+            return insets;
+        });
 
         // Carica StartFragment solo al primo avvio, non al cambio di configurazione
         if (savedInstanceState == null) {

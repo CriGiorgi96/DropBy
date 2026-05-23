@@ -8,15 +8,19 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/toolbar_height"
         android:orientation="vertical"
         android:padding="16dp">
 
         <!-- Pulsante indietro -->
-        <Button
+        <ImageButton
             android:id="@+id/btnUserDetailsBack"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/back_button" />
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:scaleType="fitCenter"
+            android:src="@drawable/x"
+            android:contentDescription="@string/back_button" />
 
         <!-- Avatar grande -->
         <com.google.android.material.imageview.ShapeableImageView
@@ -46,7 +50,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:text="Preferiti"
+            android:text="@string/favourites"
             android:textColor="#1A1A2E"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -62,7 +66,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="8dp"
-            android:text="Questo utente ha scelto di mantenere privati i suoi preferiti."
+            android:text="@string/user_keeps_favourites_private"
             android:textColor="#777777"
             android:textSize="14sp"
             android:visibility="gone" />
@@ -79,7 +83,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="8dp"
-            android:text="Nessun preferito salvato."
+            android:text="@string/no_favourites_saved"
             android:textColor="#777777"
             android:textSize="14sp"
             android:visibility="gone" />
@@ -90,7 +94,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:text="Recensioni"
+            android:text="@string/reviews_title"
             android:textColor="#1A1A2E"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -106,7 +110,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="8dp"
-            android:text="Questo utente ha scelto di mantenere private le sue recensioni."
+            android:text="@string/user_keeps_reviews_private"
             android:textColor="#777777"
             android:textSize="14sp"
             android:visibility="gone" />
@@ -123,7 +127,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="8dp"
-            android:text="Nessuna recensione scritta."
+            android:text="@string/no_reviews_written"
             android:textColor="#777777"
             android:textSize="14sp"
             android:visibility="gone" />

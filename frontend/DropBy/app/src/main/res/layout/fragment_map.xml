@@ -12,16 +12,17 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="12dp"
+        app:cardBackgroundColor="#FFFFFF"
         app:cardCornerRadius="16dp"
         app:cardElevation="6dp"
-        app:cardBackgroundColor="#FFFFFF"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/toolbar_height"
             android:orientation="vertical"
             android:padding="12dp">
 
@@ -35,7 +36,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:text="Raggio: 50 km"
+                android:text="@string/default_radius"
                 android:textColor="#6A6274"
                 android:textSize="13sp"
                 android:visibility="gone" />
@@ -57,7 +58,7 @@
                 android:layout_height="44dp"
                 android:layout_marginTop="10dp"
                 android:backgroundTint="#7B1FA2"
-                android:text="Cerca teatri"
+                android:text="@string/search_theatres"
                 android:textColor="#FFFFFF"
                 android:textSize="14sp" />
 

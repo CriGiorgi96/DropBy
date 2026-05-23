@@ -9,6 +9,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
         android:orientation="vertical"
         android:paddingBottom="18dp">
 
@@ -50,7 +51,7 @@
                         android:id="@+id/featuredLabelText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="In evidenza"
+                        android:text="@string/highlights"
                         android:textColor="@android:color/white"
                         android:textSize="13sp"
                         android:textStyle="bold" />
@@ -81,7 +82,7 @@
                         android:layout_height="48dp"
                         android:layout_marginTop="18dp"
                         android:minWidth="100dp"
-                        android:text="Acquista"
+                        android:text="@string/buy"
                         android:textSize="18sp" />
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -124,7 +125,7 @@
             android:paddingStart="16dp"
             android:paddingTop="12dp"
             android:paddingEnd="16dp"
-            android:text="Caricamento..."
+            android:text="@string/loading"
             android:textColor="#FF555555"
             android:textSize="14sp" />
 
@@ -134,7 +135,7 @@
             android:paddingStart="16dp"
             android:paddingTop="20dp"
             android:paddingEnd="16dp"
-            android:text="Categorie"
+            android:text="@string/categories"
             android:textColor="@color/black"
             android:textSize="21sp"
             android:textStyle="bold" />
@@ -186,7 +187,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="ESPLORA"
+                            android:text="@string/explore"
                             android:textColor="@android:color/white"
                             android:textSize="12sp" />
 
@@ -194,7 +195,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:text="Opera"
+                            android:text="@string/opera"
                             android:textColor="@android:color/white"
                             android:textSize="30sp" />
                     </LinearLayout>
@@ -239,7 +240,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="ESPLORA"
+                            android:text="@string/explore"
                             android:textColor="@android:color/white"
                             android:textSize="12sp" />
 
@@ -247,7 +248,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:text="Musical"
+                            android:text="@string/musical"
                             android:textColor="@android:color/white"
                             android:textSize="30sp" />
                     </LinearLayout>
@@ -292,7 +293,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="ESPLORA"
+                            android:text="@string/explore"
                             android:textColor="@android:color/white"
                             android:textSize="12sp" />
 
@@ -300,7 +301,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:text="Balletto"
+                            android:text="@string/ballet"
                             android:textColor="@android:color/white"
                             android:textSize="30sp" />
                     </LinearLayout>
@@ -345,7 +346,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="ESPLORA"
+                            android:text="@string/explore"
                             android:textColor="@android:color/white"
                             android:textSize="12sp" />
 
@@ -353,7 +354,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:text="Danza teatrale"
+                            android:text="@string/theatre_dance"
                             android:textColor="@android:color/white"
                             android:textSize="28sp" />
                     </LinearLayout>
@@ -398,7 +399,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="ESPLORA"
+                            android:text="@string/explore"
                             android:textColor="@android:color/white"
                             android:textSize="12sp" />
 
@@ -406,7 +407,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:text="Teatro contemporaneo"
+                            android:text="@string/contemporary_theatre"
                             android:textColor="@android:color/white"
                             android:textSize="25sp" />
                     </LinearLayout>

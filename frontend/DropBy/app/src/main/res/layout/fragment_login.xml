@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/loginLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -35,12 +36,15 @@
                 android:orientation="vertical"
                 app:layout_constraintGuide_percent="0.9" />
 
-            <Button
+            <ImageButton
                 android:id="@+id/btnBackToStart"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/back_button"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:scaleType="fitCenter"
+                android:src="@drawable/x"
 
+                android:contentDescription="@string/back_button"
                 app:layout_constraintStart_toStartOf="@id/guidelineStart"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -90,7 +94,8 @@
                 android:layout_height="wrap_content"
                 android:visibility="gone"
                 android:layout_gravity="center"
-                android:layout_marginBottom="8dp" />
+                android:layout_marginBottom="8dp"
+                tools:ignore="MissingConstraints" />
 
             <Button
                 android:id="@+id/btnLogin"

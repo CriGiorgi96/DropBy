@@ -8,6 +8,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/toolbar_height"
         android:padding="16dp"
         android:text="@string/favorites_title"
         android:textSize="20sp"

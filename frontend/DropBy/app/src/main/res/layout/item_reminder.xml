@@ -59,7 +59,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="32dp"
                 android:backgroundTint="#FFEBEE"
-                android:text="Rimuovi"
+                android:text="@string/delete"
                 android:textColor="#E53935"
                 android:textSize="12sp" />
 

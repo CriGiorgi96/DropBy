@@ -8,8 +8,9 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/toolbar_height"
         android:padding="20dp"
-        android:text="Le mie recensioni"
+        android:text="@string/reviews_title"
         android:textColor="#1A1A2E"
         android:textSize="20sp"
         android:textStyle="bold" />
@@ -20,7 +21,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="32dp"
-        android:text="Caricamento..."
+        android:text="@string/loading"
         android:textColor="#9E9E9E"
         android:textSize="14sp"
         android:visibility="visible" />

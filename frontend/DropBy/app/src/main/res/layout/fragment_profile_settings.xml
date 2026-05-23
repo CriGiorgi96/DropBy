@@ -225,11 +225,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="24dp"
-<<<<<<< HEAD
             android:text="@string/delete_account"
-=======
-            android:text="Elimina Account"
->>>>>>> 38f240ef1fd1bc20962ad511f9663bda2303afa6
             app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
             app:layout_constraintStart_toStartOf="@id/guidelineStart"
             app:layout_constraintTop_toBottomOf="@id/dividerDeleteAccount" />

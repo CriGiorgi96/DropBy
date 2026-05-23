@@ -92,7 +92,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="32dp"
                 android:backgroundTint="#FFEBEE"
-                android:text="Elimina"
+                android:text="@string/delete"
                 android:textColor="#C62828"
                 android:textSize="12sp"
                 android:padding="6dp" />

@@ -35,11 +35,15 @@
                 android:orientation="vertical"
                 app:layout_constraintGuide_percent="0.9" />
 
-            <Button
+            <ImageButton
                 android:id="@+id/btnBackToStart"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/back_button"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:scaleType="fitCenter"
+                android:src="@drawable/x"
+
+                android:contentDescription="@string/back_button"
                 app:layout_constraintStart_toStartOf="@id/guidelineStart"
                 app:layout_constraintTop_toTopOf="parent" />
 

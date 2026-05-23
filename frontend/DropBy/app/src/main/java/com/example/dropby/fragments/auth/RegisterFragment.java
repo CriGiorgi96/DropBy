@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
@@ -97,7 +98,7 @@ public class RegisterFragment extends Fragment {
 
         Button btnRegister    = view.findViewById(R.id.btnRegister);
         Button btnGoLogin     = view.findViewById(R.id.btnGoLogin);
-        Button btnBackToStart = view.findViewById(R.id.btnBackToStart);
+        ImageButton btnBackToStart = view.findViewById(R.id.btnBackToStart);
 
         ProgressBar progressBar = view.findViewById(R.id.progressBar);
 

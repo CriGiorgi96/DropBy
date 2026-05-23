@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/toolbar_height"
     android:orientation="vertical"
     android:background="@android:color/white"
     android:paddingBottom="32dp">
@@ -21,7 +22,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
-        android:text="Risposta proposta"
+        android:text="@string/answer_request"
         android:textSize="12sp"
         android:textAllCaps="true"
         android:textColor="#7B1FA2"
@@ -77,7 +78,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
-                android:text="Ci vengo!"
+                android:text="@string/coming"
                 android:textSize="12sp"
                 android:textColor="#4CAF50"
                 android:fontFamily="sans-serif-medium" />
@@ -105,7 +106,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
-                android:text="Ci penso"
+                android:text="@string/think_about_coming"
                 android:textSize="12sp"
                 android:textColor="#FF9800"
                 android:fontFamily="sans-serif-medium" />
@@ -133,7 +134,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
-                android:text="Non posso"
+                android:text="@string/not_coming"
                 android:textSize="12sp"
                 android:textColor="#F44336"
                 android:fontFamily="sans-serif-medium" />

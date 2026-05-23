@@ -3,11 +3,12 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginTop="@dimen/toolbar_height"
     android:gravity="center">
 
     <TextView
         android:id="@+id/text_news"
-        android:text="Ultime Notizie"
+        android:text="@string/latest_news"
         android:textSize="24sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />

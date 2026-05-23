@@ -8,10 +8,11 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/toolbar_height"
         android:paddingHorizontal="16dp"
         android:paddingTop="16dp"
         android:paddingBottom="8dp"
-        android:text="Promemoria attivi"
+        android:text="@string/active_remiders"
         android:textSize="20sp"
         android:textStyle="bold"
         android:textColor="#333333" />

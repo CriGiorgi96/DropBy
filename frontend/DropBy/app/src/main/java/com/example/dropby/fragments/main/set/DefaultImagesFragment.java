@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -32,6 +34,10 @@ public class DefaultImagesFragment extends Fragment {
         setupImage(view, R.id.imgDefaultF1, "female_01");
         setupImage(view, R.id.imgDefaultF2, "female_02");
         setupImage(view, R.id.imgDefaultF3, "female_03");
+
+        ImageButton btnBack = view.findViewById(R.id.btnBackToSettings);
+
+        btnBack.setOnClickListener(v -> requireActivity().getSupportFragmentManager().popBackStack());
     }
 
     // Saves selected image to SharedPreferences and pops backstack
