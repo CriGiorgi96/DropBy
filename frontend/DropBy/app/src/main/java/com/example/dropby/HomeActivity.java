@@ -90,7 +90,7 @@ public class HomeActivity extends AppCompatActivity {
             FrameLayout fragmentContainer = findViewById(R.id.fragment_container);
             fragmentContainer.setPadding(
                     navLeftInset,
-                    lp.height,
+                    statusBarHeight,
                     navRightInset,
                     0
             );
