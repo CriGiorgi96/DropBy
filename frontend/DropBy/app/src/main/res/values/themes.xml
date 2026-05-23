@@ -1,5 +1,8 @@
 <resources>
+<<<<<<< HEAD
+=======
 
+>>>>>>> 38f240ef1fd1bc20962ad511f9663bda2303afa6
     <style name="Base.Theme.DropBy" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="actionBarSize">64dp</item>
 
@@ -39,4 +42,14 @@
     <style name="Theme.DropBy" parent="Base.Theme.DropBy" />
     <style name="DropBy" parent="Base.Theme.DropBy" />
 
+<<<<<<< HEAD
+    <!-- Splash Screen -->
+    <style name="Theme.DropBy.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_icon</item>
+        <item name="postSplashScreenTheme">@style/Theme.DropBy</item>
+    </style>
+
 </resources>
+=======
+</resources>
+>>>>>>> 38f240ef1fd1bc20962ad511f9663bda2303afa6
