@@ -10,6 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/toolbar_height">
 
+        <!-- Bottone per tornare indietro -->
         <ImageButton
             android:id="@+id/btnBackToSettings"
             android:layout_width="32dp"
@@ -22,6 +23,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <!-- Griglia immagini a 3 colonne -->
         <GridLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

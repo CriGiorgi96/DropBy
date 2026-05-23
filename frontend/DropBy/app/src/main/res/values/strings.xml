@@ -49,6 +49,10 @@
     <string name="search_button_desc">Esegui ricerca</string>
     <string name="eventsStatusText">Caricamento eventi…</string>
     <string name="faq_title">Come funziona Drop By</string>
+    <string name="theatersStatusText">Caricamento teatri…</string>
+    <string name="server_error">Errore server</string>
+    <string name="no_connection_server">Rete assente o server spento</string>
+    <string name="no_theater_found">Nessun teatro trovato per \"</string>
 
     <string name="faq_navbar">F.A.Q.</string>
     <string name="faq_error_loading">Errore durante il caricamento delle F.A.Q.</string>
@@ -102,6 +106,10 @@
     <string name="favourites">Preferiti</string>
     <string name="remove_from_favourites">Rimuovi dai preferiti</string>
     <string name="delete_account">Elimina account</string>
+    <string name="permanent_delete">La cancellazione è permanente. Se sei sicuro, scrivi \'CONFERMA\' e premi invio</string>
+    <string name="write_confirm">Scrivi CONFERMA</string>
+    <string name="exit">Esci</string>
+    <string name="send">Invio</string>
 
     <string name="answer_request">Rispondi alla proposta</string>
     <string name="coming">Ci vengo!</string>
@@ -112,7 +120,7 @@
 
     <string name="next_shows">Prossimi spettacoli</string>
     <string name="add_to_favourites">Aggiungi ai preferiti</string>
-    <string name="buy_tickets">Acquista biglietti</string>
+    <string name="buy_tickets">ACQUISTA BIGLIETTI</string>
     <string name="buy">Acquista</string>
     <string name="reviews">Recensioni</string>
     <string name="review_restriction">Potrai recensire dopo l\'evento</string>
@@ -124,6 +132,8 @@
     <string name="showing_also_at">In scena anche a…</string>
     <string name="show_only_upcoming">Mostra solo eventi in programma</string>
     <string name="backend_not_reachable">Backend non raggiungibile</string>
+    <string name="from_date">Da: —</string>
+    <string name="to_date">A: —</string>
 
     <string name="search">Cerca</string>
     <string name="tabLayout">tabLayout</string>

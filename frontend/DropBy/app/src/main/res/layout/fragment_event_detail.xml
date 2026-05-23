@@ -43,12 +43,14 @@
                 android:id="@+id/btnFavorite"
                 android:layout_width="44dp"
                 android:layout_height="44dp"
-                android:layout_gravity="top|end"
+                android:layout_gravity="bottom|end"
                 android:layout_margin="12dp"
                 android:background="@drawable/bg_circle_white"
                 android:contentDescription="@string/add_to_favourites"
                 android:padding="8dp"
                 android:src="@drawable/ic_favorite_border"
+                android:scaleType="centerInside"
+                android:adjustViewBounds="true"
                 android:visibility="gone" />
 
         </FrameLayout>
@@ -69,7 +71,7 @@
                 android:paddingHorizontal="10dp"
                 android:paddingVertical="4dp"
                 android:textColor="#7B1FA2"
-                android:textSize="12sp"
+                android:textSize="14sp"
                 android:textStyle="bold" />
 
             <!-- Titolo -->
@@ -79,8 +81,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:textColor="#1A1A2E"
-                android:textSize="22sp"
-                android:textStyle="bold" />
+                android:textSize="24sp"
+                android:textStyle="bold"
+                style="@style/AppTitle"/>
 
             <!-- Data e orario -->
             <TextView
@@ -90,7 +93,8 @@
                 android:layout_marginTop="6dp"
                 android:drawablePadding="6dp"
                 android:textColor="#6A6274"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                style="@style/AppTextLight"/>
 
             <!-- Città -->
             <TextView
@@ -99,7 +103,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:textColor="#6A6274"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                style="@style/AppTextLight"/>
 
             <!-- Separatore -->
             <View
@@ -115,7 +120,7 @@
                 android:layout_height="wrap_content"
                 android:lineSpacingMultiplier="1.4"
                 android:textColor="#333333"
-                android:textSize="15sp" />
+                android:textSize="16sp"/>
 
             <!-- Prezzo -->
             <TextView
@@ -127,7 +132,7 @@
                 android:paddingHorizontal="14dp"
                 android:paddingVertical="6dp"
                 android:textColor="#6A1B9A"
-                android:textSize="15sp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <!-- Pulsante biglietti -->
@@ -139,7 +144,7 @@
                 android:backgroundTint="#7B1FA2"
                 android:text="@string/buy_tickets"
                 android:textColor="#FFFFFF"
-                android:textSize="15sp"
+                android:textSize="20sp"
                 android:visibility="gone" />
 
             <!-- ── SEZIONE RECENSIONI ── -->
@@ -154,8 +159,8 @@
                 android:layout_height="wrap_content"
                 android:text="@string/reviews"
                 android:textColor="#1A1A2E"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textSize="20sp"
+                style="@style/AppTitle" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/reviewsRecyclerView"
@@ -171,7 +176,7 @@
                 android:gravity="center"
                 android:padding="8dp"
                 android:textColor="#9E9E9E"
-                android:textSize="13sp"
+                android:textSize="14sp"
                 android:visibility="gone" />
 
             <!-- Form aggiunta recensione (solo per utenti loggati) -->
@@ -210,7 +215,7 @@
                         android:layout_marginBottom="10dp"
                         android:text="@string/review_restriction"
                         android:textColor="#6A1B9A"
-                        android:textSize="13sp"
+                        android:textSize="14sp"
                         android:textStyle="italic" />
 
                     <LinearLayout
@@ -224,7 +229,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/date"
                             android:textColor="#1A1A2E"
-                            android:textSize="13sp"
+                            android:textSize="14sp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -233,7 +238,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:textColor="#555555"
-                            android:textSize="13sp" />
+                            android:textSize="14sp" />
 
                     </LinearLayout>
 
@@ -248,7 +253,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/location"
                             android:textColor="#1A1A2E"
-                            android:textSize="13sp"
+                            android:textSize="14sp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -257,7 +262,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:textColor="#555555"
-                            android:textSize="13sp" />
+                            android:textSize="14sp" />
 
                     </LinearLayout>
 
@@ -271,7 +276,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/city"
                             android:textColor="#1A1A2E"
-                            android:textSize="13sp"
+                            android:textSize="14sp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -280,7 +285,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:textColor="#555555"
-                            android:textSize="13sp" />
+                            android:textSize="14sp" />
 
                     </LinearLayout>
 
@@ -299,7 +304,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/event_location"
                         android:textColor="#6A1B9A"
-                        android:textSize="12sp"
+                        android:textSize="14sp"
                         android:textStyle="bold" />
 
                     <Spinner
@@ -315,7 +320,7 @@
                         android:layout_marginTop="10dp"
                         android:text="@string/event_date"
                         android:textColor="#6A1B9A"
-                        android:textSize="12sp"
+                        android:textSize="14sp"
                         android:textStyle="bold"
                         android:visibility="gone" />
 
@@ -332,7 +337,7 @@
                     android:id="@+id/reviewRatingBar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
+                    android:layout_marginTop="14dp"
                     android:numStars="5"
                     android:stepSize="1"
                     android:rating="3" />
@@ -377,7 +382,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:textColor="#9E9E9E"
-                android:textSize="13sp"
+                android:textSize="14sp"
                 android:visibility="gone" />
 
             <androidx.recyclerview.widget.RecyclerView

@@ -5,30 +5,34 @@
     android:orientation="vertical"
     android:padding="24dp">
 
+    <!-- Titolo -->
     <TextView
         android:id="@+id/tvDeleteTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Elimina Account"
+        android:text="@string/delete_account"
         android:textColor="@color/black"
         android:textSize="22sp"
         android:textStyle="bold"
+        style="@style/AppTitle"
         android:layout_marginBottom="16dp" />
 
+    <!-- Warning -->
     <TextView
         android:id="@+id/tvDeleteWarning"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="La cancellazione è permanente. Se sei sicuro, scrivi 'CONFERMA' e premi invio."
+        android:text="@string/permanent_delete"
         android:textColor="@color/black"
         android:textSize="14sp"
         android:layout_marginBottom="16dp" />
 
+    <!-- Input per conferma -->
     <EditText
         android:id="@+id/etDeleteConfirm"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:hint="Scrivi CONFERMA"
+        android:hint="@string/write_confirm"
         android:inputType="text"
         android:imeOptions="actionDone"
         android:layout_marginBottom="24dp" />
@@ -38,21 +42,25 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
+        <!-- Bottone per annullare -->
         <Button
             android:id="@+id/btnDeleteCancel"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginEnd="8dp"
-            android:text="Esci" />
+            android:text="@string/exit"
+            android:textStyle="bold"/>
 
+        <!-- Bottone per confermare -->
         <Button
             android:id="@+id/btnDeleteConfirm"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginStart="8dp"
-            android:text="Invio" />
+            android:text="@string/send"
+            android:textStyle="bold"/>
 
     </LinearLayout>
 

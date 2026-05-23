@@ -19,7 +19,7 @@
         android:textAlignment="viewStart"
         android:textColor="@color/db_text_primary"
         android:textSize="26sp"
-        android:textStyle="bold"
+        style="@style/AppTitle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -34,6 +34,7 @@
         android:text="@string/show_only_upcoming"
         android:textColor="@color/db_text_secondary"
         android:textSize="14sp"
+        style="@style/AppTextLight"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/text_events" />
@@ -133,7 +134,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="4dp"
                 android:layout_weight="1"
-                android:text="Da: --" />
+                android:text="@string/from_date" />
 
             <Button
                 android:id="@+id/btnDateTo"
@@ -142,7 +143,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 android:layout_weight="1"
-                android:text="A: --" />
+                android:text="@string/to_date" />
 
         </LinearLayout>
 
@@ -157,10 +158,11 @@
         android:textAlignment="viewStart"
         android:textColor="@color/db_text_secondary"
         android:textSize="14sp"
+        style="@style/AppTextLight"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/searchContainer"
+        app:layout_constraintTop_toBottomOf="@+id/filterPanel"
         tools:text="@string/backend_not_reachable" />
 
     <androidx.recyclerview.widget.RecyclerView
@@ -174,5 +176,28 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/eventsStatusText" />
+
+    <!-- Gif di caricamento -->
+    <ImageView
+        android:id="@+id/loadingImage"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:scaleType="fitCenter"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/eventsStatusText"/>
+
+    <!-- Immagine no results -->
+    <ImageView
+        android:id="@+id/noResultsImage"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/no_results"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/eventsStatusText"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

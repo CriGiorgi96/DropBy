@@ -23,6 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
         android:text="@string/answer_request"
+        style="@style/AppTitle"
         android:textSize="12sp"
         android:textAllCaps="true"
         android:textColor="#7B1FA2"

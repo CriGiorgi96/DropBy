@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -33,6 +34,7 @@ public class TheatersFragment extends Fragment {
     private RecyclerView recyclerView;
     private TextView statusText;
     private EditText editSearch;
+    private ImageView noResultsImage;
     private List<Location> allLocations = new ArrayList<>();
 
     @Nullable
@@ -50,6 +52,7 @@ public class TheatersFragment extends Fragment {
         recyclerView = view.findViewById(R.id.theatersRecyclerView);
         statusText   = view.findViewById(R.id.theatersStatusText);
         editSearch   = view.findViewById(R.id.editSearchTheater);
+        noResultsImage = view.findViewById(R.id.noResultsImage);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
 
@@ -66,7 +69,7 @@ public class TheatersFragment extends Fragment {
 
     private void loadTheaters() {
         statusText.setVisibility(View.VISIBLE);
-        statusText.setText("Caricamento teatri...");
+        statusText.setText(R.string.theatersStatusText);
 
         ApiClient.getApiService().getLocations(null, null)
                 .enqueue(new Callback<LocationsResponse>() {
@@ -79,13 +82,13 @@ public class TheatersFragment extends Fragment {
                             statusText.setVisibility(View.GONE);
                             showLocations(allLocations);
                         } else {
-                            statusText.setText("Errore server: " + response.code());
+                            statusText.setText(R.string.server_error + response.code());
                         }
                     }
                     @Override
                     public void onFailure(@NonNull Call<LocationsResponse> call, @NonNull Throwable t) {
                         if (!isAdded()) return;
-                        statusText.setText("Rete assente o server spento");
+                        statusText.setText(R.string.no_connection_server);
                     }
                 });
     }
@@ -101,7 +104,7 @@ public class TheatersFragment extends Fragment {
         }
         if (filtered.isEmpty()) {
             statusText.setVisibility(View.VISIBLE);
-            statusText.setText("Nessun teatro trovato per \"" + query + "\"");
+            statusText.setText(R.string.no_theater_found + query + "\"");
             recyclerView.setAdapter(null);
         } else {
             statusText.setVisibility(View.GONE);

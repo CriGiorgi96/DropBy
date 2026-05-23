@@ -37,15 +37,20 @@
     <!-- Stili di testo -->
     <style name="DropBy.TextAppearance.Title" parent="TextAppearance.AppCompat.Large">
         <item name="android:textColor">@color/db_text_primary</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:fontFamily">@font/title_font</item>
+        <item name="fontFamily">@font/title_font</item>
     </style>
 
     <style name="DropBy.TextAppearance.Subtitle" parent="TextAppearance.AppCompat.Medium">
         <item name="android:textColor">@color/db_text_secondary</item>
+        <item name="android:fontFamily">@font/body_font</item>
+        <item name="fontFamily">@font/body_font</item>
     </style>
 
     <style name="DropBy.TextAppearance.Caption" parent="TextAppearance.AppCompat.Small">
         <item name="android:textColor">@color/db_text_hint</item>
+        <item name="android:fontFamily">@font/body_font</item>
+        <item name="fontFamily">@font/body_font</item>
     </style>
 
     <!-- ThemeOverlay per Spinner: forza testo crema su sfondo scuro -->
@@ -53,12 +58,16 @@
         <item name="android:textColorPrimary">@color/db_text_primary</item>
         <item name="android:textColorSecondary">@color/db_text_secondary</item>
         <item name="android:textColor">@color/db_text_primary</item>
+        <item name="android:fontFamily">@font/body_font</item>
+        <item name="fontFamily">@font/body_font</item>
     </style>
 
     <!-- Testo voci del drawer destro: 14sp crema -->
     <style name="DropBy.NavItemText">
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/db_text_primary</item>
+        <item name="android:fontFamily">@font/body_font</item>
+        <item name="fontFamily">@font/body_font</item>
     </style>
 
     <!-- Titoli sezione drawer (Account, Social): 11sp grigio ALL_CAPS -->
@@ -66,6 +75,8 @@
         <item name="android:textSize">11sp</item>
         <item name="android:textAllCaps">true</item>
         <item name="android:textColor">@color/db_text_secondary</item>
+        <item name="android:fontFamily">@font/body_font</item>
+        <item name="fontFamily">@font/body_font</item>
         <item name="android:letterSpacing">0.08</item>
     </style>
 
@@ -74,5 +85,37 @@
         <item name="textAppearanceOverline">@style/DropBy.NavSubheader</item>
         <item name="android:textColorSecondary">@color/db_text_secondary</item>
     </style>
+
+    <!-- Font styles -->
+    <style name="AppText">
+        <item name="android:fontFamily">@font/body_font</item>
+        <item name="fontFamily">@font/body_font</item>
+    </style>
+
+    <style name="AppTitle">
+        <item name="android:fontFamily">@font/title_font</item>
+        <item name="fontFamily">@font/title_font</item>
+    </style>
+
+    <style name="AppTextLight">
+        <item name="android:fontFamily">@font/normal_text_light</item>
+        <item name="fontFamily">@font/normal_text_light</item>
+    </style>
+
+    <style name="AppTextView" parent="Widget.AppCompat.TextView">
+        <item name="android:fontFamily">@font/body_font</item>
+        <item name="fontFamily">@font/body_font</item>
+    </style>
+
+    <style name="AppButton" parent="Widget.MaterialComponents.Button">
+        <item name="android:fontFamily">@font/body_font</item>
+        <item name="fontFamily">@font/body_font</item>
+    </style>
+
+    <style name="AppEditText" parent="Widget.AppCompat.EditText">
+        <item name="android:fontFamily">@font/body_font</item>
+        <item name="fontFamily">@font/body_font</item>
+    </style>
+
 
 </resources>

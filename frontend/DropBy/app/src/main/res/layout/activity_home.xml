@@ -5,12 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
     <FrameLayout
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingTop="@dimen/toolbar_height" />
 
+    <!-- Drawer sinistro -->
     <FrameLayout
         android:id="@+id/leftDrawerPanel"
         android:layout_width="200dp"
@@ -29,6 +31,7 @@
 
     </FrameLayout>
 
+    <!-- Drawer destro -->
     <FrameLayout
         android:id="@+id/rightDrawerPanel"
         android:layout_width="200dp"
@@ -52,6 +55,7 @@
             app:menu="@menu/drawer_right_menu" />
     </FrameLayout>
 
+    <!-- Toolbar -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -71,6 +75,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <!-- Burger menu - apre il drawer sinistro -->
             <ImageButton
                 android:id="@+id/toolbarLeftMenuButton"
                 android:layout_width="48dp"
@@ -83,6 +88,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"/>
 
+            <!-- Logo DropBy - torna alla HomeFragment -->
             <ImageView
                 android:id="@+id/toolbarLogo"
                 android:layout_width="wrap_content"
@@ -99,6 +105,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
 
+            <!-- Icona profilo - apre il drawer destro -->
             <FrameLayout
                 android:id="@+id/userButtonContainer"
                 android:layout_width="wrap_content"
@@ -118,6 +125,7 @@
                     android:contentDescription="@string/user_area"
                     app:shapeAppearanceOverlay="@style/CircleImage" />
 
+                <!-- Badge notifiche -->
                 <TextView
                     android:id="@+id/notificationBadge"
                     android:layout_width="18dp"

@@ -610,8 +610,8 @@ public class EventDetailFragment extends Fragment {
     private void updateFavoriteIcon() {
         if (btnFavorite == null) return;
         btnFavorite.setImageResource(isFavorite
-                ? R.drawable.ic_favorite
-                : R.drawable.ic_favorite_border);
+                ? R.drawable.ic_heart_full
+                : R.drawable.ic_heart_empty);
     }
 
     private void toggleFavorite() {

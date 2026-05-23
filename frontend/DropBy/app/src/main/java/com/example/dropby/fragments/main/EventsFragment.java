@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -20,6 +21,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.dropby.R;
 import com.example.dropby.adapters.EventGroupAdapter;
 import com.example.dropby.models.Event;
@@ -63,6 +65,9 @@ public class EventsFragment extends Fragment {
     private String selectedStartDate = null;
     private String selectedEndDate   = null;
 
+    private ImageView loadingImage;
+    private ImageView noResultsImage;
+
     // Blocca i listener durante l'inizializzazione degli spinner
     private boolean filtersReady = false;
 
@@ -86,6 +91,14 @@ public class EventsFragment extends Fragment {
         dateContainer     = view.findViewById(R.id.dateContainer);
         btnDateFrom       = view.findViewById(R.id.btnDateFrom);
         btnDateTo         = view.findViewById(R.id.btnDateTo);
+
+        loadingImage = view.findViewById(R.id.loadingImage);
+        noResultsImage = view.findViewById(R.id.noResultsImage);
+
+        Glide.with(this)
+                .asGif()
+                .load(R.drawable.loading)
+                .into(loadingImage);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
 
@@ -201,6 +214,10 @@ public class EventsFragment extends Fragment {
         } else {
             statusText.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);
+
+            if (loadingImage != null) loadingImage.setVisibility(View.GONE);
+            if (noResultsImage != null) noResultsImage.setVisibility(View.GONE);
+
             recyclerView.setAdapter(new EventGroupAdapter(
                     groups, true, group -> openEvent(group.getRepresentative())));
         }
@@ -271,5 +288,15 @@ public class EventsFragment extends Fragment {
         recyclerView.setVisibility(View.GONE);
         statusText.setText(msg);
         statusText.setVisibility(View.VISIBLE);
+
+        if (loadingImage != null) {
+            boolean isLoading = msg.toLowerCase(Locale.getDefault()).contains("caricamento");
+            loadingImage.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+        }
+
+        if (noResultsImage != null) {
+            boolean noResults = msg.toLowerCase(Locale.getDefault()).contains("nessun");
+            noResultsImage.setVisibility(noResults ? View.VISIBLE : View.GONE);
+        }
     }
 }

@@ -13,6 +13,8 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.graphics.Rect;
+import android.view.MotionEvent;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
@@ -101,8 +103,7 @@ public class HomeActivity extends AppCompatActivity {
         // Il click sul logo della toolbar riporta alla HomeFragment
         findViewById(R.id.toolbarLogo).setOnClickListener(v -> {
             openFragment(new HomeFragment(), false);
-            closeLeftDrawer();
-            closeRightDrawer();
+            closeBothDrawers();
         });
 
         ImageView toolbarProfileButton = findViewById(R.id.toolbarUserButton);
@@ -177,8 +178,7 @@ public class HomeActivity extends AppCompatActivity {
             if (target != null) {
                 openFragment(target, false);
             }
-            closeLeftDrawer();
-            closeRightDrawer();
+            closeBothDrawers();
             return true;
         });
     }
@@ -244,8 +244,7 @@ public class HomeActivity extends AppCompatActivity {
             }
 
             if (target != null) openFragment(target, true);
-            closeRightDrawer();
-            closeLeftDrawer();
+            closeBothDrawers();
             return true;
         });
     }
@@ -383,6 +382,11 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
+    private void closeBothDrawers() {
+        closeLeftDrawer();
+        closeRightDrawer();
+    }
+
     // ── NOTIFICHE POLLING ────────────────────────────────────────────────────
 
     private void startNotificationPoller() {
@@ -494,5 +498,33 @@ public class HomeActivity extends AppCompatActivity {
         ImageView toolbarProfileButton = findViewById(R.id.toolbarUserButton);
         loadToolbarProfileImage(toolbarProfileButton);
         updateRightDrawerHeader();
+    }
+
+    // ── CHIUSURA DI ENTRAMBI I DRAWER ────────────────────────────────────────
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (ev.getAction() == MotionEvent.ACTION_DOWN && (leftOpen || rightOpen)) {
+
+            boolean touchedLeftDrawer = isTouchInsideView(leftDrawerPanel, ev);
+            boolean touchedRightDrawer = isTouchInsideView(rightDrawerPanel, ev);
+
+            if (!touchedLeftDrawer && !touchedRightDrawer) {
+                closeBothDrawers();
+            }
+        }
+
+        return super.dispatchTouchEvent(ev);
+    }
+
+    private boolean isTouchInsideView(View view, MotionEvent ev) {
+        if (view == null || view.getVisibility() != View.VISIBLE) return false;
+
+        Rect rect = new Rect();
+        view.getGlobalVisibleRect(rect);
+
+        int x = (int) ev.getRawX();
+        int y = (int) ev.getRawY();
+
+        return rect.contains(x, y);
     }
 }
