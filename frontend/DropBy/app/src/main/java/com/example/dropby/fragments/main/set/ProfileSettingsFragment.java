@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -92,7 +93,7 @@ public class ProfileSettingsFragment extends Fragment {
         editConfirmPassword    = view.findViewById(R.id.editConfirmPassword);
         Button btnChangeImg       = view.findViewById(R.id.btnChangeProfileImg);
         Button btnSave            = view.findViewById(R.id.btnSaveProfile);
-        Button btnBack            = view.findViewById(R.id.btnBackToSettings);
+        ImageButton btnBack            = view.findViewById(R.id.btnBackToSettings);
         checkPrivateFavorites     = view.findViewById(R.id.checkPrivateFavorites);
         checkPrivateReviews       = view.findViewById(R.id.checkPrivateReviews);
 
