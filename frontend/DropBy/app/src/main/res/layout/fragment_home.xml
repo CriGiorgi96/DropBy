@@ -54,7 +54,8 @@
                         android:text="@string/highlights"
                         android:textColor="@android:color/white"
                         android:textSize="13sp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        style="@style/AppTextLight"/>
 
                     <TextView
                         android:id="@+id/featuredTitleText"
@@ -64,7 +65,7 @@
                         android:maxLines="3"
                         android:textColor="@android:color/white"
                         android:textSize="34sp"
-                        android:textStyle="bold"
+                        style="@style/AppTitle"
                         tools:text="Aida" />
 
                     <TextView
@@ -197,7 +198,8 @@
                             android:layout_marginTop="8dp"
                             android:text="@string/opera"
                             android:textColor="@android:color/white"
-                            android:textSize="30sp" />
+                            android:textSize="30sp"
+                            style="@style/AppTitle"/>
                     </LinearLayout>
                 </FrameLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -250,7 +252,8 @@
                             android:layout_marginTop="8dp"
                             android:text="@string/musical"
                             android:textColor="@android:color/white"
-                            android:textSize="30sp" />
+                            android:textSize="30sp"
+                            style="@style/AppTitle"/>
                     </LinearLayout>
                 </FrameLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -303,7 +306,8 @@
                             android:layout_marginTop="8dp"
                             android:text="@string/ballet"
                             android:textColor="@android:color/white"
-                            android:textSize="30sp" />
+                            android:textSize="30sp"
+                            style="@style/AppTitle"/>
                     </LinearLayout>
                 </FrameLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -356,7 +360,8 @@
                             android:layout_marginTop="8dp"
                             android:text="@string/theatre_dance"
                             android:textColor="@android:color/white"
-                            android:textSize="28sp" />
+                            android:textSize="28sp"
+                            style="@style/AppTitle"/>
                     </LinearLayout>
                 </FrameLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -409,7 +414,8 @@
                             android:layout_marginTop="8dp"
                             android:text="@string/contemporary_theatre"
                             android:textColor="@android:color/white"
-                            android:textSize="25sp" />
+                            android:textSize="25sp"
+                            style="@style/AppTitle"/>
                     </LinearLayout>
                 </FrameLayout>
             </com.google.android.material.card.MaterialCardView>

@@ -1,5 +1,6 @@
 package com.example.dropby.fragments.main;
 
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.text.Editable;
@@ -40,15 +41,8 @@ import retrofit2.Response;
 
 public class EventsFragment extends Fragment {
 
-    private static final String[] FILTER_TYPES = {
-        "Filtra per...", "Cerca per genere", "Cerca per data"
-    };
-
-    private static final String[] GENRES = {
-        "Tutti i generi", "Opera", "Musical", "Balletto",
-        "Danza teatrale", "Teatro contemporaneo"
-    };
-
+    private String[] FILTER_TYPES;
+    private String[] GENRES;
     private RecyclerView recyclerView;
     private TextView     statusText;
     private EditText     editSearch;
@@ -82,6 +76,21 @@ public class EventsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        FILTER_TYPES = new String[] {
+                getString(R.string.filter_on),
+                getString(R.string.filter_using_category),
+                getString(R.string.filter_using_date)
+        };
+
+        GENRES = new String[] {
+                getString(R.string.all_genres),
+                getString(R.string.opera),
+                getString(R.string.musical),
+                getString(R.string.ballet),
+                getString(R.string.theatre_dance),
+                getString(R.string.contemporary_theatre)
+        };
+
         recyclerView      = view.findViewById(R.id.recyclerView);
         statusText        = view.findViewById(R.id.eventsStatusText);
         editSearch        = view.findViewById(R.id.editSearch);
@@ -101,6 +110,7 @@ public class EventsFragment extends Fragment {
                 .into(loadingImage);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        recyclerView.setNestedScrollingEnabled(false);
 
         // ── Spinner tipo filtro ───────────────────────────────────────────────
         ArrayAdapter<String> filterAdapter = new ArrayAdapter<>(
@@ -159,7 +169,8 @@ public class EventsFragment extends Fragment {
 
     private void loadData() {
         if (!isAdded()) return;
-        setStatus("Caricamento spettacoli…");
+        setStatus(getString(R.string.eventsStatusText));
+        showLoadingState();
 
         boolean onlyUpcoming = checkOnlyUpcoming != null && checkOnlyUpcoming.isChecked();
 
@@ -187,13 +198,17 @@ public class EventsFragment extends Fragment {
 
             @Override
             public void onFailure(@NonNull Call<EventsResponse> call, @NonNull Throwable t) {
-                if (isAdded()) setStatus("Errore di rete");
+                if (isAdded()) {
+                    setStatus(getString(R.string.network_error));
+                    showErrorState();
+                }
             }
         });
     }
 
     // ── VISUALIZZAZIONE (filtro testo locale su allEvents già filtrati) ────────
 
+    @SuppressLint("StringFormatInvalid")
     private void showEvents() {
         if (!isAdded()) return;
         String query = editSearch != null
@@ -210,13 +225,15 @@ public class EventsFragment extends Fragment {
 
         List<EventGroup> groups = EventGroup.from(filtered, true);
         if (groups.isEmpty()) {
-            setStatus(query.isEmpty() ? "Nessuno spettacolo disponibile" : "Nessun risultato per: " + query);
-        } else {
-            statusText.setVisibility(View.GONE);
-            recyclerView.setVisibility(View.VISIBLE);
+            if (query.isEmpty()) {
+                setStatus(getString(R.string.no_event_found));
+            } else {
+                setStatus(getString(R.string.no_results_for, query));
+            }
 
-            if (loadingImage != null) loadingImage.setVisibility(View.GONE);
-            if (noResultsImage != null) noResultsImage.setVisibility(View.GONE);
+            showNoResultsState();
+        } else {
+            showResultsState();
 
             recyclerView.setAdapter(new EventGroupAdapter(
                     groups, true, group -> openEvent(group.getRepresentative())));
@@ -246,8 +263,8 @@ public class EventsFragment extends Fragment {
                 selectedStartDate = null;
                 selectedEndDate   = null;
                 spinnerGenre.setSelection(0);
-                btnDateFrom.setText("Da: --");
-                btnDateTo.setText("A: --");
+                btnDateFrom.setText(R.string.from_date);
+                btnDateTo.setText(R.string.to_date);
                 break;
         }
     }
@@ -261,10 +278,10 @@ public class EventsFragment extends Fragment {
                     String date = String.format(Locale.US, "%04d-%02d-%02d", year, month + 1, day);
                     if (isStartDate) {
                         selectedStartDate = date;
-                        btnDateFrom.setText("Da: " + date);
+                        btnDateFrom.setText(R.string.from + date);
                     } else {
                         selectedEndDate = date;
-                        btnDateTo.setText("A: " + date);
+                        btnDateTo.setText(R.string.to + date);
                     }
                     loadData();
                 },
@@ -288,15 +305,38 @@ public class EventsFragment extends Fragment {
         recyclerView.setVisibility(View.GONE);
         statusText.setText(msg);
         statusText.setVisibility(View.VISIBLE);
+    }
 
-        if (loadingImage != null) {
-            boolean isLoading = msg.toLowerCase(Locale.getDefault()).contains("caricamento");
-            loadingImage.setVisibility(isLoading ? View.VISIBLE : View.GONE);
-        }
+    //  Uses the no result image or the loading gif based on status
+    private void showLoadingState() {
+        recyclerView.setVisibility(View.GONE);
+        statusText.setVisibility(View.VISIBLE);
 
-        if (noResultsImage != null) {
-            boolean noResults = msg.toLowerCase(Locale.getDefault()).contains("nessun");
-            noResultsImage.setVisibility(noResults ? View.VISIBLE : View.GONE);
-        }
+        if (loadingImage != null) loadingImage.setVisibility(View.VISIBLE);
+        if (noResultsImage != null) noResultsImage.setVisibility(View.GONE);
+    }
+
+    private void showNoResultsState() {
+        recyclerView.setVisibility(View.GONE);
+        statusText.setVisibility(View.VISIBLE);
+
+        if (loadingImage != null) loadingImage.setVisibility(View.GONE);
+        if (noResultsImage != null) noResultsImage.setVisibility(View.VISIBLE);
+    }
+
+    private void showResultsState() {
+        recyclerView.setVisibility(View.VISIBLE);
+        statusText.setVisibility(View.GONE);
+
+        if (loadingImage != null) loadingImage.setVisibility(View.GONE);
+        if (noResultsImage != null) noResultsImage.setVisibility(View.GONE);
+    }
+
+    private void showErrorState() {
+        recyclerView.setVisibility(View.GONE);
+        statusText.setVisibility(View.VISIBLE);
+
+        if (loadingImage != null) loadingImage.setVisibility(View.GONE);
+        if (noResultsImage != null) noResultsImage.setVisibility(View.GONE);
     }
 }

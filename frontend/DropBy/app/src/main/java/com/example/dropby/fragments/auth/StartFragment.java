@@ -5,6 +5,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.content.SharedPreferences;
+import android.widget.ImageButton;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.os.LocaleListCompat;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -29,6 +33,14 @@ public class StartFragment extends Fragment {
         Button btnRegister = view.findViewById(R.id.btnRegister);
         TextView btnGuest = view.findViewById(R.id.btnGuest);
         backgroundVideo = view.findViewById(R.id.loginBackgroundVideo);
+        ImageButton btnLanguageIt = view.findViewById(R.id.btnLanguageIt);
+        ImageButton btnLanguageEn = view.findViewById(R.id.btnLanguageEn);
+
+        updateLanguageButtons(btnLanguageIt, btnLanguageEn);
+
+        btnLanguageIt.setOnClickListener(v -> setLanguage("it"));
+
+        btnLanguageEn.setOnClickListener(v -> setLanguage("en-GB"));
 
         setupBackgroundVideo();
 
@@ -96,5 +108,35 @@ public class StartFragment extends Fragment {
             backgroundVideo = null;
         }
         super.onDestroyView();
+    }
+
+    // Change language
+    private void setLanguage(String languageTag) {
+        requireActivity()
+                .getSharedPreferences("app_settings", requireContext().MODE_PRIVATE)
+                .edit()
+                .putString("language", languageTag)
+                .apply();
+
+        AppCompatDelegate.setApplicationLocales(
+                LocaleListCompat.forLanguageTags(languageTag)
+        );
+
+        requireActivity().recreate();
+    }
+
+    private void updateLanguageButtons(ImageButton btnIt, ImageButton btnEn) {
+        SharedPreferences prefs = requireActivity()
+                .getSharedPreferences("app_settings", requireContext().MODE_PRIVATE);
+
+        String language = prefs.getString("language", "it");
+
+        if ("en-GB".equals(language)) {
+            btnEn.setBackgroundResource(R.drawable.bg_language_selected);
+            btnIt.setBackgroundResource(R.drawable.bg_language_normal);
+        } else {
+            btnIt.setBackgroundResource(R.drawable.bg_language_selected);
+            btnEn.setBackgroundResource(R.drawable.bg_language_normal);
+        }
     }
 }

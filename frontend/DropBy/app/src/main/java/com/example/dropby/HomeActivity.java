@@ -18,8 +18,10 @@ import android.view.MotionEvent;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
+import androidx.core.os.LocaleListCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
@@ -51,10 +53,18 @@ public class HomeActivity extends AppCompatActivity {
     private NavigationView navRight;
     private TextView notificationBadge;
     private NotificationPoller notificationPoller;
+    private FrameLayout fragmentContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SharedPreferences settings = getSharedPreferences("app_settings", MODE_PRIVATE);
+        String language = settings.getString("language", "it");
+
+        AppCompatDelegate.setApplicationLocales(
+                LocaleListCompat.forLanguageTags(language)
+        );
+
         setContentView(R.layout.activity_home);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -62,6 +72,9 @@ public class HomeActivity extends AppCompatActivity {
 
         // FIX BUG: Collegamento del badge delle notifiche (mancava nel codice della collega)
         notificationBadge = findViewById(R.id.notificationBadge);
+
+        // Far si che toccando il fragment Container si chiuda il drawer
+        fragmentContainer = findViewById(R.id.fragment_container);
 
         // Gestione dei margini di sistema (Status Bar e Navigation Bar)
         ViewCompat.setOnApplyWindowInsetsListener(toolbar, (view, insets) -> {
@@ -89,7 +102,6 @@ public class HomeActivity extends AppCompatActivity {
             navLeft.setPadding(navLeftInset, lp.height, 0, navBottomInset);
             navRight.setPadding(0, lp.height, navRightInset, navBottomInset);
 
-            FrameLayout fragmentContainer = findViewById(R.id.fragment_container);
             fragmentContainer.setPadding(
                     navLeftInset,
                     statusBarHeight,
@@ -505,10 +517,11 @@ public class HomeActivity extends AppCompatActivity {
     public boolean dispatchTouchEvent(MotionEvent ev) {
         if (ev.getAction() == MotionEvent.ACTION_DOWN && (leftOpen || rightOpen)) {
 
+            boolean touchedToolbar = isTouchInsideView(findViewById(R.id.toolbar), ev);
             boolean touchedLeftDrawer = isTouchInsideView(leftDrawerPanel, ev);
             boolean touchedRightDrawer = isTouchInsideView(rightDrawerPanel, ev);
 
-            if (!touchedLeftDrawer && !touchedRightDrawer) {
+            if (!touchedToolbar && !touchedLeftDrawer && !touchedRightDrawer) {
                 closeBothDrawers();
             }
         }

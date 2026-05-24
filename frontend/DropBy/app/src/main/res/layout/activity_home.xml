@@ -92,7 +92,7 @@
             <ImageView
                 android:id="@+id/toolbarLogo"
                 android:layout_width="wrap_content"
-                android:layout_height="42dp"
+                android:layout_height="50dp"
                 android:adjustViewBounds="true"
                 android:clickable="true"
                 android:focusable="true"

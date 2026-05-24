@@ -11,6 +11,8 @@ import com.example.dropby.fragments.auth.LoginFragment;
 import com.example.dropby.fragments.auth.RegisterFragment;
 import com.example.dropby.fragments.auth.StartFragment;
 
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.os.LocaleListCompat;
 import androidx.core.splashscreen.SplashScreen;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -32,6 +34,13 @@ public class AuthActivity extends AppCompatActivity {
             finish();
             return;
         }
+
+        SharedPreferences settings = getSharedPreferences("app_settings", MODE_PRIVATE);
+        String language = settings.getString("language", "it");
+
+        AppCompatDelegate.setApplicationLocales(
+                LocaleListCompat.forLanguageTags(language)
+        );
 
         setContentView(R.layout.activity_auth);
 

@@ -169,6 +169,37 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:background="?attr/selectableItemBackground" />
+
+            <LinearLayout
+                android:id="@+id/languageButtonsContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <ImageButton
+                    android:id="@+id/btnLanguageIt"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/bg_language_normal"
+                    android:padding="6dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/italy"
+                    android:contentDescription="Italiano" />
+
+                <ImageButton
+                    android:id="@+id/btnLanguageEn"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="12dp"
+                    android:background="@drawable/bg_language_normal"
+                    android:padding="6dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/uk"
+                    android:contentDescription="English" />
+
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 

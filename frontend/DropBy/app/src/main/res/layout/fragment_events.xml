@@ -1,203 +1,210 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<androidx.core.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/db_background"
-    android:paddingStart="16dp"
-    android:paddingEnd="16dp"
-    android:paddingBottom="16dp">
-
-    <TextView
-        android:id="@+id/text_events"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/toolbar_height"
-        android:text="@string/next_shows"
-        android:textAlignment="viewStart"
-        android:textColor="@color/db_text_primary"
-        android:textSize="26sp"
-        style="@style/AppTitle"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <!-- CheckBox sopra la barra di ricerca, attivo di default -->
-    <CheckBox
-        android:id="@+id/checkOnlyUpcoming"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:checked="true"
-        android:text="@string/show_only_upcoming"
-        android:textColor="@color/db_text_secondary"
-        android:textSize="14sp"
-        style="@style/AppTextLight"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_events" />
-
-    <!-- Barra di Ricerca -->
+    android:fillViewport="true"
+    android:background="@color/db_background">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/searchContainer"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:background="@drawable/bg_search_bar"
-        android:clipToOutline="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/checkOnlyUpcoming">
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="16dp">
 
-        <EditText
-            android:id="@+id/editSearch"
+        <TextView
+            android:id="@+id/text_events"
             android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:background="@android:color/transparent"
-            android:hint="@string/search_hint"
-            android:imeOptions="actionSearch"
-            android:inputType="text"
-            android:paddingStart="12dp"
-            android:paddingEnd="8dp"
-            android:singleLine="true"
-            android:textColor="#F5F5DC"
-            android:textColorHint="#9E9E9E"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/btnSearch"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/toolbar_height"
+            android:text="@string/next_shows"
+            android:textAlignment="viewStart"
+            android:textColor="@color/db_text_primary"
+            android:textSize="26sp"
+            style="@style/AppTitle"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageButton
-            android:id="@+id/btnSearch"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/search_button_desc"
-            android:color="@color/db_text_secondary"
-            android:src="@drawable/ic_search"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <!-- Pannello filtri: si espande in base alla selezione -->
-    <LinearLayout
-        android:id="@+id/filterPanel"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/searchContainer">
-
-        <Spinner
-            android:id="@+id/spinnerFilterType"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:background="@drawable/bg_spinner_dark"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
-            android:popupBackground="@color/db_surface_variant"
-            android:theme="@style/DropBy.SpinnerTheme" />
-
-        <!-- Spinner generi, visibile solo con "Cerca per genere" -->
-        <Spinner
-            android:id="@+id/spinnerGenre"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginTop="4dp"
-            android:background="@drawable/bg_spinner_dark"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
-            android:popupBackground="@color/db_surface_variant"
-            android:theme="@style/DropBy.SpinnerTheme"
-            android:visibility="gone" />
-
-        <!-- Pulsanti data, visibili solo con "Cerca per data" -->
-        <LinearLayout
-            android:id="@+id/dateContainer"
-            android:layout_width="match_parent"
+        <!-- CheckBox sopra la barra di ricerca, attivo di default -->
+        <CheckBox
+            android:id="@+id/checkOnlyUpcoming"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:orientation="horizontal"
-            android:visibility="gone">
+            android:layout_marginTop="12dp"
+            android:checked="true"
+            android:text="@string/show_only_upcoming"
+            android:textColor="@color/db_text_secondary"
+            android:textSize="14sp"
+            style="@style/AppTextLight"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/text_events" />
 
-            <Button
-                android:id="@+id/btnDateFrom"
-                style="@style/DropBy.Button.Outline"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="4dp"
-                android:layout_weight="1"
-                android:text="@string/from_date" />
+        <!-- Barra di Ricerca -->
 
-            <Button
-                android:id="@+id/btnDateTo"
-                style="@style/DropBy.Button.Outline"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/searchContainer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_search_bar"
+            android:clipToOutline="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/checkOnlyUpcoming">
+
+            <EditText
+                android:id="@+id/editSearch"
                 android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:background="@android:color/transparent"
+                android:hint="@string/search_hint"
+                android:imeOptions="actionSearch"
+                android:inputType="text"
+                android:paddingStart="12dp"
+                android:paddingEnd="8dp"
+                android:singleLine="true"
+                android:textColor="#F5F5DC"
+                android:textColorHint="#9E9E9E"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/btnSearch"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
+                android:id="@+id/btnSearch"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/search_button_desc"
+                android:color="@color/db_text_secondary"
+                android:src="@drawable/ic_search"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- Pannello filtri: si espande in base alla selezione -->
+        <LinearLayout
+            android:id="@+id/filterPanel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/searchContainer">
+
+            <Spinner
+                android:id="@+id/spinnerFilterType"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_spinner_dark"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:popupBackground="@color/db_surface_variant"
+                android:theme="@style/DropBy.SpinnerTheme" />
+
+            <!-- Spinner generi, visibile solo con "Cerca per genere" -->
+            <Spinner
+                android:id="@+id/spinnerGenre"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="4dp"
+                android:background="@drawable/bg_spinner_dark"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:popupBackground="@color/db_surface_variant"
+                android:theme="@style/DropBy.SpinnerTheme"
+                android:visibility="gone" />
+
+            <!-- Pulsanti data, visibili solo con "Cerca per data" -->
+            <LinearLayout
+                android:id="@+id/dateContainer"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:layout_weight="1"
-                android:text="@string/to_date" />
+                android:layout_marginTop="4dp"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <Button
+                    android:id="@+id/btnDateFrom"
+                    style="@style/DropBy.Button.Outline"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
+                    android:layout_weight="1"
+                    android:text="@string/from_date" />
+
+                <Button
+                    android:id="@+id/btnDateTo"
+                    style="@style/DropBy.Button.Outline"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_weight="1"
+                    android:text="@string/to_date" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
-    </LinearLayout>
+        <TextView
+            android:id="@+id/eventsStatusText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/eventsStatusText"
+            android:textAlignment="viewStart"
+            android:textColor="@color/db_text_secondary"
+            android:textSize="14sp"
+            style="@style/AppTextLight"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/filterPanel"
+            tools:text="@string/backend_not_reachable" />
 
-    <TextView
-        android:id="@+id/eventsStatusText"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="@string/eventsStatusText"
-        android:textAlignment="viewStart"
-        android:textColor="@color/db_text_secondary"
-        android:textSize="14sp"
-        style="@style/AppTextLight"
-        android:visibility="visible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/filterPanel"
-        tools:text="@string/backend_not_reachable" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:clipToPadding="false"
+            android:paddingBottom="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/eventsStatusText" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="8dp"
-        android:clipToPadding="false"
-        android:paddingBottom="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/eventsStatusText" />
+        <!-- Gif di caricamento -->
+        <ImageView
+            android:id="@+id/loadingImage"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:layout_marginTop="24dp"
+            android:scaleType="fitCenter"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/eventsStatusText"/>
 
-    <!-- Gif di caricamento -->
-    <ImageView
-        android:id="@+id/loadingImage"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
-        android:scaleType="fitCenter"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/eventsStatusText"/>
+        <!-- Immagine no results -->
+        <ImageView
+            android:id="@+id/noResultsImage"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:layout_marginTop="24dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/no_results"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/eventsStatusText"/>
 
-    <!-- Immagine no results -->
-    <ImageView
-        android:id="@+id/noResultsImage"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
-        android:scaleType="fitCenter"
-        android:src="@drawable/no_results"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/eventsStatusText"/>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

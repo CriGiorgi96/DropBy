@@ -48,11 +48,18 @@
     <string name="search_hint">Cerca…</string>
     <string name="search_button_desc">Esegui ricerca</string>
     <string name="eventsStatusText">Caricamento eventi…</string>
-    <string name="faq_title">Come funziona Drop By</string>
+    <string name="faq_title">Come funziona DropBy</string>
     <string name="theatersStatusText">Caricamento teatri…</string>
     <string name="server_error">Errore server</string>
     <string name="no_connection_server">Rete assente o server spento</string>
-    <string name="no_theater_found">Nessun teatro trovato per \"</string>
+    <string name="no_theater_found">Nessun teatro trovato per: </string>
+    <string name="no_event_found">Nessun evento disponibile</string>
+    <string name="no_theaters_available">Nessun teatro disponibile</string>
+    <string name="no_results_for">Nessun risultato</string>
+    <string name="network_error">Errore di rete</string>
+    <string name="event_loading_error">Errore caricamento eventi.</string>
+    <string name="connection_error">Errore di connessione.</string>
+
 
     <string name="faq_navbar">F.A.Q.</string>
     <string name="faq_error_loading">Errore durante il caricamento delle F.A.Q.</string>
@@ -132,15 +139,20 @@
     <string name="showing_also_at">In scena anche a…</string>
     <string name="show_only_upcoming">Mostra solo eventi in programma</string>
     <string name="backend_not_reachable">Backend non raggiungibile</string>
+    <string name="backend_not_available">Backend non disponibile</string>
     <string name="from_date">Da: —</string>
     <string name="to_date">A: —</string>
+    <string name="from">Da: </string>
+    <string name="to">A: </string>
 
     <string name="search">Cerca</string>
     <string name="tabLayout">tabLayout</string>
     <string name="highlights">In evidenza</string>
+    <string name="highlighted_event">Evento in evidenza</string>
     <string name="loading">Loading…</string>
     <string name="categories">Categorie</string>
     <string name="explore">ESPLORA</string>
+    <string name="all_genres">Tutti i generi</string>
     <string name="opera">Opera</string>
     <string name="musical">Musical</string>
     <string name="ballet">Balletto</string>
@@ -148,6 +160,12 @@
     <string name="contemporary_theatre">Teatro contemporaneo</string>"
     <string name="tap_for_details">Tap per dettagli ›</string>
     <string name="delete">Elimina</string>
+    <string name="filter_on">Filtra per…</string>
+    <string name="filter_using_category">Filtra per genere</string>
+    <string name="filter_using_date">Filtra per data</string>
+    <string name="theatre_capacity">Capienza: %1$d posti</string>
+    <string name="services_not_available">Servizi non indicati</string>
+    <string name="services_label">Servizi: %1$s</string>
 
     <string name="default_radius">Raggio: 50 km</string>
     <string name="search_theatres">Cerca teatri</string>
@@ -156,6 +174,8 @@
 
     <string name="active_remiders">Promemoria attivi</string>
     <string name="floor_plan">Planimetria</string>
+    <string name="floor_plan_title">Planimetria %1$s</string>
+    <string name="close_button">Chiudi</string>
     <string name="directions">Indicazioni</string>
     <string name="scheduled">In programma</string>
     <string name="search_theatre_city">Cerca un teatro o una città…</string>

@@ -212,14 +212,19 @@ public class TheaterDetailFragment extends Fragment {
             setText(v, R.id.theaterAddressText,
                     addr.isEmpty() ? city : (city.isEmpty() ? addr : addr + " - " + city));
 
-        if (location.getCapacity() > 0)
-            setText(v, R.id.theaterDetailsText, "Capienza: " + location.getCapacity() + " posti");
+        if (location.getCapacity() > 0) {
+            setText(
+                    v,
+                    R.id.theaterDetailsText,
+                    getString(R.string.theatre_capacity, location.getCapacity())
+            );
+        }
 
         TextView srv = v.findViewById(R.id.theaterServicesText);
         if (srv != null && location.getServices() != null) {
             srv.setText(location.getServices().isEmpty()
-                    ? "Servizi non indicati"
-                    : "Servizi: " + TextUtils.join(", ", location.getServices()));
+                    ? getString(R.string.services_not_available)
+                    : getString(R.string.services_label, TextUtils.join(", ", location.getServices())));
         }
 
         // Pulsante planimetria
@@ -301,9 +306,9 @@ public class TheaterDetailFragment extends Fragment {
         wv.loadUrl(resolvedUrl, headers);   // ← overload con headers
 
         new AlertDialog.Builder(requireContext())
-                .setTitle("Planimetria " + safe(location.getName()))
+                .setTitle(getString(R.string.floor_plan_title, safe(location.getName())))
                 .setView(wv)
-                .setPositiveButton("Chiudi", null)
+                .setPositiveButton(R.string.close_button, null)
                 .show();
     }
 
@@ -316,7 +321,7 @@ public class TheaterDetailFragment extends Fragment {
     private void loadEventsForLocation(int locationId) {
         if (locationId <= 0 || eventsStatusTextView == null) return;
         eventsStatusTextView.setVisibility(View.VISIBLE);
-        eventsStatusTextView.setText("Caricamento eventi...");
+        eventsStatusTextView.setText(R.string.eventsStatusText);
 
         ApiClient.getApiService()
                 .searchEvents(null, null, null, null, locationId, null, null, null)
@@ -329,7 +334,7 @@ public class TheaterDetailFragment extends Fragment {
                             List<EventGroup> groups = EventGroup.from(
                                     response.body().getEvents(), false);
                             if (groups.isEmpty()) {
-                                eventsStatusTextView.setText("Nessun evento in programma.");
+                                eventsStatusTextView.setText(R.string.no_event_found);
                             } else {
                                 eventsStatusTextView.setVisibility(View.GONE);
                                 if (eventsRecyclerView != null)
@@ -338,13 +343,13 @@ public class TheaterDetailFragment extends Fragment {
                                             g -> openEventDetail(g.getRepresentative())));
                             }
                         } else {
-                            eventsStatusTextView.setText("Errore caricamento eventi.");
+                            eventsStatusTextView.setText(R.string.event_loading_error);
                         }
                     }
                     @Override
                     public void onFailure(@NonNull Call<EventsResponse> call, @NonNull Throwable t) {
                         if (isAdded() && eventsStatusTextView != null)
-                            eventsStatusTextView.setText("Errore di connessione.");
+                            eventsStatusTextView.setText(R.string.connection_error);
                     }
                 });
     }

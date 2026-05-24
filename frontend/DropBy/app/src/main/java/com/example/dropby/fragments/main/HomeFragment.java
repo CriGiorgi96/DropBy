@@ -163,7 +163,7 @@ public class HomeFragment extends Fragment {
 
     private void loadHomeEvents() {
         statusTextView.setVisibility(View.VISIBLE);
-        statusTextView.setText("Caricamento eventi...");
+        statusTextView.setText(R.string.eventsStatusText);
 
         ApiService apiService = ApiClient.getApiService();
         // AGGIUNTO IL QUINTO PARAMETRO (null) PER location_id
@@ -176,20 +176,20 @@ public class HomeFragment extends Fragment {
                         if (response.isSuccessful() && response.body() != null) {
                             List<Event> events = response.body().getEvents();
                             if (events.isEmpty()) {
-                                statusTextView.setText("Nessun evento disponibile.");
+                                statusTextView.setText(R.string.no_event_found);
                             } else {
                                 statusTextView.setVisibility(View.GONE);
                                 bindFeaturedEvents(events);
                             }
                         } else {
-                            statusTextView.setText("Backend non disponibile.");
+                            statusTextView.setText(R.string.backend_not_available);
                         }
                     }
 
                     @Override
                     public void onFailure(Call<EventsResponse> call, Throwable t) {
                         if (isAdded()) {
-                            statusTextView.setText("Backend non raggiungibile.");
+                            statusTextView.setText(R.string.backend_not_reachable);
                         }
                     }
                 });
@@ -222,7 +222,7 @@ public class HomeFragment extends Fragment {
 
     private void bindFeaturedEvent(Event event) {
         featuredEvent = event;
-        featuredTitleTextView.setText(textOrFallback(event.getTitle(), "Evento in evidenza"));
+        featuredTitleTextView.setText(textOrFallback(event.getTitle(), getString(R.string.highlighted_event)));
         featuredMetaTextView.setText(buildMeta(event));
 
         String imageUrl = event.getMainImage() != null ? event.getMainImage().getUrl() : null;

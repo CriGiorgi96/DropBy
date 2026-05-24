@@ -1,5 +1,6 @@
 package com.example.dropby.fragments.main;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -16,6 +17,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.dropby.R;
 import com.example.dropby.adapters.LocationAdapter;
 import com.example.dropby.models.Location;
@@ -34,6 +36,7 @@ public class TheatersFragment extends Fragment {
     private RecyclerView recyclerView;
     private TextView statusText;
     private EditText editSearch;
+    private ImageView loadingImage;
     private ImageView noResultsImage;
     private List<Location> allLocations = new ArrayList<>();
 
@@ -52,9 +55,16 @@ public class TheatersFragment extends Fragment {
         recyclerView = view.findViewById(R.id.theatersRecyclerView);
         statusText   = view.findViewById(R.id.theatersStatusText);
         editSearch   = view.findViewById(R.id.editSearchTheater);
+        loadingImage = view.findViewById(R.id.loadingImage);
         noResultsImage = view.findViewById(R.id.noResultsImage);
 
+        Glide.with(this)
+                .asGif()
+                .load(R.drawable.loading)
+                .into(loadingImage);
+
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        recyclerView.setNestedScrollingEnabled(false);
 
         editSearch.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int i, int i1, int i2) {}
@@ -68,8 +78,8 @@ public class TheatersFragment extends Fragment {
     }
 
     private void loadTheaters() {
-        statusText.setVisibility(View.VISIBLE);
-        statusText.setText(R.string.theatersStatusText);
+        setStatus(getString(R.string.theatersStatusText));
+        showLoadingState();
 
         ApiClient.getApiService().getLocations(null, null)
                 .enqueue(new Callback<LocationsResponse>() {
@@ -79,20 +89,22 @@ public class TheatersFragment extends Fragment {
                         if (!isAdded()) return;
                         if (response.isSuccessful() && response.body() != null) {
                             allLocations = response.body().getLocations();
-                            statusText.setVisibility(View.GONE);
                             showLocations(allLocations);
                         } else {
                             statusText.setText(R.string.server_error + response.code());
+                            showErrorState();
                         }
                     }
                     @Override
                     public void onFailure(@NonNull Call<LocationsResponse> call, @NonNull Throwable t) {
                         if (!isAdded()) return;
                         statusText.setText(R.string.no_connection_server);
+                        showErrorState();
                     }
                 });
     }
 
+    @SuppressLint("StringFormatInvalid")
     private void filterLocations(String query) {
         if (query.isEmpty()) { showLocations(allLocations); return; }
         String lower = query.toLowerCase();
@@ -103,19 +115,65 @@ public class TheatersFragment extends Fragment {
             if (matchName || matchCity) filtered.add(loc);
         }
         if (filtered.isEmpty()) {
-            statusText.setVisibility(View.VISIBLE);
-            statusText.setText(R.string.no_theater_found + query + "\"");
+            setStatus(getString(R.string.no_results_for, query));
             recyclerView.setAdapter(null);
+            showNoResultsState();
         } else {
-            statusText.setVisibility(View.GONE);
             showLocations(filtered);
         }
     }
 
     private void showLocations(List<Location> locations) {
+        if (locations == null || locations.isEmpty()) {
+            setStatus(getString(R.string.no_theaters_available));
+            showNoResultsState();
+            return;
+        }
+
+        showResultsState();
+
         recyclerView.setAdapter(new LocationAdapter(locations, loc ->
                 requireActivity().getSupportFragmentManager().beginTransaction()
                         .replace(R.id.fragment_container, TheaterDetailFragment.newInstance(loc))
                         .addToBackStack(null).commit()));
+    }
+
+    private void setStatus(String msg) {
+        recyclerView.setVisibility(View.GONE);
+        statusText.setText(msg);
+        statusText.setVisibility(View.VISIBLE);
+    }
+
+    //  Uses the no result image or the loading gif based on status
+    private void showLoadingState() {
+        recyclerView.setVisibility(View.GONE);
+        statusText.setVisibility(View.VISIBLE);
+
+        if (loadingImage != null) loadingImage.setVisibility(View.VISIBLE);
+        if (noResultsImage != null) noResultsImage.setVisibility(View.GONE);
+    }
+
+    private void showNoResultsState() {
+        recyclerView.setVisibility(View.GONE);
+        statusText.setVisibility(View.VISIBLE);
+
+        if (loadingImage != null) loadingImage.setVisibility(View.GONE);
+        if (noResultsImage != null) noResultsImage.setVisibility(View.VISIBLE);
+    }
+
+    private void showResultsState() {
+        recyclerView.setVisibility(View.VISIBLE);
+        statusText.setVisibility(View.GONE);
+
+        if (loadingImage != null) loadingImage.setVisibility(View.GONE);
+        if (noResultsImage != null) noResultsImage.setVisibility(View.GONE);
+    }
+
+    private void showErrorState() {
+        recyclerView.setVisibility(View.GONE);
+        statusText.setVisibility(View.VISIBLE);
+
+        if (loadingImage != null) loadingImage.setVisibility(View.GONE);
+        if (noResultsImage != null) noResultsImage.setVisibility(View.GONE);
     }
 }
