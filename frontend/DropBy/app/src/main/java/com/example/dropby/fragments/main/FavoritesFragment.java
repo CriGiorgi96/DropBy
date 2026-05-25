@@ -55,14 +55,24 @@ public class FavoritesFragment extends Fragment {
                     @Override
                     public void onResponse(Call<ApiService.FavoritesWrapper> call,
                                            Response<ApiService.FavoritesWrapper> response) {
-                        if (!isAdded()) return;
-                        Log.d("FAV_DEBUG", "HTTP " + response.code()
+                        // Log PRIMA di isAdded(): altrimenti il fragment detached rende tutto silenzioso
+                        Log.d("FAV_DEBUG", "onResponse HTTP " + response.code()
+                                + " isAdded=" + isAdded()
                                 + " body_null=" + (response.body() == null)
                                 + " favs=" + (response.body() != null && response.body().favorites != null
                                         ? response.body().favorites.size() : "null"));
+                        if (!isAdded()) {
+                            Log.w("FAV_DEBUG", "Fragment non attached — risposta ignorata");
+                            return;
+                        }
                         if (response.isSuccessful() && response.body() != null
                                 && response.body().favorites != null) {
                             List<FavoriteItem> list = response.body().favorites;
+                            Log.d("JSON_DEBUG", "Adapter riceve " + list.size() + " FavoriteItem. "
+                                    + (list.isEmpty() ? "Lista vuota." :
+                                       "Primo: title=" + list.get(0).getTitle()
+                                       + " price=" + list.get(0).getPrice()
+                                       + " img=" + list.get(0).getMainImageUrl()));
                             requireActivity().runOnUiThread(() -> {
                                 if (!isAdded()) return;
                                 if (list.isEmpty()) {
@@ -74,16 +84,27 @@ public class FavoritesFragment extends Fragment {
                                 }
                             });
                         } else {
+                            int code = response.code();
+                            Log.w("FAV_DEBUG", "body_null=true causato da HTTP " + code
+                                    + (code == 401 ? " → token scaduto/mancante" : ""));
                             requireActivity().runOnUiThread(() -> {
-                                if (isAdded()) setStatus("Errore caricamento preferiti");
+                                if (!isAdded()) return;
+                                if (code == 401) {
+                                    setStatus("Sessione scaduta. Effettua nuovamente il login.");
+                                } else {
+                                    setStatus("Errore caricamento preferiti (HTTP " + code + ")");
+                                }
                             });
                         }
                     }
                     @Override
                     public void onFailure(Call<ApiService.FavoritesWrapper> call, Throwable t) {
-                        Log.e("FAV_DEBUG", "onFailure: " + t.getMessage(), t);
+                        // Sempre loggato — se è JsonSyntaxException c'è un tipo sbagliato nel modello
+                        Log.e("FAV_DEBUG", "onFailure [" + t.getClass().getSimpleName()
+                                + "]: " + t.getMessage(), t);
                         if (isAdded()) requireActivity().runOnUiThread(
-                                () -> { if (isAdded()) setStatus("Errore di rete"); });
+                                () -> { if (isAdded()) setStatus(
+                                        "Errore: " + t.getClass().getSimpleName()); });
                     }
                 });
     }

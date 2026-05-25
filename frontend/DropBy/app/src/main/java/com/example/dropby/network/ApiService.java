@@ -219,8 +219,18 @@ public interface ApiService {
     }
 
     class FavoritesWrapper {
+        // "favorites" corrisponde esattamente alla chiave radice del JSON del backend
         @com.google.gson.annotations.SerializedName("favorites")
+        @androidx.annotation.Nullable
         public List<FavoriteItem> favorites;
+
+        // Presente solo quando il backend risponde 403 (profilo privato in getUserFavorites)
+        @com.google.gson.annotations.SerializedName("private")
+        public boolean isPrivate;
+
+        public boolean hasFavorites() {
+            return favorites != null && !favorites.isEmpty();
+        }
     }
 
     class NotificationsWrapper {

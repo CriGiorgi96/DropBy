@@ -16,12 +16,22 @@ def get_events():
         conn  = Database().get_connection()
         sql   = """
             SELECT
-                e.id, e.slug, e.title, e.category, e.city,
-                e.event_date   AS date,
-                e.start_time   AS time,
-                e.duration,    e.price, e.description,
-                e.ticket_url,  e.source_url, e.location_id,
-                l.name         AS location_name
+                e.id, e.slug, e.title, e.category,
+                COALESCE(
+                    NULLIF(e.city, ''),
+                    (SELECT li.city FROM event_replicas eri
+                     JOIN locations li ON li.id = eri.location_id
+                     WHERE eri.event_id = e.id ORDER BY eri.show_date LIMIT 1)
+                ) AS city,
+                COALESCE(
+                    (SELECT to_char(MIN(eri.show_date), 'YYYY-MM-DD')
+                     FROM event_replicas eri
+                     WHERE eri.event_id = e.id AND eri.show_date >= NOW()),
+                    NULLIF(e.event_date::TEXT, '')
+                ) AS date,
+                e.duration, e.description,
+                e.location_id,
+                l.name AS location_name
             FROM events e
             LEFT JOIN locations l ON l.id = e.location_id
             WHERE 1=1

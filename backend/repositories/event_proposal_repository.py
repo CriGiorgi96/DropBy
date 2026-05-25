@@ -1,6 +1,21 @@
 from database import Database
 from helpers.format_helper import dict_format, dict_format_single
 
+_DATE_COALESCE = """COALESCE(
+        (SELECT to_char(MIN(eri.show_date), 'YYYY-MM-DD')
+         FROM event_replicas eri
+         WHERE eri.event_id = e.id AND eri.show_date >= NOW()),
+        NULLIF(e.event_date::TEXT, '')
+    ) AS event_date"""
+
+_CITY_COALESCE = """COALESCE(
+        NULLIF(e.city, ''),
+        (SELECT li.city FROM event_replicas eri
+         JOIN locations li ON li.id = eri.location_id
+         WHERE eri.event_id = e.id ORDER BY eri.show_date LIMIT 1)
+    ) AS event_city"""
+
+
 class EventProposalRepository:
 
     @staticmethod
@@ -48,11 +63,12 @@ class EventProposalRepository:
         db = Database()
         conn = db.get_connection()
         rows = conn.run(
-            """SELECT p.id, p.status, p.created_at,
+            f"""SELECT p.id, p.status, p.created_at,
                       p.from_user_id, uf.username AS from_username,
                       p.to_user_id,   ut.username AS to_username,
                       e.id AS event_id, e.title AS event_title,
-                      e.event_date, e.city AS event_city
+                      {_DATE_COALESCE},
+                      {_CITY_COALESCE}
                FROM event_proposals p
                JOIN users  uf ON p.from_user_id = uf.id
                JOIN users  ut ON p.to_user_id   = ut.id
@@ -72,10 +88,11 @@ class EventProposalRepository:
         db = Database()
         conn = db.get_connection()
         rows = conn.run(
-            """SELECT p.id, p.status, p.created_at,
+            f"""SELECT p.id, p.status, p.created_at,
                       p.to_user_id,  ut.username AS to_username,
                       e.id AS event_id, e.title AS event_title,
-                      e.event_date, e.city AS event_city,
+                      {_DATE_COALESCE},
+                      {_CITY_COALESCE},
                       er.response AS response_emoji
                FROM event_proposals p
                JOIN users  ut ON p.to_user_id = ut.id

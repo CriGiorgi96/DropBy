@@ -3,7 +3,7 @@ package com.example.dropby.fragments.main;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,7 +47,7 @@ public class UserDetailsFragment extends Fragment {
             targetUserId = getArguments().getInt("user_id", -1);
         }
 
-        Button btnBack = view.findViewById(R.id.btnUserDetailsBack);
+        ImageButton btnBack = view.findViewById(R.id.btnUserDetailsBack);
         btnBack.setOnClickListener(v -> requireActivity().getSupportFragmentManager().popBackStack());
 
         if (targetUserId == -1) {
@@ -182,20 +182,22 @@ public class UserDetailsFragment extends Fragment {
                     public void onResponse(@NonNull Call<ApiService.FavoritesWrapper> call,
                                            @NonNull Response<ApiService.FavoritesWrapper> response) {
                         if (!isAdded()) return;
-                        if (response.isSuccessful() && response.body() != null
-                                && response.body().favorites != null) {
-                            List<FavoriteItem> list = response.body().favorites;
-                            if (list.isEmpty()) {
-                                emptyMsg.setVisibility(View.VISIBLE);
-                            } else {
-                                rv.setLayoutManager(new LinearLayoutManager(requireContext()));
-                                rv.setAdapter(new FavoriteAdapter(list, null,
-                                        eventId -> openEventDetail(eventId)));
-                                rv.setVisibility(View.VISIBLE);
-                            }
-                        } else if (response.code() == 403) {
+                        ApiService.FavoritesWrapper body = response.body();
+                        if (response.isSuccessful() && body != null && body.hasFavorites()) {
+                            rv.setLayoutManager(new LinearLayoutManager(requireContext()));
+                            rv.setAdapter(new FavoriteAdapter(body.favorites, null,
+                                    eventId -> openEventDetail(eventId)));
+                            rv.setVisibility(View.VISIBLE);
+                        } else if (response.code() == 403
+                                || (body != null && body.isPrivate)) {
+                            // 403 = backend protegge il profilo privato lato server
                             privacyMsg.setVisibility(View.VISIBLE);
+                        } else if (response.isSuccessful()) {
+                            // 200 ma lista vuota
+                            emptyMsg.setVisibility(View.VISIBLE);
                         } else {
+                            android.util.Log.w("FAV_DEBUG",
+                                    "getUserFavorites HTTP " + response.code());
                             emptyMsg.setVisibility(View.VISIBLE);
                         }
                     }
