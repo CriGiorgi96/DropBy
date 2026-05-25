@@ -19,6 +19,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fillViewport="true"
     android:background="#FFF8F5FC">
 
     <LinearLayout
@@ -122,18 +123,20 @@
                 android:textColor="#333333"
                 android:textSize="16sp"/>
 
-            <!-- Prezzo -->
+            <!-- Link approfondimento (Wikipedia / info_url) -->
             <TextView
-                android:id="@+id/eventDetailPrice"
+                android:id="@+id/eventDetailInfoLink"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:background="#F3E5F5"
-                android:paddingHorizontal="14dp"
-                android:paddingVertical="6dp"
-                android:textColor="#6A1B9A"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:layout_marginTop="10dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackground"
+                android:paddingVertical="4dp"
+                android:textColor="#7B1FA2"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
 
             <!-- Pulsante biglietti -->
             <Button
@@ -365,6 +368,16 @@
             </LinearLayout>
 
             <!-- ── SEZIONE REPLICHE ── -->
+            <CheckBox
+                android:id="@+id/checkShowPastReplicas"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="@string/show_past_replicas"
+                android:textColor="#6A6274"
+                android:textSize="14sp"
+                android:checked="false" />
+
             <TextView
                 android:id="@+id/eventDetailReplicasLabel"
                 android:layout_width="match_parent"
@@ -385,12 +398,13 @@
                 android:textSize="14sp"
                 android:visibility="gone" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/eventDetailReplicasRecyclerView"
+            <!-- Container teatri: LinearLayout statico, nessuna RecyclerView -->
+            <LinearLayout
+                android:id="@+id/eventDetailReplicasContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:nestedScrollingEnabled="false" />
+                android:orientation="vertical" />
 
         </LinearLayout>
     </LinearLayout>

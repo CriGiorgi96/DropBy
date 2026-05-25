@@ -15,16 +15,16 @@ def serialize_location(row, columns):
     """
     loc = dict(zip(columns, row))
 
-    services = loc.get("services")
-
-    if isinstance(services, str):
-        try:
-            import json
-            loc["services"] = json.loads(services)
-        except Exception:
-            loc["services"] = []
-    elif services is None:
-        loc["services"] = []
+    for field in ("services", "services_it"):
+        val = loc.get(field)
+        if isinstance(val, str):
+            try:
+                import json
+                loc[field] = json.loads(val)
+            except Exception:
+                loc[field] = []
+        elif val is None:
+            loc[field] = []
 
     for field in ("image_est", "image_int", "floor_plan"):
         if loc.get(field) in ("None", ""):
@@ -49,7 +49,8 @@ def get_locations():
 @locations_bp.route('/<int:location_id>', methods=['GET'])
 def get_location(location_id):
     try:
-        location = LocationService.get_location_detail(location_id)
+        include_past = request.args.get('include_past', 'false').lower() == 'true'
+        location = LocationService.get_location_detail(location_id, include_past=include_past)
         return jsonify(location), 200
 
     except ValueError as e:

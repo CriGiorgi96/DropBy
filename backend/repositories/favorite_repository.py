@@ -18,22 +18,26 @@ class FavoriteRepository:
 
     @staticmethod
     def find_by_user(user_id):
-        db = Database()
-        conn = db.get_connection()
-        rows = conn.run(
-            """SELECT f.id AS favorite_id, f.created_at, f.event_id,
-                      e.title, e.category, e.city, e.event_date, e.price,
-                      (SELECT ei.url FROM event_images ei
-                       WHERE ei.event_id = e.id
-                       ORDER BY ei.image_order
-                       LIMIT 1) AS image_url
-               FROM favorites f
-               JOIN events e ON f.event_id = e.id
-               WHERE f.user_id = :user_id
-               ORDER BY f.created_at DESC""",
-            user_id=user_id
-        )
-        return dict_format(conn, rows)
+        try:
+            db = Database()
+            conn = db.get_connection()
+            rows = conn.run(
+                """SELECT f.id AS favorite_id, f.created_at, f.event_id,
+                          e.title, e.category, e.city, e.event_date, e.price,
+                          (SELECT ei.url FROM event_images ei
+                           WHERE ei.event_id = e.id
+                           ORDER BY ei.image_order
+                           LIMIT 1) AS image_url
+                   FROM favorites f
+                   LEFT JOIN events e ON f.event_id = e.id
+                   WHERE f.user_id = :user_id
+                   ORDER BY f.created_at DESC""",
+                user_id=user_id
+            )
+            all_rows = dict_format(conn, rows)
+            return [r for r in all_rows if r.get("title") is not None]
+        except Exception:
+            return []
 
     @staticmethod
     def remove(user_id, event_id):

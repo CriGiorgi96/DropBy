@@ -66,7 +66,13 @@ public class UserDetailsFragment extends Fragment {
                     @Override
                     public void onResponse(@NonNull Call<Map<String, Object>> call,
                                            @NonNull Response<Map<String, Object>> response) {
-                        if (!isAdded() || response.body() == null) return;
+                        if (!isAdded()) return;
+                        if (!response.isSuccessful() || response.body() == null) {
+                            Toast.makeText(requireContext(),
+                                    "Impossibile caricare il profilo", Toast.LENGTH_SHORT).show();
+                            requireActivity().getSupportFragmentManager().popBackStack();
+                            return;
+                        }
                         Map<String, Object> data = response.body();
 
                         bindProfileHeader(view, data);
@@ -107,15 +113,20 @@ public class UserDetailsFragment extends Fragment {
             loadSource = R.drawable.default_guest;
         }
 
-        Glide.with(this)
-                .load(loadSource)
-                .placeholder(R.drawable.default_guest)
-                .circleCrop()
-                .into(avatar);
+        try {
+            Glide.with(this)
+                    .load(loadSource)
+                    .placeholder(R.drawable.default_guest)
+                    .error(R.drawable.default_guest)
+                    .circleCrop()
+                    .into(avatar);
+        } catch (Exception e) {
+            avatar.setImageResource(R.drawable.default_guest);
+        }
     }
 
     private void openEventDetail(int eventId) {
-        ApiClient.getApiService().getEventDetail(eventId)
+        ApiClient.getApiService().getEventDetail(eventId,false)
                 .enqueue(new retrofit2.Callback<ApiService.EventWrapper>() {
                     @Override
                     public void onResponse(@NonNull retrofit2.Call<ApiService.EventWrapper> call,

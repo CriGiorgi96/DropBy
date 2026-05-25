@@ -1,27 +1,32 @@
 package com.example.dropby.models;
 
+import androidx.annotation.Nullable;
 import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 
 public class Review implements Serializable {
 
     @SerializedName("id")
-    private int id;
+    @Nullable
+    private Integer id;
 
     @SerializedName("user_id")
-    private int userId;
+    @Nullable
+    private Integer userId;
 
     @SerializedName("username")
     private String username;
 
     @SerializedName("event_id")
-    private int eventId;
+    @Nullable
+    private Integer eventId;
 
     @SerializedName("event_title")
     private String eventTitle;
 
     @SerializedName("rating")
-    private int rating;
+    @Nullable
+    private Integer rating;
 
     @SerializedName("comment")
     private String comment;
@@ -41,23 +46,23 @@ public class Review implements Serializable {
     @SerializedName("profile_image")
     private String profileImage;
 
-    public int getId()              { return id; }
-    public int getUserId()          { return userId; }
-    public String getUsername()     { return username; }
-    public String getProfileImage() { return profileImage; }
-    public int getEventId()         { return eventId; }
-    public String getEventTitle()   { return eventTitle; }
-    public int getRating()          { return rating; }
-    public String getComment()      { return comment; }
-    public String getCreatedAt()    { return createdAt; }
-    public String getEventDate()    { return eventDate; }
-    public String getEventCity()    { return eventCity; }
-    public String getLocationName() { return locationName; }
+    public int    getId()              { return id      != null ? id      : 0; }
+    public int    getUserId()          { return userId  != null ? userId  : 0; }
+    public String getUsername()        { return username; }
+    public String getProfileImage()    { return profileImage; }
+    public int    getEventId()         { return eventId != null ? eventId : 0; }
+    public String getEventTitle()      { return eventTitle; }
+    public int    getRating()          { return rating  != null ? rating  : 0; }
+    public String getComment()         { return comment; }
+    public String getCreatedAt()       { return createdAt; }
+    public String getEventDate()       { return eventDate; }
+    public String getEventCity()       { return eventCity; }
+    public String getLocationName()    { return locationName; }
 
-    /** Restituisce le stelle come stringa (es. "★★★★☆" per 4/5) */
     public String getStarsString() {
+        int r = getRating();
         StringBuilder sb = new StringBuilder();
-        for (int i = 1; i <= 5; i++) sb.append(i <= rating ? "★" : "☆");
+        for (int i = 1; i <= 5; i++) sb.append(i <= r ? "★" : "☆");
         return sb.toString();
     }
 }

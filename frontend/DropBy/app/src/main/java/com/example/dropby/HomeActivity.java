@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.view.Menu;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -193,6 +194,32 @@ public class HomeActivity extends AppCompatActivity {
             closeBothDrawers();
             return true;
         });
+
+        // Pulsanti lingua nel header del NavigationView sinistro
+        View leftHeader = navLeft.getHeaderView(0);
+        ImageButton btnIt = leftHeader != null ? leftHeader.findViewById(R.id.drawerBtnLanguageIt) : null;
+        ImageButton btnEn = leftHeader != null ? leftHeader.findViewById(R.id.drawerBtnLanguageEn) : null;
+        updateDrawerLanguageButtons(btnIt, btnEn);
+
+        if (btnIt != null) btnIt.setOnClickListener(v -> setAppLanguage("it"));
+        if (btnEn != null) btnEn.setOnClickListener(v -> setAppLanguage("en"));
+    }
+
+    private void setAppLanguage(String languageTag) {
+        SharedPreferences settings = getSharedPreferences("app_settings", MODE_PRIVATE);
+        String current = settings.getString("language", "it");
+        if (current.equals(languageTag)) return;
+        settings.edit().putString("language", languageTag).apply();
+        recreate();
+    }
+
+    private void updateDrawerLanguageButtons(ImageButton btnIt, ImageButton btnEn) {
+        if (btnIt == null || btnEn == null) return;
+        String lang = getSharedPreferences("app_settings", MODE_PRIVATE)
+                .getString("language", "it");
+        boolean en = lang.startsWith("en");
+        btnIt.setBackgroundResource(en ? R.drawable.bg_language_normal : R.drawable.bg_language_selected);
+        btnEn.setBackgroundResource(en ? R.drawable.bg_language_selected : R.drawable.bg_language_normal);
     }
 
     private void toggleLeftDrawer() {

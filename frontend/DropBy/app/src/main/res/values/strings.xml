@@ -180,11 +180,22 @@
     <string name="scheduled">In programma</string>
     <string name="search_theatre_city">Cerca un teatro o una città…</string>
     <string name="event_action">Azioni Evento</string>
+    <string name="add_to_favorites">Salva nei preferiti</string>
+    <string name="set_reminder">Imposta promemoria</string>
+    <string name="propose_to_friend">Proponi a un amico</string>
 
     <string name="verify_your_account">Verifica il tuo account</string>
     <string name="sent_code_to_email">Abbiamo inviato un codice alla tua email</string>
     <string name="six_character_code">Codice a 6 cifre</string>
     <string name="verify">Verifica</string>
     <string name="did_not_receive_code">Non hai ricevuto il codice? Reinvia</string>
+
+    <!-- EventDetailFragment / TheaterDetailFragment -->
+    <string name="show_past_replicas">Mostra le repliche già avvenute</string>
+    <string name="show_past_events">Mostra eventi passati</string>
+    <string name="choose_theater">Scegli il teatro</string>
+    <string name="show_already_happened_title">Spettacolo già avvenuto</string>
+    <string name="show_already_happened_message">Lo spettacolo è già avvenuto, vuoi comunque proseguire all\'acquisto?</string>
+    <string name="proceed_anyway">Prosegui comunque</string>
 
 </resources>

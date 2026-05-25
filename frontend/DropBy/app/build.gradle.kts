@@ -40,6 +40,7 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.gson)
     implementation(libs.okhttp.logging)
+    implementation("androidx.core:core-splashscreen:1.0.1")
 
     // GLIDE
     implementation("com.github.bumptech.glide:glide:4.16.0")

@@ -18,6 +18,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fillViewport="true"
     android:background="#FFF8F5FC">
 
     <LinearLayout
@@ -106,6 +107,16 @@
                 android:textColor="#6A6274"
                 android:textSize="14sp" />
 
+            <TextView
+                android:id="@+id/theaterDescriptionText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:lineSpacingMultiplier="1.4"
+                android:textColor="#333333"
+                android:textSize="14sp"
+                android:visibility="gone" />
+
             <!-- Pulsanti azione -->
             <LinearLayout
                 android:layout_width="match_parent"
@@ -154,6 +165,16 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
+            <CheckBox
+                android:id="@+id/checkShowPastEvents"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/show_past_events"
+                android:textColor="#6A6274"
+                android:textSize="14sp"
+                android:checked="false" />
+
             <TextView
                 android:id="@+id/theaterEventsStatusText"
                 android:layout_width="match_parent"
@@ -163,13 +184,13 @@
                 android:textSize="13sp"
                 android:visibility="visible" />
 
-            <!-- RecyclerView per eventi raggruppati (sostituisce il vecchio LinearLayout) -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/theaterEventsRecyclerView"
+            <!-- Container eventi: LinearLayout statico, nessuna RecyclerView -->
+            <LinearLayout
+                android:id="@+id/theaterEventsContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:nestedScrollingEnabled="false" />
+                android:orientation="vertical" />
 
         </LinearLayout>
     </LinearLayout>

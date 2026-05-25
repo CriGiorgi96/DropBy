@@ -167,7 +167,7 @@ public class HomeFragment extends Fragment {
 
         ApiService apiService = ApiClient.getApiService();
         // AGGIUNTO IL QUINTO PARAMETRO (null) PER location_id
-        apiService.searchEvents(null, null, null, null, null, null, null, null)
+        apiService.searchEvents(null, null, null, null, null, null, null, null, null)
                 .enqueue(new Callback<EventsResponse>() {
                     @Override
                     public void onResponse(Call<EventsResponse> call, Response<EventsResponse> response) {
@@ -250,7 +250,8 @@ public class HomeFragment extends Fragment {
     }
 
     private void openTicketPage(Event event) {
-        String ticketUrl = event.getTicketUrl();
+        Event.EventReplica next = event.getNextReplica();
+        String ticketUrl = next != null ? next.getTicketUrl() : null;
         if (ticketUrl == null || ticketUrl.trim().isEmpty()) {
             Toast.makeText(requireContext(), "Biglietto non disponibile per questo spettacolo.", Toast.LENGTH_SHORT).show();
             return;
@@ -261,8 +262,9 @@ public class HomeFragment extends Fragment {
 
     private String buildMeta(Event event) {
         StringBuilder builder = new StringBuilder();
-        appendPart(builder, event.getCity());
-        appendPart(builder, event.getDate());
+        Event.EventReplica next = event.getNextReplica();
+        appendPart(builder, next != null ? next.getLocationName() : event.getNextLocationName());
+        appendPart(builder, next != null ? next.getDatePart()     : null);
         appendPart(builder, event.getCategory());
         return builder.toString();
     }

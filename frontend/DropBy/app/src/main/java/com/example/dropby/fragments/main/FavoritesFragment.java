@@ -1,6 +1,7 @@
 package com.example.dropby.fragments.main;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -55,29 +56,40 @@ public class FavoritesFragment extends Fragment {
                     public void onResponse(Call<ApiService.FavoritesWrapper> call,
                                            Response<ApiService.FavoritesWrapper> response) {
                         if (!isAdded()) return;
+                        Log.d("FAV_DEBUG", "HTTP " + response.code()
+                                + " body_null=" + (response.body() == null)
+                                + " favs=" + (response.body() != null && response.body().favorites != null
+                                        ? response.body().favorites.size() : "null"));
                         if (response.isSuccessful() && response.body() != null
                                 && response.body().favorites != null) {
                             List<FavoriteItem> list = response.body().favorites;
-                            if (list.isEmpty()) {
-                                setStatus(getString(R.string.no_favorites));
-                            } else {
-                                statusText.setVisibility(View.GONE);
-                                adapter.update(list);
-                                recyclerView.setVisibility(View.VISIBLE);
-                            }
+                            requireActivity().runOnUiThread(() -> {
+                                if (!isAdded()) return;
+                                if (list.isEmpty()) {
+                                    setStatus(getString(R.string.no_favorites));
+                                } else {
+                                    statusText.setVisibility(View.GONE);
+                                    adapter.update(list);
+                                    recyclerView.setVisibility(View.VISIBLE);
+                                }
+                            });
                         } else {
-                            setStatus("Errore caricamento preferiti");
+                            requireActivity().runOnUiThread(() -> {
+                                if (isAdded()) setStatus("Errore caricamento preferiti");
+                            });
                         }
                     }
                     @Override
                     public void onFailure(Call<ApiService.FavoritesWrapper> call, Throwable t) {
-                        if (isAdded()) setStatus("Errore di rete");
+                        Log.e("FAV_DEBUG", "onFailure: " + t.getMessage(), t);
+                        if (isAdded()) requireActivity().runOnUiThread(
+                                () -> { if (isAdded()) setStatus("Errore di rete"); });
                     }
                 });
     }
 
     private void openEventDetail(int eventId) {
-        ApiClient.getApiService().getEventDetail(eventId)
+        ApiClient.getApiService().getEventDetail(eventId,false)
                 .enqueue(new Callback<ApiService.EventWrapper>() {
                     @Override
                     public void onResponse(Call<ApiService.EventWrapper> call,

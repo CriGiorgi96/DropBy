@@ -46,12 +46,16 @@ public interface ApiService {
             @Query("query")         String query,
             @Query("location_id")   Integer locationId,
             @Query("only_upcoming") Boolean onlyUpcoming,
+            @Query("include_past")  Boolean includePast,
             @Query("start_date")    String startDate,
             @Query("end_date")      String endDate
     );
 
     @GET("api/events/{eventId}")
-    Call<EventWrapper> getEventDetail(@Path("eventId") int eventId);
+    Call<EventWrapper> getEventDetail(
+            @Path("eventId")       int eventId,
+            @Query("include_past") Boolean includePast
+    );
 
     // ── LOCATION ─────────────────────────────────────────────────────────────
 
@@ -62,7 +66,10 @@ public interface ApiService {
     );
 
     @GET("api/locations/{locationId}")
-    Call<Location> getLocationById(@Path("locationId") int locationId);
+    Call<Location> getLocationById(
+            @Path("locationId")    int locationId,
+            @Query("include_past") Boolean includePast
+    );
 
     // ── AUTH ─────────────────────────────────────────────────────────────────
 
@@ -197,30 +204,37 @@ public interface ApiService {
     }
 
     class FriendsWrapper {
+        @com.google.gson.annotations.SerializedName("friends")
         public List<Friend> friends;
     }
 
     class FriendRequestsWrapper {
+        @com.google.gson.annotations.SerializedName("requests")
         public List<Friend> requests;
     }
 
     class ReviewsWrapper {
+        @com.google.gson.annotations.SerializedName("reviews")
         public List<Review> reviews;
     }
 
     class FavoritesWrapper {
+        @com.google.gson.annotations.SerializedName("favorites")
         public List<FavoriteItem> favorites;
     }
 
     class NotificationsWrapper {
+        @com.google.gson.annotations.SerializedName("notifications")
         public List<Notification> notifications;
     }
 
     class ProposalsWrapper {
+        @com.google.gson.annotations.SerializedName("proposals")
         public List<Proposal> proposals;
     }
 
     class RemindersWrapper {
+        @com.google.gson.annotations.SerializedName("reminders")
         public List<Reminder> reminders;
     }
 }

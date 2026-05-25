@@ -27,6 +27,7 @@
             android:background="@android:color/transparent"
             android:paddingTop="100dp"
             android:clipToPadding="false"
+            app:headerLayout="@layout/nav_header_home"
             app:menu="@menu/drawer_menu" />
 
     </FrameLayout>

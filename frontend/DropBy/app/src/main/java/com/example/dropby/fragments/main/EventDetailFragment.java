@@ -1,19 +1,23 @@
 package com.example.dropby.fragments.main;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -23,16 +27,17 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.dropby.EventActionsHelper;
+import com.example.dropby.LangUtil;
 import com.example.dropby.R;
+import com.example.dropby.ReminderScheduler;
 import com.example.dropby.adapters.ReviewAdapter;
 import com.example.dropby.adapters.TheaterReplicaAdapter;
 import com.example.dropby.models.Event;
-import com.example.dropby.models.EventsResponse;
-import com.example.dropby.models.Location;
 import com.example.dropby.models.FavoriteItem;
 import com.example.dropby.models.Friend;
 import com.example.dropby.models.GenericResponse;
-import com.example.dropby.ReminderScheduler;
+import com.example.dropby.models.Location;
 import com.example.dropby.models.Review;
 import com.example.dropby.models.ReviewRequest;
 import com.example.dropby.network.ApiClient;
@@ -43,6 +48,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -51,19 +57,12 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-/**
- * Dettaglio di un singolo evento.
- *
- * Mostra:
- *  - Locandina, titolo, categoria, descrizione, prezzo
- *  - Pulsante biglietti (se disponibile)
- *  - Sezione "Altre repliche": tutte le date/teatri per la stessa produzione,
- *    raggruppate per location (showVenue=true in EventGroup.from)
- */
 public class EventDetailFragment extends Fragment {
 
     private static final String ARG_EVENT = "event";
-    private Event event;
+
+    private Event     event;
+    private CheckBox  checkShowPast;
 
     public static EventDetailFragment newInstance(Event event) {
         EventDetailFragment f = new EventDetailFragment();
@@ -92,13 +91,13 @@ public class EventDetailFragment extends Fragment {
         setupFavoriteButton(view);
         loadReviews(view);
         setupReviewForm(view);
+        setupShowPastCheckbox(view);
         loadOtherReplicas(view);
     }
 
     // ── BIND DATA ────────────────────────────────────────────────────────────
 
     private void bindEventData(View view) {
-        // Locandina
         ImageView poster = view.findViewById(R.id.eventDetailPoster);
         if (poster != null) {
             if (event.getMainImage() != null && event.getMainImage().getUrl() != null) {
@@ -111,462 +110,265 @@ public class EventDetailFragment extends Fragment {
             }
         }
 
-        setText(view, R.id.eventDetailTitle,       event.getTitle());
+        setText(view, R.id.eventDetailTitle,
+                LangUtil.pick(requireContext(), event.getTitle(), event.getTitleEng()));
         setText(view, R.id.eventDetailCategory,    event.getCategory());
-        setText(view, R.id.eventDetailDate,        safe(event.getDate()) + " · " + safe(event.getStartTime()));
-        setText(view, R.id.eventDetailCity,        event.getCity());
-        setText(view, R.id.eventDetailDescription, event.getDescription());
-        setText(view, R.id.eventDetailPrice,
-                event.getPrice() != null ? "€ " + event.getPrice() : "Prezzo non indicato");
 
-        // Pulsante biglietti
+        // Prossima replica: data + teatro + città
+        Event.EventReplica next = event.getNextReplica();
+        if (next != null) {
+            String d = formatEventDate(next.getDatePart());
+            String t = next.getTimePart();
+            setText(view, R.id.eventDetailDate, t.isEmpty() ? d : d + " · " + t);
+            String loc = safe(next.getLocationName());
+            if (!safe(next.getLocationCity()).isEmpty()) loc += " · " + next.getLocationCity();
+            setText(view, R.id.eventDetailCity, loc);
+        } else {
+            setText(view, R.id.eventDetailDate, "—");
+            setText(view, R.id.eventDetailCity, "—");
+        }
+
+        setText(view, R.id.eventDetailDescription,
+                LangUtil.pick(requireContext(), event.getDescription(), event.getDescriptionEng()));
+
+        // Link approfondimento (Wikipedia / info_url)
+        bindInfoLink(view);
+
+        // Pulsante biglietti → dialogo selezione teatro
+        // Mostra il bottone solo se esiste almeno una replica FUTURA con URL biglietti.
         Button ticketBtn = view.findViewById(R.id.eventDetailTicketButton);
         if (ticketBtn != null) {
-            if (event.getTicketUrl() != null && !event.getTicketUrl().isEmpty()) {
+            List<Event.EventReplica> replicas = event.getReplicas();
+            boolean hasTicketUrl = replicas != null && !replicas.isEmpty()
+                    && replicas.stream().anyMatch(r ->
+                            !r.isPast()
+                            && r.getTicketUrl() != null
+                            && !r.getTicketUrl().isEmpty());
+            if (hasTicketUrl) {
                 ticketBtn.setVisibility(View.VISIBLE);
-                ticketBtn.setOnClickListener(v -> {
-                    android.net.Uri uri = android.net.Uri.parse(event.getTicketUrl());
-                    startActivity(new android.content.Intent(
-                            android.content.Intent.ACTION_VIEW, uri));
-                });
+                ticketBtn.setOnClickListener(v -> showTicketDialog());
             } else {
                 ticketBtn.setVisibility(View.GONE);
             }
         }
     }
 
+    // ── LINK APPROFONDIMENTO ─────────────────────────────────────────────────
+
+    private void bindInfoLink(View view) {
+        android.widget.TextView tv = view.findViewById(R.id.eventDetailInfoLink);
+        if (tv == null) return;
+
+        boolean en = LangUtil.isEnglish(requireContext());
+        String infoUrl = en ? event.getInfoUrlEng() : event.getInfoUrlIt();
+        if (infoUrl == null || infoUrl.trim().isEmpty()) {
+            tv.setVisibility(View.GONE);
+            return;
+        }
+
+        String label = en ? "More details →" : "Per più dettagli →";
+        android.text.SpannableString ss = new android.text.SpannableString(label);
+        ss.setSpan(new android.text.style.UnderlineSpan(), 0, label.length(), 0);
+        tv.setText(ss);
+        tv.setVisibility(View.VISIBLE);
+        tv.setOnClickListener(v -> openTicketUrl(infoUrl));
+    }
+
+    // ── DIALOGO ACQUISTO BIGLIETTI ───────────────────────────────────────────
+
+    private void showTicketDialog() {
+        List<Event.EventReplica> replicas = event.getReplicas();
+        if (replicas == null || replicas.isEmpty()) return;
+
+        String[] labels = new String[replicas.size()];
+        for (int i = 0; i < replicas.size(); i++) {
+            Event.EventReplica r = replicas.get(i);
+            String venue = r.getLocationName() != null ? r.getLocationName() : "—";
+            String city  = r.getLocationCity() != null ? r.getLocationCity()  : "";
+            String date  = formatEventDate(r.getDatePart());
+            String time  = r.getTimePart();
+            labels[i] = venue + (city.isEmpty() ? "" : " · " + city)
+                    + "\n" + date + (time.isEmpty() ? "" : " · " + time);
+            if (r.isPast()) labels[i] += " ⚠ già avvenuto";
+        }
+
+        final int[] selected = {0};
+
+        new android.app.AlertDialog.Builder(requireContext())
+                .setTitle(getString(R.string.choose_theater))
+                .setSingleChoiceItems(labels, 0, (dialog, which) -> selected[0] = which)
+                .setPositiveButton(getString(R.string.buy_tickets), (dialog, which) -> {
+                    Event.EventReplica replica = replicas.get(selected[0]);
+                    if (replica.isPast()) {
+                        showTicketWarningDialog(replica.getTicketUrl());
+                    } else {
+                        openTicketUrl(replica.getTicketUrl());
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
+    }
+
+    private void showTicketWarningDialog(String ticketUrl) {
+        new android.app.AlertDialog.Builder(requireContext())
+                .setTitle(getString(R.string.show_already_happened_title))
+                .setMessage(getString(R.string.show_already_happened_message))
+                .setPositiveButton(getString(R.string.proceed_anyway), (d, w) -> openTicketUrl(ticketUrl))
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
+    }
+
+    private void openTicketUrl(String url) {
+        if (url == null || url.isEmpty()) {
+            Toast.makeText(requireContext(), "URL biglietti non disponibile", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        startActivity(new android.content.Intent(
+                android.content.Intent.ACTION_VIEW, android.net.Uri.parse(url)));
+    }
+
+    // ── CHECKBOX MOSTRA REPLICHE PASSATE ────────────────────────────────────
+
+    private void setupShowPastCheckbox(View view) {
+        checkShowPast = view.findViewById(R.id.checkShowPastReplicas);
+        if (checkShowPast == null) return;
+        checkShowPast.setOnCheckedChangeListener((btn, checked) ->
+                reloadEventWithPast(view, checked));
+    }
+
+    private void reloadEventWithPast(View view, boolean includePast) {
+        ApiClient.getApiService()
+                .getEventDetail(event.getId(), includePast)
+                .enqueue(new Callback<ApiService.EventWrapper>() {
+                    @Override
+                    public void onResponse(@NonNull Call<ApiService.EventWrapper> call,
+                                           @NonNull Response<ApiService.EventWrapper> response) {
+                        if (!isAdded()) return;
+                        if (response.isSuccessful() && response.body() != null
+                                && response.body().event != null) {
+                            event = response.body().event;
+                            // Aggiorna il bottone biglietti e la sezione repliche
+                            bindEventData(view);
+                            loadOtherReplicas(view);
+                        }
+                    }
+                    @Override
+                    public void onFailure(@NonNull Call<ApiService.EventWrapper> call, @NonNull Throwable t) {}
+                });
+    }
+
+    // ── SEZIONE "IN SCENA ANCHE A…" ─────────────────────────────────────────
+
+    private void loadOtherReplicas(View view) {
+        TextView     label     = view.findViewById(R.id.eventDetailReplicasLabel);
+        TextView     status    = view.findViewById(R.id.eventDetailReplicasStatus);
+        LinearLayout container = view.findViewById(R.id.eventDetailReplicasContainer);
+        if (label == null || container == null) return;
+
+        List<Event.EventReplica> replicas = event.getReplicas();
+
+        if (replicas == null || replicas.isEmpty()) {
+            label.setVisibility(View.GONE);
+            if (status != null) status.setVisibility(View.GONE);
+            container.removeAllViews();
+            return;
+        }
+
+        // Raggruppa le repliche per location_id
+        LinkedHashMap<Integer, TheaterReplicaAdapter.LocationGroup> map = new LinkedHashMap<>();
+        for (Event.EventReplica r : replicas) {
+            if (!map.containsKey(r.getLocationId())) {
+                TheaterReplicaAdapter.LocationGroup grp =
+                        new TheaterReplicaAdapter.LocationGroup(
+                                r.getLocationId(),
+                                r.getLocationName(),
+                                r.getLocationCity(),
+                                r.getLocationImageEst(),
+                                r.getLocationImageInt());
+                grp.representative = event;
+                map.put(r.getLocationId(), grp);
+            }
+            map.get(r.getLocationId()).slots.add(
+                    new String[]{r.getDatePart(), r.getTimePart()});
+        }
+
+        List<TheaterReplicaAdapter.LocationGroup> groups = new ArrayList<>(map.values());
+        if (status != null) status.setVisibility(View.GONE);
+        label.setVisibility(View.VISIBLE);
+
+        container.removeAllViews();
+        LayoutInflater inflater = LayoutInflater.from(requireContext());
+        SharedPreferences prefs = requireContext().getSharedPreferences("app", Context.MODE_PRIVATE);
+        boolean isLogged = prefs.getString("token", null) != null;
+
+        for (TheaterReplicaAdapter.LocationGroup g : groups) {
+            View card = inflater.inflate(R.layout.item_theater_replica, container, false);
+
+            ImageView image    = card.findViewById(R.id.theaterReplicaImage);
+            TextView  nameTv   = card.findViewById(R.id.theaterReplicaName);
+            TextView  cityTv   = card.findViewById(R.id.theaterReplicaCity);
+            LinearLayout dates = card.findViewById(R.id.theaterReplicaDates);
+            ImageButton btnAct = card.findViewById(R.id.btnTheaterReplicaActions);
+
+            if (nameTv != null) nameTv.setText(g.locationName != null ? g.locationName : "—");
+            if (cityTv != null) cityTv.setText(g.city != null ? g.city : "—");
+
+            if (image != null) {
+                String imgUrl = ApiClient.resolveLocationImage(
+                        g.imageEst, Location.LocationImageType.EXTERIOR);
+                if (imgUrl == null) imgUrl = ApiClient.resolveLocationImage(
+                        g.imageInt, Location.LocationImageType.INTERIOR);
+                if (imgUrl != null) {
+                    Glide.with(this).load(GlideHelper.url(imgUrl))
+                            .placeholder(R.drawable.image_placeholder)
+                            .centerCrop().into(image);
+                } else {
+                    image.setImageResource(R.drawable.image_placeholder);
+                }
+            }
+
+            if (dates != null) {
+                for (String[] slot : g.slots) {
+                    String rawDate = slot.length > 0 ? slot[0] : null;
+                    String rawTime = slot.length > 1 ? slot[1] : null;
+                    String dateStr = formatEventDate(rawDate);
+                    String timeStr = rawTime != null
+                            ? rawTime.substring(0, Math.min(5, rawTime.length())) : "—";
+                    TextView row = new TextView(requireContext());
+                    row.setText(dateStr + "  ·  " + timeStr);
+                    row.setTextSize(12f);
+                    row.setPadding(0, 3, 0, 3);
+                    row.setTextColor(0xFF6A6274);
+                    dates.addView(row);
+                }
+            }
+
+            if (btnAct != null) {
+                btnAct.setVisibility(isLogged && g.representative != null ? View.VISIBLE : View.GONE);
+                if (isLogged && g.representative != null) {
+                    Event rep = g.representative;
+                    btnAct.setOnClickListener(v ->
+                            new EventActionsHelper(requireActivity(), rep).showMenu(v));
+                }
+            }
+
+            card.setOnClickListener(v ->
+                    requireActivity().getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.fragment_container,
+                                    TheaterDetailFragment.newInstance(
+                                            g.locationId, g.locationName,
+                                            g.city, g.imageEst, g.imageInt))
+                            .addToBackStack(null).commit());
+
+            container.addView(card);
+        }
+    }
+
     // ── PREFERITI ────────────────────────────────────────────────────────────
 
     private ImageButton btnFavorite;
-    private boolean isFavorite = false;
-
-    // ── RECENSIONI ───────────────────────────────────────────────────────────
-
-    private ReviewAdapter reviewAdapter;
-
-    private void loadReviews(View view) {
-        RecyclerView rv = view.findViewById(R.id.reviewsRecyclerView);
-        TextView status = view.findViewById(R.id.reviewsStatusText);
-        if (rv == null) return;
-
-        rv.setLayoutManager(new LinearLayoutManager(requireContext()));
-        rv.setNestedScrollingEnabled(false);
-
-        SharedPreferences prefs = requireActivity().getSharedPreferences("app", requireContext().MODE_PRIVATE);
-        int currentUserId = prefs.getInt("userId", -1);
-
-        reviewAdapter = new ReviewAdapter(new ArrayList<>(), currentUserId, authorUserId -> {
-            if (!isAdded()) return;
-            android.os.Bundle bundle = new android.os.Bundle();
-            bundle.putInt("user_id", authorUserId);
-            com.example.dropby.fragments.main.UserDetailsFragment udf =
-                    new com.example.dropby.fragments.main.UserDetailsFragment();
-            udf.setArguments(bundle);
-            requireActivity().getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragment_container, udf)
-                    .addToBackStack(null)
-                    .commit();
-        }, null);
-        rv.setAdapter(reviewAdapter);
-
-        ApiClient.getApiService().getEventReviews(event.getId())
-                .enqueue(new Callback<ApiService.ReviewsWrapper>() {
-                    @Override
-                    public void onResponse(Call<ApiService.ReviewsWrapper> call,
-                                           Response<ApiService.ReviewsWrapper> response) {
-                        if (!isAdded()) return;
-
-                        // ── DEBUG LOG: JSON grezzo delle recensioni ───────────────────────
-                        android.util.Log.d("DEBUG_REVIEW_JSON",
-                                "HTTP " + response.code()
-                                + " | body=" + new com.google.gson.Gson().toJson(response.body()));
-                        // ─────────────────────────────────────────────────────────────────
-
-                        if (response.isSuccessful() && response.body() != null
-                                && response.body().reviews != null) {
-                            List<Review> reviews = response.body().reviews;
-
-                            // ── DEBUG LOG: prima recensione ricevuta ───────────────────────
-                            if (!reviews.isEmpty()) {
-                                Review first = reviews.get(0);
-                                android.util.Log.d("DEBUG_REVIEW_JSON",
-                                        "Review[0] userId="       + first.getUserId()
-                                        + " | username="          + first.getUsername()
-                                        + " | profileImage="      + first.getProfileImage()
-                                        + " | rating="            + first.getRating());
-                            }
-                            // ─────────────────────────────────────────────────────────────
-
-                            if (reviews.isEmpty() && status != null) {
-                                status.setText("Nessuna recensione per questo evento");
-                                status.setVisibility(View.VISIBLE);
-                            } else {
-                                reviewAdapter.update(reviews);
-                                if (status != null) status.setVisibility(View.GONE);
-                            }
-                        }
-                    }
-                    @Override
-                    public void onFailure(Call<ApiService.ReviewsWrapper> call, Throwable t) {
-                        android.util.Log.e("DEBUG_REVIEW_JSON", "Chiamata fallita: " + t.getMessage());
-                    }
-                });
-    }
-
-    private void setupReviewForm(View view) {
-        View formLayout = view.findViewById(R.id.reviewFormLayout);
-        if (formLayout == null) return;
-
-        SharedPreferences prefs = requireActivity()
-                .getSharedPreferences("app", requireContext().MODE_PRIVATE);
-        if (prefs.getString("token", null) == null) return;
-
-        // Evento futuro → box informativo TicketOne, form nascosto
-        if (isEventInFuture()) {
-            formLayout.setVisibility(View.VISIBLE);
-            view.findViewById(R.id.reviewSpinnerSection).setVisibility(View.GONE);
-            view.findViewById(R.id.reviewRatingBar).setVisibility(View.GONE);
-            view.findViewById(R.id.reviewCommentInput).setVisibility(View.GONE);
-            view.findViewById(R.id.btnSubmitReview).setVisibility(View.GONE);
-            view.findViewById(R.id.reviewFutureInfoBox).setVisibility(View.VISIBLE);
-            TextView futureBoxDate     = view.findViewById(R.id.futureBoxDate);
-            TextView futureBoxLocation = view.findViewById(R.id.futureBoxLocation);
-            TextView futureBoxCity     = view.findViewById(R.id.futureBoxCity);
-            if (futureBoxDate     != null) futureBoxDate.setText(formatEventDate(event.getDate()));
-            if (futureBoxLocation != null) futureBoxLocation.setText(safe(event.getLocationName()));
-            if (futureBoxCity     != null) futureBoxCity.setText(safe(event.getCity()));
-            return;
-        }
-
-        formLayout.setVisibility(View.VISIBLE);
-
-        Spinner  locationSpinner = view.findViewById(R.id.reviewLocationSpinner);
-        Spinner  dateSpinner     = view.findViewById(R.id.reviewDateSpinner);
-        View     dateLabel       = view.findViewById(R.id.reviewDateSpinnerLabel);
-        RatingBar ratingBar      = view.findViewById(R.id.reviewRatingBar);
-        EditText commentInput    = view.findViewById(R.id.reviewCommentInput);
-        Button   submitBtn       = view.findViewById(R.id.btnSubmitReview);
-
-        submitBtn.setEnabled(false);
-
-        // selectedEventId[0] == -1 → nessuna replica selezionata
-        final int[] selectedEventId = {-1};
-
-        submitBtn.setOnClickListener(v -> {
-            int    rating  = (int) ratingBar.getRating();
-            String comment = commentInput.getText().toString().trim();
-
-            if (rating < 1) {
-                Toast.makeText(requireContext(), "Seleziona almeno 1 stella", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            if (comment.isEmpty()) {
-                commentInput.setError("Scrivi un commento");
-                return;
-            }
-            if (selectedEventId[0] <= 0) {
-                Toast.makeText(requireContext(),
-                        "Seleziona luogo e data dell'evento", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            submitBtn.setEnabled(false);
-            ApiClient.getApiService()
-                    .addReview(new ReviewRequest(selectedEventId[0], rating, comment))
-                    .enqueue(new Callback<GenericResponse>() {
-                        @Override
-                        public void onResponse(@NonNull Call<GenericResponse> call,
-                                               @NonNull Response<GenericResponse> response) {
-                            if (!isAdded()) return;
-                            submitBtn.setEnabled(true);
-                            if (response.isSuccessful()) {
-                                commentInput.setText("");
-                                ratingBar.setRating(3);
-                                selectedEventId[0] = -1;
-                                locationSpinner.setSelection(0);
-                                submitBtn.setEnabled(false);
-                                Toast.makeText(requireContext(),
-                                        "Recensione inviata!", Toast.LENGTH_SHORT).show();
-                                loadReviews(view);
-                            } else {
-                                String msg = "Errore invio recensione";
-                                try {
-                                    if (response.errorBody() != null) {
-                                        org.json.JSONObject err =
-                                                new org.json.JSONObject(response.errorBody().string());
-                                        msg = err.optString("error", msg);
-                                    }
-                                } catch (Exception ignored) {}
-                                Toast.makeText(requireContext(), msg, Toast.LENGTH_LONG).show();
-                            }
-                        }
-                        @Override
-                        public void onFailure(@NonNull Call<GenericResponse> call, @NonNull Throwable t) {
-                            if (isAdded()) submitBtn.setEnabled(true);
-                        }
-                    });
-        });
-
-        loadReplicasForSpinners(locationSpinner, dateSpinner, dateLabel, selectedEventId, submitBtn);
-    }
-
-    private void loadReplicasForSpinners(Spinner locationSpinner, Spinner dateSpinner,
-                                         View dateLabel, int[] selectedEventId, Button submitBtn) {
-        ApiClient.getApiService()
-                .searchEvents(null, null, null, event.getTitle(), null, null, null, null)
-                .enqueue(new Callback<EventsResponse>() {
-                    @Override
-                    public void onResponse(@NonNull Call<EventsResponse> call,
-                                           @NonNull Response<EventsResponse> response) {
-                        if (!isAdded()) return;
-
-                        // Raggruppa repliche passate per location
-                        final java.util.LinkedHashMap<String, List<Event>> byLoc =
-                                new java.util.LinkedHashMap<>();
-                        final List<String> locKeys = new ArrayList<>();
-
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-                        Date today = new Date();
-
-                        List<Event> candidates = (response.isSuccessful() && response.body() != null)
-                                ? response.body().getEvents() : new ArrayList<>();
-
-                        for (Event e : candidates) {
-                            // Filtra per production_id (o solo l'evento corrente)
-                            if (event.getProductionId() > 0
-                                    && e.getProductionId() != event.getProductionId()) continue;
-                            if (event.getProductionId() == 0
-                                    && e.getId() != event.getId()) continue;
-
-                            // Solo repliche già avvenute
-                            if (e.getDate() != null) {
-                                try {
-                                    Date d = sdf.parse(e.getDate().substring(0, 10));
-                                    if (d != null && d.after(today)) continue;
-                                } catch (Exception ignored) {}
-                            }
-
-                            String name = e.getLocationName() != null ? e.getLocationName() : "—";
-                            String city = e.getCity()         != null ? e.getCity()         : "";
-                            String key  = name + "§" + city;
-
-                            if (!byLoc.containsKey(key)) {
-                                byLoc.put(key, new ArrayList<>());
-                                locKeys.add(key);
-                            }
-                            byLoc.get(key).add(e);
-                        }
-
-                        // Ordina le date per ognuna delle location (crescente)
-                        for (List<Event> list : byLoc.values())
-                            java.util.Collections.sort(list, (a, b) -> {
-                                if (a.getDate() == null) return 1;
-                                if (b.getDate() == null) return -1;
-                                return a.getDate().compareTo(b.getDate());
-                            });
-
-                        // Fallback: se non trovato nulla, usa l'evento corrente
-                        if (byLoc.isEmpty()) {
-                            String name = event.getLocationName() != null ? event.getLocationName() : "—";
-                            String city = event.getCity()         != null ? event.getCity()         : "";
-                            String key  = name + "§" + city;
-                            byLoc.put(key, new ArrayList<>(java.util.Collections.singletonList(event)));
-                            locKeys.add(key);
-                        }
-
-                        // Popola spinner location
-                        List<String> locLabels = new ArrayList<>();
-                        locLabels.add("Seleziona luogo…");
-                        for (String key : locKeys) {
-                            String[] p = key.split("§", 2);
-                            String label = p[0];
-                            if (p.length > 1 && !p[1].isEmpty()) label += "  –  " + p[1];
-                            locLabels.add(label);
-                        }
-                        ArrayAdapter<String> locAdap = new ArrayAdapter<>(requireContext(),
-                                android.R.layout.simple_spinner_item, locLabels);
-                        locAdap.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                        locationSpinner.setAdapter(locAdap);
-
-                        locationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                            @Override
-                            public void onItemSelected(AdapterView<?> p, View v, int pos, long id) {
-                                if (pos == 0) {
-                                    selectedEventId[0] = -1;
-                                    submitBtn.setEnabled(false);
-                                    dateSpinner.setVisibility(View.GONE);
-                                    dateLabel.setVisibility(View.GONE);
-                                    return;
-                                }
-                                List<Event> dates = byLoc.get(locKeys.get(pos - 1));
-                                if (dates == null || dates.isEmpty()) return;
-
-                                if (dates.size() == 1) {
-                                    // Data unica: auto-seleziona, nascondi spinner date
-                                    selectedEventId[0] = dates.get(0).getId();
-                                    submitBtn.setEnabled(true);
-                                    dateSpinner.setVisibility(View.GONE);
-                                    dateLabel.setVisibility(View.GONE);
-                                } else {
-                                    // Più date: mostra spinner date
-                                    selectedEventId[0] = -1;
-                                    submitBtn.setEnabled(false);
-
-                                    List<String> dLabels = new ArrayList<>();
-                                    dLabels.add("Seleziona data…");
-                                    for (Event e : dates) {
-                                        String ds = formatEventDate(e.getDate());
-                                        String ts = e.getStartTime() != null
-                                                ? e.getStartTime().substring(
-                                                        0, Math.min(5, e.getStartTime().length()))
-                                                : "";
-                                        dLabels.add(ds + (ts.isEmpty() ? "" : "  ·  " + ts));
-                                    }
-                                    ArrayAdapter<String> dAdap = new ArrayAdapter<>(requireContext(),
-                                            android.R.layout.simple_spinner_item, dLabels);
-                                    dAdap.setDropDownViewResource(
-                                            android.R.layout.simple_spinner_dropdown_item);
-                                    dateSpinner.setAdapter(dAdap);
-                                    dateLabel.setVisibility(View.VISIBLE);
-                                    dateSpinner.setVisibility(View.VISIBLE);
-
-                                    dateSpinner.setOnItemSelectedListener(
-                                            new AdapterView.OnItemSelectedListener() {
-                                                @Override
-                                                public void onItemSelected(AdapterView<?> p2,
-                                                                           View v2, int pos2, long id2) {
-                                                    if (pos2 == 0) {
-                                                        selectedEventId[0] = -1;
-                                                        submitBtn.setEnabled(false);
-                                                        return;
-                                                    }
-                                                    selectedEventId[0] = dates.get(pos2 - 1).getId();
-                                                    submitBtn.setEnabled(true);
-                                                }
-                                                @Override
-                                                public void onNothingSelected(AdapterView<?> p2) {}
-                                            });
-                                }
-                            }
-                            @Override
-                            public void onNothingSelected(AdapterView<?> p) {}
-                        });
-
-                        // Se c'è una sola location, auto-selezionala
-                        if (locKeys.size() == 1) locationSpinner.setSelection(1);
-                    }
-
-                    @Override
-                    public void onFailure(@NonNull Call<EventsResponse> call, @NonNull Throwable t) {
-                        // Fallback silenzioso: il submit resterà disabilitato
-                        if (!isAdded()) return;
-                        // Pre-seleziona l'evento corrente per non bloccare l'utente
-                        selectedEventId[0] = event.getId();
-                        submitBtn.setEnabled(true);
-                    }
-                });
-    }
-
-    // ── IN SCENA ANCHE A… (repliche raggruppate per teatro) ──────────────────
-
-    private void loadOtherReplicas(View view) {
-        TextView     replicasLabel  = view.findViewById(R.id.eventDetailReplicasLabel);
-        TextView     replicasStatus = view.findViewById(R.id.eventDetailReplicasStatus);
-        RecyclerView replicasRv    = view.findViewById(R.id.eventDetailReplicasRecyclerView);
-
-        if (replicasLabel == null || replicasRv == null) return;
-
-        if (event.getProductionId() == 0) {
-            replicasLabel.setVisibility(View.GONE);
-            if (replicasStatus != null) replicasStatus.setVisibility(View.GONE);
-            return;
-        }
-
-        replicasLabel.setVisibility(View.VISIBLE);
-        replicasRv.setLayoutManager(new LinearLayoutManager(requireContext()));
-        replicasRv.setNestedScrollingEnabled(false);
-
-        if (replicasStatus != null) {
-            replicasStatus.setVisibility(View.VISIBLE);
-            replicasStatus.setText("Caricamento repliche...");
-        }
-
-        ApiClient.getApiService()
-                .searchEvents(null, null, null, event.getTitle(), null, null, null, null)
-                .enqueue(new Callback<EventsResponse>() {
-                    @Override
-                    public void onResponse(@NonNull Call<EventsResponse> call,
-                                           @NonNull Response<EventsResponse> response) {
-                        if (!isAdded()) return;
-
-                        if (response.isSuccessful() && response.body() != null) {
-                            // Filtra per stesso production_id e ordina per data crescente
-                            List<Event> allSame = new ArrayList<>();
-                            for (Event e : response.body().getEvents()) {
-                                if (e.getProductionId() == event.getProductionId())
-                                    allSame.add(e);
-                            }
-                            java.util.Collections.sort(allSame, (a, b) -> {
-                                if (a.getDate() == null) return 1;
-                                if (b.getDate() == null) return -1;
-                                return a.getDate().compareTo(b.getDate());
-                            });
-
-                            // Raggruppa per location_id — il primo evento inserito è il rappresentativo
-                            java.util.LinkedHashMap<Integer, TheaterReplicaAdapter.LocationGroup> map =
-                                    new java.util.LinkedHashMap<>();
-                            for (Event e : allSame) {
-                                int locId = e.getLocationId();
-                                if (!map.containsKey(locId)) {
-                                    TheaterReplicaAdapter.LocationGroup grp =
-                                            new TheaterReplicaAdapter.LocationGroup(
-                                                    locId,
-                                                    e.getLocationName(),
-                                                    e.getCity(),
-                                                    e.getLocationImageEst(),
-                                                    e.getLocationImageInt());
-                                    grp.representative = e;
-                                    map.put(locId, grp);
-                                }
-                                map.get(locId).slots.add(
-                                        new String[]{ e.getDate(), e.getStartTime() });
-                            }
-
-                            List<TheaterReplicaAdapter.LocationGroup> groups =
-                                    new ArrayList<>(map.values());
-
-                            if (replicasStatus != null) replicasStatus.setVisibility(View.GONE);
-
-                            if (groups.isEmpty()) {
-                                replicasLabel.setVisibility(View.GONE);
-                            } else {
-                                replicasRv.setAdapter(new TheaterReplicaAdapter(groups, g ->
-                                    requireActivity().getSupportFragmentManager()
-                                            .beginTransaction()
-                                            .replace(R.id.fragment_container,
-                                                    TheaterDetailFragment.newInstance(
-                                                            g.locationId, g.locationName,
-                                                            g.city, g.imageEst, g.imageInt))
-                                            .addToBackStack(null).commit()
-                                ));
-                            }
-                        } else {
-                            replicasLabel.setVisibility(View.GONE);
-                            if (replicasStatus != null) replicasStatus.setVisibility(View.GONE);
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(@NonNull Call<EventsResponse> call, @NonNull Throwable t) {
-                        if (!isAdded()) return;
-                        replicasLabel.setVisibility(View.GONE);
-                        if (replicasStatus != null) replicasStatus.setVisibility(View.GONE);
-                    }
-                });
-    }
-
-    // ── PREFERITI ────────────────────────────────────────────────────────────
+    private boolean     isFavorite = false;
 
     private void setupFavoriteButton(View view) {
         btnFavorite = view.findViewById(R.id.btnFavorite);
@@ -578,7 +380,6 @@ public class EventDetailFragment extends Fragment {
             btnFavorite.setVisibility(View.GONE);
             return;
         }
-
         btnFavorite.setVisibility(View.VISIBLE);
 
         ApiClient.getApiService().getFavorites()
@@ -587,11 +388,14 @@ public class EventDetailFragment extends Fragment {
                     public void onResponse(Call<ApiService.FavoritesWrapper> call,
                                            Response<ApiService.FavoritesWrapper> response) {
                         if (!isAdded()) return;
+                        Log.d("FAV_ICON", "checkFav HTTP=" + response.code()
+                                + " eventId=" + event.getId());
                         if (response.isSuccessful() && response.body() != null
                                 && response.body().favorites != null) {
                             for (FavoriteItem item : response.body().favorites) {
                                 if (item.getEventId() == event.getId()) {
                                     isFavorite = true;
+                                    Log.d("FAV_ICON", "found in favorites → star=FULL");
                                     break;
                                 }
                             }
@@ -600,10 +404,10 @@ public class EventDetailFragment extends Fragment {
                     }
                     @Override
                     public void onFailure(Call<ApiService.FavoritesWrapper> call, Throwable t) {
+                        Log.e("FAV_ICON", "checkFav failed: " + t.getMessage());
                         if (isAdded()) updateFavoriteIcon();
                     }
                 });
-
         btnFavorite.setOnClickListener(this::showHeartMenu);
     }
 
@@ -646,15 +450,20 @@ public class EventDetailFragment extends Fragment {
                                                Response<GenericResponse> response) {
                             if (!isAdded()) return;
                             btnFavorite.setEnabled(true);
+                            // isSuccessful() copre 200-299 incluso 201 Created
                             if (response.isSuccessful()) {
                                 isFavorite = true;
-                                updateFavoriteIcon();
+                                updateFavoriteIcon();   // aggiorna stella immediatamente
+                                Log.d("FAV_ICON", "addFavorite OK (" + response.code() + ") → star=FULL");
                                 Toast.makeText(requireContext(),
                                         "Aggiunto ai preferiti", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Log.w("FAV_ICON", "addFavorite failed HTTP=" + response.code());
                             }
                         }
                         @Override
                         public void onFailure(Call<GenericResponse> call, Throwable t) {
+                            Log.e("FAV_ICON", "addFavorite network error: " + t.getMessage());
                             if (isAdded()) btnFavorite.setEnabled(true);
                         }
                     });
@@ -672,8 +481,8 @@ public class EventDetailFragment extends Fragment {
         popup.getMenu().add(0, 3, 2, "Proponi ad un amico");
         popup.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
-                case 1: toggleFavorite();         break;
-                case 2: showReminderPicker();     break;
+                case 1: toggleFavorite();          break;
+                case 2: showReminderPicker();      break;
                 case 3: showProposeFriendDialog(); break;
             }
             return true;
@@ -696,7 +505,6 @@ public class EventDetailFragment extends Fragment {
                                            @NonNull Response<ApiService.FriendsWrapper> response) {
                         if (!isAdded()) return;
                         loading.dismiss();
-
                         if (!response.isSuccessful() || response.body() == null
                                 || response.body().friends == null
                                 || response.body().friends.isEmpty()) {
@@ -704,28 +512,21 @@ public class EventDetailFragment extends Fragment {
                                     "Nessun amico trovato", Toast.LENGTH_SHORT).show();
                             return;
                         }
-
                         List<Friend> friends = response.body().friends;
                         String[] names = new String[friends.size()];
-                        for (int i = 0; i < friends.size(); i++) {
-                            names[i] = friends.get(i).getUsername();
-                        }
-
+                        for (int i = 0; i < friends.size(); i++) names[i] = friends.get(i).getUsername();
                         new android.app.AlertDialog.Builder(requireContext())
                                 .setTitle("Proponi \"" + event.getTitle() + "\" a:")
-                                .setItems(names, (dialog, which) ->
-                                        submitProposal(friends.get(which)))
+                                .setItems(names, (dialog, which) -> submitProposal(friends.get(which)))
                                 .setNegativeButton("Annulla", null)
                                 .show();
                     }
-
                     @Override
                     public void onFailure(@NonNull Call<ApiService.FriendsWrapper> call,
                                           @NonNull Throwable t) {
                         if (!isAdded()) return;
                         loading.dismiss();
-                        Toast.makeText(requireContext(),
-                                "Errore di rete", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), "Errore di rete", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -734,7 +535,6 @@ public class EventDetailFragment extends Fragment {
         Map<String, Integer> body = new HashMap<>();
         body.put("to_user_id", friend.getUserId());
         body.put("event_id",   event.getId());
-
         ApiClient.getApiService().proposeEvent(body)
                 .enqueue(new Callback<GenericResponse>() {
                     @Override
@@ -751,23 +551,279 @@ public class EventDetailFragment extends Fragment {
                                     Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(requireContext(),
-                                    "Errore nell'invio della proposta",
-                                    Toast.LENGTH_SHORT).show();
+                                    "Errore nell'invio della proposta", Toast.LENGTH_SHORT).show();
                         }
                     }
-
                     @Override
-                    public void onFailure(@NonNull Call<GenericResponse> call,
-                                          @NonNull Throwable t) {
+                    public void onFailure(@NonNull Call<GenericResponse> call, @NonNull Throwable t) {
                         if (isAdded())
-                            Toast.makeText(requireContext(),
-                                    "Rete assente", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(requireContext(), "Rete assente", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
 
+    // ── RECENSIONI ───────────────────────────────────────────────────────────
+
+    private ReviewAdapter reviewAdapter;
+
+    private void loadReviews(View view) {
+        RecyclerView rv     = view.findViewById(R.id.reviewsRecyclerView);
+        TextView     status = view.findViewById(R.id.reviewsStatusText);
+        if (rv == null) return;
+
+        rv.setLayoutManager(new LinearLayoutManager(requireContext()));
+
+        SharedPreferences prefs = requireActivity()
+                .getSharedPreferences("app", requireContext().MODE_PRIVATE);
+        int currentUserId = prefs.getInt("userId", -1);
+
+        reviewAdapter = new ReviewAdapter(new ArrayList<>(), currentUserId, authorUserId -> {
+            if (!isAdded()) return;
+            Bundle bundle = new Bundle();
+            bundle.putInt("user_id", authorUserId);
+            com.example.dropby.fragments.main.UserDetailsFragment udf =
+                    new com.example.dropby.fragments.main.UserDetailsFragment();
+            udf.setArguments(bundle);
+            requireActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, udf)
+                    .addToBackStack(null).commit();
+        }, null);
+        rv.setAdapter(reviewAdapter);
+        rv.setNestedScrollingEnabled(false);
+
+        ApiClient.getApiService().getEventReviews(event.getId())
+                .enqueue(new Callback<ApiService.ReviewsWrapper>() {
+                    @Override
+                    public void onResponse(Call<ApiService.ReviewsWrapper> call,
+                                           Response<ApiService.ReviewsWrapper> response) {
+                        if (!isAdded()) return;
+                        if (response.isSuccessful() && response.body() != null
+                                && response.body().reviews != null) {
+                            List<Review> reviews = response.body().reviews;
+                            if (reviews.isEmpty() && status != null) {
+                                status.setText("Nessuna recensione per questo evento");
+                                status.setVisibility(View.VISIBLE);
+                            } else {
+                                reviewAdapter.update(reviews);
+                                if (status != null) status.setVisibility(View.GONE);
+                            }
+                        }
+                    }
+                    @Override
+                    public void onFailure(Call<ApiService.ReviewsWrapper> call, Throwable t) {}
+                });
+    }
+
+    private void setupReviewForm(View view) {
+        View formLayout = view.findViewById(R.id.reviewFormLayout);
+        if (formLayout == null) return;
+
+        SharedPreferences prefs = requireActivity()
+                .getSharedPreferences("app", requireContext().MODE_PRIVATE);
+        if (prefs.getString("token", null) == null) return;
+
+        // Se ci sono spettacoli futuri: mostra box informativo, nascondi form
+        if (isEventInFuture()) {
+            formLayout.setVisibility(View.VISIBLE);
+            view.findViewById(R.id.reviewSpinnerSection).setVisibility(View.GONE);
+            view.findViewById(R.id.reviewRatingBar).setVisibility(View.GONE);
+            view.findViewById(R.id.reviewCommentInput).setVisibility(View.GONE);
+            view.findViewById(R.id.btnSubmitReview).setVisibility(View.GONE);
+            view.findViewById(R.id.reviewFutureInfoBox).setVisibility(View.VISIBLE);
+
+            Event.EventReplica next = event.getNextReplica();
+            TextView futureBoxDate     = view.findViewById(R.id.futureBoxDate);
+            TextView futureBoxLocation = view.findViewById(R.id.futureBoxLocation);
+            TextView futureBoxCity     = view.findViewById(R.id.futureBoxCity);
+            if (futureBoxDate     != null && next != null)
+                futureBoxDate.setText(formatEventDate(next.getDatePart()));
+            if (futureBoxLocation != null)
+                futureBoxLocation.setText(safe(event.getNextLocationName()));
+            if (futureBoxCity     != null && next != null)
+                futureBoxCity.setText(safe(next.getLocationCity()));
+            return;
+        }
+
+        formLayout.setVisibility(View.VISIBLE);
+
+        Spinner   locationSpinner = view.findViewById(R.id.reviewLocationSpinner);
+        Spinner   dateSpinner     = view.findViewById(R.id.reviewDateSpinner);
+        View      dateLabel       = view.findViewById(R.id.reviewDateSpinnerLabel);
+        RatingBar ratingBar       = view.findViewById(R.id.reviewRatingBar);
+        EditText  commentInput    = view.findViewById(R.id.reviewCommentInput);
+        Button    submitBtn       = view.findViewById(R.id.btnSubmitReview);
+
+        submitBtn.setEnabled(false);
+
+        submitBtn.setOnClickListener(v -> {
+            int    rating  = (int) ratingBar.getRating();
+            String comment = commentInput.getText().toString().trim();
+            if (rating < 1) {
+                Toast.makeText(requireContext(), "Seleziona almeno 1 stella", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (comment.isEmpty()) {
+                commentInput.setError("Scrivi un commento");
+                return;
+            }
+            submitBtn.setEnabled(false);
+            ApiClient.getApiService()
+                    .addReview(new ReviewRequest(event.getId(), rating, comment))
+                    .enqueue(new Callback<GenericResponse>() {
+                        @Override
+                        public void onResponse(@NonNull Call<GenericResponse> call,
+                                               @NonNull Response<GenericResponse> response) {
+                            if (!isAdded()) return;
+                            submitBtn.setEnabled(true);
+                            if (response.isSuccessful()) {
+                                commentInput.setText("");
+                                ratingBar.setRating(3);
+                                locationSpinner.setSelection(0);
+                                submitBtn.setEnabled(false);
+                                Toast.makeText(requireContext(),
+                                        "Recensione inviata!", Toast.LENGTH_SHORT).show();
+                                loadReviews(view);
+                            } else {
+                                String msg = "Errore invio recensione";
+                                try {
+                                    if (response.errorBody() != null) {
+                                        org.json.JSONObject err =
+                                                new org.json.JSONObject(response.errorBody().string());
+                                        msg = err.optString("error", msg);
+                                    }
+                                } catch (Exception ignored) {}
+                                Toast.makeText(requireContext(), msg, Toast.LENGTH_LONG).show();
+                            }
+                        }
+                        @Override
+                        public void onFailure(@NonNull Call<GenericResponse> call, @NonNull Throwable t) {
+                            if (isAdded()) submitBtn.setEnabled(true);
+                        }
+                    });
+        });
+
+        loadReplicasForSpinners(locationSpinner, dateSpinner, dateLabel, submitBtn);
+    }
+
+    /**
+     * Carica le repliche passate (include_past=true) e popola gli spinner
+     * del form di recensione.  Il submit usa sempre event.getId() come target.
+     */
+    private void loadReplicasForSpinners(Spinner locationSpinner, Spinner dateSpinner,
+                                         View dateLabel, Button submitBtn) {
+        ApiClient.getApiService()
+                .getEventDetail(event.getId(), true)
+                .enqueue(new Callback<ApiService.EventWrapper>() {
+                    @Override
+                    public void onResponse(@NonNull Call<ApiService.EventWrapper> call,
+                                           @NonNull Response<ApiService.EventWrapper> response) {
+                        if (!isAdded()) return;
+
+                        // Estrai solo le repliche già avvenute
+                        List<Event.EventReplica> pastReplicas = new ArrayList<>();
+                        if (response.isSuccessful() && response.body() != null
+                                && response.body().event != null
+                                && response.body().event.getReplicas() != null) {
+                            for (Event.EventReplica r : response.body().event.getReplicas()) {
+                                if (r.isPast()) pastReplicas.add(r);
+                            }
+                        }
+
+                        // Se non ci sono repliche passate, abilita subito il submit
+                        if (pastReplicas.isEmpty()) {
+                            submitBtn.setEnabled(true);
+                            return;
+                        }
+
+                        // Raggruppa per location_id
+                        LinkedHashMap<Integer, List<Event.EventReplica>> byLoc = new LinkedHashMap<>();
+                        List<Integer> locIds   = new ArrayList<>();
+                        List<String>  locNames = new ArrayList<>();
+
+                        for (Event.EventReplica r : pastReplicas) {
+                            if (!byLoc.containsKey(r.getLocationId())) {
+                                byLoc.put(r.getLocationId(), new ArrayList<>());
+                                locIds.add(r.getLocationId());
+                                String label = safe(r.getLocationName());
+                                if (!safe(r.getLocationCity()).isEmpty())
+                                    label += "  –  " + r.getLocationCity();
+                                locNames.add(label.isEmpty() ? "—" : label);
+                            }
+                            byLoc.get(r.getLocationId()).add(r);
+                        }
+
+                        List<String> locLabels = new ArrayList<>();
+                        locLabels.add("Seleziona luogo…");
+                        locLabels.addAll(locNames);
+
+                        ArrayAdapter<String> locAdap = new ArrayAdapter<>(requireContext(),
+                                android.R.layout.simple_spinner_item, locLabels);
+                        locAdap.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        locationSpinner.setAdapter(locAdap);
+
+                        locationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                            @Override
+                            public void onItemSelected(AdapterView<?> p, View v, int pos, long id) {
+                                if (pos == 0) {
+                                    submitBtn.setEnabled(false);
+                                    dateSpinner.setVisibility(View.GONE);
+                                    dateLabel.setVisibility(View.GONE);
+                                    return;
+                                }
+                                List<Event.EventReplica> dates = byLoc.get(locIds.get(pos - 1));
+                                if (dates == null || dates.isEmpty()) return;
+
+                                if (dates.size() == 1) {
+                                    submitBtn.setEnabled(true);
+                                    dateSpinner.setVisibility(View.GONE);
+                                    dateLabel.setVisibility(View.GONE);
+                                } else {
+                                    submitBtn.setEnabled(false);
+                                    List<String> dLabels = new ArrayList<>();
+                                    dLabels.add("Seleziona data…");
+                                    for (Event.EventReplica r : dates) {
+                                        String ds = formatEventDate(r.getDatePart());
+                                        String ts = r.getTimePart();
+                                        dLabels.add(ds + (ts.isEmpty() ? "" : "  ·  " + ts));
+                                    }
+                                    ArrayAdapter<String> dAdap = new ArrayAdapter<>(requireContext(),
+                                            android.R.layout.simple_spinner_item, dLabels);
+                                    dAdap.setDropDownViewResource(
+                                            android.R.layout.simple_spinner_dropdown_item);
+                                    dateSpinner.setAdapter(dAdap);
+                                    dateLabel.setVisibility(View.VISIBLE);
+                                    dateSpinner.setVisibility(View.VISIBLE);
+
+                                    dateSpinner.setOnItemSelectedListener(
+                                            new AdapterView.OnItemSelectedListener() {
+                                                @Override
+                                                public void onItemSelected(AdapterView<?> p2,
+                                                                           View v2, int pos2, long id2) {
+                                                    submitBtn.setEnabled(pos2 > 0);
+                                                }
+                                                @Override
+                                                public void onNothingSelected(AdapterView<?> p2) {}
+                                            });
+                                }
+                            }
+                            @Override
+                            public void onNothingSelected(AdapterView<?> p) {}
+                        });
+
+                        if (locIds.size() == 1) locationSpinner.setSelection(1);
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<ApiService.EventWrapper> call, @NonNull Throwable t) {
+                        if (isAdded()) submitBtn.setEnabled(true);
+                    }
+                });
+    }
+
+    // ── PROMEMORIA ───────────────────────────────────────────────────────────
+
     private void showReminderPicker() {
-        // Check POST_NOTIFICATIONS permission on Android 13+
         if (android.os.Build.VERSION.SDK_INT >= 33 &&
                 requireActivity().checkSelfPermission("android.permission.POST_NOTIFICATIONS")
                         != android.content.pm.PackageManager.PERMISSION_GRANTED) {
@@ -796,7 +852,6 @@ public class EventDetailFragment extends Fragment {
     }
 
     private void scheduleReminder(java.util.Calendar cal) {
-        // Converte l'ora locale in UTC prima di inviarla al server
         java.util.Calendar utcCal = java.util.Calendar.getInstance(
                 java.util.TimeZone.getTimeZone("UTC"));
         utcCal.setTimeInMillis(cal.getTimeInMillis());
@@ -807,7 +862,7 @@ public class EventDetailFragment extends Fragment {
                 utcCal.get(java.util.Calendar.HOUR_OF_DAY),
                 utcCal.get(java.util.Calendar.MINUTE));
         Map<String, Object> body = new HashMap<>();
-        body.put("event_id", event.getId());
+        body.put("event_id",  event.getId());
         body.put("remind_at", remindAt);
         ApiClient.getApiService().setReminder(body)
                 .enqueue(new Callback<GenericResponse>() {
@@ -836,25 +891,17 @@ public class EventDetailFragment extends Fragment {
         TextView tv = root.findViewById(id);
         if (tv != null) tv.setText(text != null ? text : "—");
     }
+
     private String safe(String s) { return s != null ? s : ""; }
 
-    /** Restituisce true se la data dell'evento è successiva a oggi. */
+    /** True se l'evento ha almeno uno spettacolo futuro. */
     private boolean isEventInFuture() {
-        String dateStr = event.getDate();
-        if (dateStr == null || dateStr.isEmpty()) return false;
-        try {
-            String normalized = dateStr.length() > 10 ? dateStr.substring(0, 10) : dateStr;
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-            Date eventDate = sdf.parse(normalized);
-            return eventDate != null && eventDate.after(new Date());
-        } catch (Exception e) {
-            return false;
-        }
+        return event.getNextShowDate() != null && !event.getNextShowDate().isEmpty();
     }
 
     /** Formatta "YYYY-MM-DD" in "17 mag 2026". */
     private String formatEventDate(String raw) {
-        if (raw == null || raw.isEmpty()) return "";
+        if (raw == null || raw.isEmpty()) return "—";
         try {
             String normalized = raw.length() > 10 ? raw.substring(0, 10) : raw;
             SimpleDateFormat sdfIn  = new SimpleDateFormat("yyyy-MM-dd", Locale.US);

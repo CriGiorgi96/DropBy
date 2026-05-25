@@ -62,7 +62,7 @@ public class EventActionsHelper {
 
     // ── 1. Preferiti ─────────────────────────────────────────────────────────
 
-    private void addToFavorites() {
+    public void addToFavorites() {
         Map<String, Integer> body = new HashMap<>();
         body.put("event_id", event.getId());
         ApiClient.getApiService().addFavorite(body)
@@ -89,7 +89,7 @@ public class EventActionsHelper {
 
     // ── 2. Promemoria ─────────────────────────────────────────────────────────
 
-    private void showReminderPicker() {
+    public void showReminderPicker() {
         if (Build.VERSION.SDK_INT >= 33 &&
                 activity.checkSelfPermission("android.permission.POST_NOTIFICATIONS")
                         != PackageManager.PERMISSION_GRANTED) {
@@ -152,7 +152,7 @@ public class EventActionsHelper {
 
     // ── 3. Proponi ad un amico ────────────────────────────────────────────────
 
-    private void showProposeFriendDialog() {
+    public void showProposeFriendDialog() {
         android.app.AlertDialog loading = new android.app.AlertDialog.Builder(activity)
                 .setMessage("Caricamento amici…")
                 .setCancelable(false)

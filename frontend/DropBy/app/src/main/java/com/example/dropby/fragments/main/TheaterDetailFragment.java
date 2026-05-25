@@ -1,14 +1,20 @@
 package com.example.dropby.fragments.main;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.webkit.WebView;
 
@@ -16,12 +22,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.dropby.EventActionsHelper;
+import com.example.dropby.LangUtil;
 import com.example.dropby.R;
-import com.example.dropby.adapters.EventGroupAdapter;
 import com.example.dropby.models.Event;
 import com.example.dropby.models.EventGroup;
 import com.example.dropby.models.EventsResponse;
@@ -29,7 +34,6 @@ import com.example.dropby.models.Location;
 import com.example.dropby.network.ApiClient;
 import com.example.dropby.network.GlideHelper;
 
-import java.util.Arrays;
 import java.util.List;
 
 import retrofit2.Call;
@@ -48,14 +52,16 @@ public class TheaterDetailFragment extends Fragment {
 
     private Location     location;
     private TextView     eventsStatusTextView;
-    private RecyclerView eventsRecyclerView;
+    private LinearLayout theaterEventsContainer;
     private ImageView    galleryImageView;
     private TextView     previousImageButton, nextImageButton;
+    private CheckBox     checkShowPastEvents;
 
     // Galleria: costruita dalle due immagini disponibili (est + int)
     private String[] galleryUrls;
     private int selectedImageIndex = 0;
     private boolean eventsLoaded = false;
+    private boolean includePastEvents = false;
 
     /** Usato dalla lista teatri: Location completa già disponibile. */
     public static TheaterDetailFragment newInstance(Location location) {
@@ -112,13 +118,21 @@ public class TheaterDetailFragment extends Fragment {
             // Location completa: mostra subito e poi aggiorna in background
             buildGalleryUrls();
             bindLocationData();
-            if (!eventsLoaded) { eventsLoaded = true; loadEventsForTheater(); }
+            if (!eventsLoaded) { eventsLoaded = true; loadEventsForLocation(location.getId()); }
             loadFullLocation(location.getId());
         } else if (partialId > 0) {
             // Dati parziali: mostra nome/città/immagine subito, poi carica il resto dall'API
             bindPartialData(view);
             if (!eventsLoaded) { eventsLoaded = true; loadEventsForLocation(partialId); }
             loadFullLocation(partialId);
+        }
+
+        if (checkShowPastEvents != null) {
+            checkShowPastEvents.setOnCheckedChangeListener((btn, checked) -> {
+                includePastEvents = checked;
+                int locId = location != null ? location.getId() : partialId;
+                loadEventsForLocation(locId);
+            });
         }
     }
 
@@ -148,7 +162,7 @@ public class TheaterDetailFragment extends Fragment {
 
     private void loadFullLocation(int locationId) {
         if (locationId <= 0) return;
-        ApiClient.getApiService().getLocationById(locationId)
+        ApiClient.getApiService().getLocationById(locationId, false)
                 .enqueue(new Callback<Location>() {
                     @Override
                     public void onResponse(@NonNull Call<Location> call,
@@ -166,15 +180,12 @@ public class TheaterDetailFragment extends Fragment {
     }
 
     private void initViews(View view) {
-        galleryImageView     = view.findViewById(R.id.theaterGalleryImage);
-        previousImageButton  = view.findViewById(R.id.theaterPreviousImageButton);
-        nextImageButton      = view.findViewById(R.id.theaterNextImageButton);
-        eventsStatusTextView = view.findViewById(R.id.theaterEventsStatusText);
-        eventsRecyclerView   = view.findViewById(R.id.theaterEventsRecyclerView);
-        if (eventsRecyclerView != null) {
-            eventsRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-            eventsRecyclerView.setNestedScrollingEnabled(false);
-        }
+        galleryImageView       = view.findViewById(R.id.theaterGalleryImage);
+        previousImageButton    = view.findViewById(R.id.theaterPreviousImageButton);
+        nextImageButton        = view.findViewById(R.id.theaterNextImageButton);
+        eventsStatusTextView   = view.findViewById(R.id.theaterEventsStatusText);
+        theaterEventsContainer = view.findViewById(R.id.theaterEventsContainer);
+        checkShowPastEvents    = view.findViewById(R.id.checkShowPastEvents);
     }
 
     /**
@@ -221,10 +232,28 @@ public class TheaterDetailFragment extends Fragment {
         }
 
         TextView srv = v.findViewById(R.id.theaterServicesText);
-        if (srv != null && location.getServices() != null) {
-            srv.setText(location.getServices().isEmpty()
-                    ? getString(R.string.services_not_available)
-                    : getString(R.string.services_label, TextUtils.join(", ", location.getServices())));
+        if (srv != null) {
+            java.util.List<String> services = LangUtil.isEnglish(requireContext())
+                    ? location.getServices()
+                    : (location.getServicesIt() != null ? location.getServicesIt() : location.getServices());
+            if (services == null || services.isEmpty()) {
+                srv.setText(getString(R.string.services_not_available));
+            } else {
+                srv.setText(getString(R.string.services_label, TextUtils.join(", ", services)));
+            }
+        }
+
+        // Descrizione teatro (it/en via LangUtil)
+        TextView descTv = v.findViewById(R.id.theaterDescriptionText);
+        if (descTv != null) {
+            String desc = LangUtil.pick(requireContext(),
+                    location.getDescriptionIt(), location.getDescriptionEn());
+            if (desc != null && !desc.isEmpty()) {
+                descTv.setText(desc);
+                descTv.setVisibility(View.VISIBLE);
+            } else {
+                descTv.setVisibility(View.GONE);
+            }
         }
 
         // Pulsante planimetria
@@ -314,17 +343,14 @@ public class TheaterDetailFragment extends Fragment {
 
     // ── EVENTI ───────────────────────────────────────────────────────────────
 
-    private void loadEventsForTheater() {
-        loadEventsForLocation(location != null ? location.getId() : 0);
-    }
-
     private void loadEventsForLocation(int locationId) {
         if (locationId <= 0 || eventsStatusTextView == null) return;
         eventsStatusTextView.setVisibility(View.VISIBLE);
         eventsStatusTextView.setText(R.string.eventsStatusText);
+        if (theaterEventsContainer != null) theaterEventsContainer.removeAllViews();
 
         ApiClient.getApiService()
-                .searchEvents(null, null, null, null, locationId, null, null, null)
+                .searchEvents(null, null, null, null, locationId, null, includePastEvents, null, null)
                 .enqueue(new Callback<EventsResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<EventsResponse> call,
@@ -333,14 +359,13 @@ public class TheaterDetailFragment extends Fragment {
                         if (response.isSuccessful() && response.body() != null) {
                             List<EventGroup> groups = EventGroup.from(
                                     response.body().getEvents(), false);
+                            Log.d("TDF", "groups to inflate: " + groups.size());
                             if (groups.isEmpty()) {
+                                eventsStatusTextView.setVisibility(View.VISIBLE);
                                 eventsStatusTextView.setText(R.string.no_event_found);
                             } else {
                                 eventsStatusTextView.setVisibility(View.GONE);
-                                if (eventsRecyclerView != null)
-                                    eventsRecyclerView.setAdapter(new EventGroupAdapter(
-                                            groups, false,
-                                            g -> openEventDetail(g.getRepresentative())));
+                                inflateEventCards(groups);
                             }
                         } else {
                             eventsStatusTextView.setText(R.string.event_loading_error);
@@ -352,6 +377,77 @@ public class TheaterDetailFragment extends Fragment {
                             eventsStatusTextView.setText(R.string.connection_error);
                     }
                 });
+    }
+
+    private void inflateEventCards(List<EventGroup> groups) {
+        if (theaterEventsContainer == null || !isAdded()) return;
+        theaterEventsContainer.removeAllViews();
+        LayoutInflater inflater = LayoutInflater.from(requireContext());
+        SharedPreferences prefs = requireContext().getSharedPreferences("app", Context.MODE_PRIVATE);
+        boolean isLogged = prefs.getString("token", null) != null;
+
+        for (EventGroup g : groups) {
+            View card = inflater.inflate(R.layout.item_event_group, theaterEventsContainer, false);
+
+            ImageView poster = card.findViewById(R.id.groupPosterImage);
+            if (poster != null) {
+                if (g.getMainImage() != null && g.getMainImage().getUrl() != null) {
+                    Glide.with(this)
+                            .load(GlideHelper.url(g.getMainImage().getUrl()))
+                            .placeholder(R.drawable.image_placeholder)
+                            .centerCrop()
+                            .into(poster);
+                } else {
+                    poster.setImageResource(R.drawable.image_placeholder);
+                }
+            }
+
+            TextView titleTv = card.findViewById(R.id.groupTitleText);
+            if (titleTv != null) titleTv.setText(g.getTitle() != null ? g.getTitle() : "—");
+
+            TextView categoryTv = card.findViewById(R.id.groupCategoryText);
+            if (categoryTv != null)
+                categoryTv.setText(g.getCategory() != null ? g.getCategory() : "");
+
+            LinearLayout datesContainer = card.findViewById(R.id.groupDatesContainer);
+            if (datesContainer != null) {
+                for (EventGroup.Occurrence occ : g.getOccurrences()) {
+                    TextView row = new TextView(requireContext());
+                    row.setText(occ.toDisplayString(false));
+                    row.setTextSize(13f);
+                    row.setPadding(0, 4, 0, 4);
+                    row.setTextColor(0xFF6A6274);
+                    datesContainer.addView(row);
+                }
+            }
+
+            int btnVis = isLogged ? View.VISIBLE : View.GONE;
+            ImageButton btnFav = card.findViewById(R.id.btnFavorite);
+            ImageButton btnRem = card.findViewById(R.id.btnReminder);
+            ImageButton btnPro = card.findViewById(R.id.btnPropose);
+            if (btnFav != null) {
+                btnFav.setVisibility(btnVis);
+                if (isLogged) btnFav.setOnClickListener(v ->
+                        new EventActionsHelper(requireActivity(), g.getRepresentative())
+                                .addToFavorites());
+            }
+            if (btnRem != null) {
+                btnRem.setVisibility(btnVis);
+                if (isLogged) btnRem.setOnClickListener(v ->
+                        new EventActionsHelper(requireActivity(), g.getRepresentative())
+                                .showReminderPicker());
+            }
+            if (btnPro != null) {
+                btnPro.setVisibility(btnVis);
+                if (isLogged) btnPro.setOnClickListener(v ->
+                        new EventActionsHelper(requireActivity(), g.getRepresentative())
+                                .showProposeFriendDialog());
+            }
+
+            card.setOnClickListener(v -> openEventDetail(g.getRepresentative()));
+            theaterEventsContainer.addView(card);
+        }
+        Log.d("TDF", "inflated " + groups.size() + " cards");
     }
 
     private void openEventDetail(Event event) {

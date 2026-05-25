@@ -1,34 +1,38 @@
 package com.example.dropby.models;
 
+import android.util.Log;
+
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
- * Rappresenta una produzione teatrale con tutte le sue repliche.
- * Non arriva dal backend: viene costruito lato client raggruppando
- * la lista piatta di Event per production_id.
- *
- * Uso:
- *   List<EventGroup> groups = EventGroup.from(flatEvents);
+ * Raggruppa un Event con le sue repliche come Occurrence.
+ * In precedenza veniva costruito lato client da una lista piatta di eventi;
+ * ora il backend restituisce già un Event per opera con l'array "replicas",
+ * quindi from() crea semplicemente un gruppo per ogni Event ricevuto.
  */
 public class EventGroup {
 
-    /** Una singola replica: data + orario + (opzionale) nome del teatro */
+    /** Una singola replica: data + orario + (opzionale) nome del teatro. */
     public static class Occurrence {
         public final String date;
         public final String startTime;
-        public final String locationName; // null se non disponibile
+        public final String locationName;
 
         public Occurrence(String date, String startTime, String locationName) {
             this.date         = date      != null ? date      : "—";
-            this.startTime    = startTime != null ? startTime : "—";
+            this.startTime    = startTime != null ? startTime : "";
             this.locationName = locationName;
         }
 
-        /** Stringa leggibile: "12 mag · 21:00" o "12 mag · 21:00 — Teatro X" */
+        /** "12 mag · 21:00" oppure "12 mag · 21:00 — Teatro X" */
         public String toDisplayString(boolean includeVenue) {
-            StringBuilder sb = new StringBuilder();
-            sb.append(date).append(" · ").append(startTime);
+            StringBuilder sb = new StringBuilder(date);
+            if (startTime != null && !startTime.isEmpty()) {
+                sb.append(" · ").append(startTime);
+            }
             if (includeVenue && locationName != null && !locationName.isEmpty()) {
                 sb.append(" — ").append(locationName);
             }
@@ -36,7 +40,7 @@ public class EventGroup {
         }
     }
 
-    private final Event representative; // primo evento (per titolo, immagine, categoria…)
+    private final Event           representative;
     private final List<Occurrence> occurrences = new ArrayList<>();
 
     public EventGroup(Event representative) {
@@ -47,45 +51,71 @@ public class EventGroup {
         occurrences.add(o);
     }
 
-    public Event getRepresentative()     { return representative; }
-    public List<Occurrence> getOccurrences() { return occurrences; }
+    public Event             getRepresentative() { return representative; }
+    public List<Occurrence>  getOccurrences()    { return occurrences; }
 
-    // Shortcut usati dagli adapter
-    public String getTitle()    { return representative.getTitle(); }
-    public String getCategory() { return representative.getCategory(); }
-    public Event.EventImage getMainImage() { return representative.getMainImage(); }
+    public String            getTitle()    { return representative.getTitle(); }
+    public String            getCategory() { return representative.getCategory(); }
+    public Event.EventImage  getMainImage(){ return representative.getMainImage(); }
 
     /**
-     * Trasforma una lista piatta di Event in una lista di EventGroup.
+     * Trasforma una lista di Event (già uno per opera, con replicas embedded)
+     * in una lista di EventGroup pronti per l'adapter.
      *
-     * @param events   lista piatta restituita dall'API
+     * Un EventGroup distinto viene creato per OGNI event.getId() univoco.
+     * Due spettacoli diversi nello stesso teatro producono sempre Card separate.
+     *
+     * @param events    lista restituita dall'API
      * @param withVenue true = includi il nome del teatro in ogni Occurrence
-     *                  (utile in EventDetailFragment, inutile in TheaterDetailFragment)
      */
     public static List<EventGroup> from(List<Event> events, boolean withVenue) {
-        if (events == null) return new ArrayList<>();
+        if (events == null) {
+            Log.d("EventGroup", "from() called with null events");
+            return new ArrayList<>();
+        }
+        Log.d("EventGroup", "from() input size: " + events.size());
 
-        // Mantiene l'ordine di prima apparizione (LinkedHashMap)
-        java.util.LinkedHashMap<Integer, EventGroup> map = new java.util.LinkedHashMap<>();
+        // LinkedHashMap garantisce un gruppo per ID univoco, preservando l'ordine
+        Map<Integer, EventGroup> byId = new LinkedHashMap<>();
 
-        // Ordina per data prima di raggruppare (così la prima occurrence è quella più vicina)
-        List<Event> sorted = new ArrayList<>(events);
-        java.util.Collections.sort(sorted, (a, b) -> {
-            if (a.getDate() == null && b.getDate() == null) return 0;
-            if (a.getDate() == null) return 1;
-            if (b.getDate() == null) return -1;
-            return a.getDate().compareTo(b.getDate());
-        });
+        for (Event e : events) {
+            int eventId = e.getId();
+            Log.d("EventGroup", "processing event id=" + eventId + " title=" + e.getTitle());
 
-        for (Event e : sorted) {
-            int key = e.getProductionId() != 0 ? e.getProductionId() : e.getId();
-            if (!map.containsKey(key)) {
-                map.put(key, new EventGroup(e));
+            // Ogni event_id univoco → un solo EventGroup
+            EventGroup g = byId.get(eventId);
+            if (g == null) {
+                g = new EventGroup(e);
+                byId.put(eventId, g);
             }
-            String venueName = withVenue ? e.getCity() : null; // fallback: città
-            map.get(key).addOccurrence(new Occurrence(e.getDate(), e.getStartTime(), venueName));
+
+            List<Event.EventReplica> replicas = e.getReplicas();
+            if (replicas != null && !replicas.isEmpty()) {
+                Log.d("EventGroup", "  replicas count: " + replicas.size());
+                for (Event.EventReplica r : replicas) {
+                    String venue = withVenue ? r.getLocationName() : null;
+                    g.addOccurrence(new Occurrence(r.getDatePart(), r.getTimePart(), venue));
+                }
+            } else {
+                // Fallback: usa next_show_date se non ci sono repliche nell'array
+                Log.d("EventGroup", "  no replicas, using nextShowDate");
+                String showDate = e.getNextShowDate();
+                String datePart = "", timePart = "";
+                if (showDate != null) {
+                    int t = showDate.indexOf('T');
+                    datePart = t > 0 ? showDate.substring(0, t) : showDate;
+                    if (t >= 0 && t + 1 < showDate.length()) {
+                        String time = showDate.substring(t + 1);
+                        timePart = time.length() >= 5 ? time.substring(0, 5) : time;
+                    }
+                }
+                String venue = withVenue ? e.getNextLocationName() : null;
+                g.addOccurrence(new Occurrence(datePart, timePart, venue));
+            }
         }
 
-        return new ArrayList<>(map.values());
+        List<EventGroup> result = new ArrayList<>(byId.values());
+        Log.d("EventGroup", "from() output size: " + result.size());
+        return result;
     }
 }

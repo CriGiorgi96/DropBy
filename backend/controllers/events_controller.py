@@ -83,12 +83,12 @@ def create_event():
             """
             INSERT INTO events
                 (id, slug, production_id, location_id, title, description,
-                 category, city, event_date, start_time, duration,
-                 price, ticket_url, source_url)
+                 category, city, event_date, duration,
+                 title_eng, description_eng, info_url_it, info_url_eng)
             VALUES
                 (:id, :slug, :production_id, :location_id, :title, :description,
-                 :category, :city, :event_date, :start_time, :duration,
-                 :price, :ticket_url, :source_url)
+                 :category, :city, :event_date, :duration,
+                 :title_eng, :description_eng, :info_url_it, :info_url_eng)
             """,
             id=new_id,
             slug=data['slug'],
@@ -99,11 +99,11 @@ def create_event():
             category=data['category'],
             city=city,
             event_date=data['date'],
-            start_time=data.get('time') or None,
             duration=data.get('duration') or None,
-            price=float(data.get('price') or 0),
-            ticket_url=data.get('ticket_url') or None,
-            source_url=data.get('source_url') or None,
+            title_eng=data.get('title_eng') or None,
+            description_eng=data.get('description_eng') or None,
+            info_url_it=data.get('info_url_it') or None,
+            info_url_eng=data.get('info_url_eng') or None,
         )
         conn.run("COMMIT")
         return jsonify({'message': 'Evento creato', 'id': new_id}), 201
@@ -124,17 +124,17 @@ def update_event(event_id):
 
         # Mappa campo HTML → colonna DB
         field_map = {
-            'title':       'title',
-            'slug':        'slug',
-            'category':    'category',
-            'date':        'event_date',
-            'time':        'start_time',
-            'duration':    'duration',
-            'price':       'price',
-            'description': 'description',
-            'ticket_url':  'ticket_url',
-            'source_url':  'source_url',
-            'location_id': 'location_id',
+            'title':           'title',
+            'slug':            'slug',
+            'category':        'category',
+            'date':            'event_date',
+            'duration':        'duration',
+            'description':     'description',
+            'location_id':     'location_id',
+            'title_eng':       'title_eng',
+            'description_eng': 'description_eng',
+            'info_url_it':     'info_url_it',
+            'info_url_eng':    'info_url_eng',
         }
 
         sets   = []
@@ -195,12 +195,13 @@ def search_events():
         loc_raw       = request.args.get('location_id')
         location_id   = int(loc_raw) if loc_raw and loc_raw.isdigit() else None
         only_upcoming = request.args.get('only_upcoming', 'false').lower() == 'true'
+        include_past  = request.args.get('include_past',  'false').lower() == 'true'
         start_date    = request.args.get('start_date') or None
         end_date      = request.args.get('end_date') or None
 
         events = EventService.search_events(
             city, category, date, query, location_id,
-            only_upcoming, start_date, end_date
+            only_upcoming, start_date, end_date, include_past
         )
         return jsonify({'events': events}), 200
     except Exception:
@@ -211,7 +212,8 @@ def search_events():
 @events_bp.route('/<int:event_id>', methods=['GET'])
 def get_event(event_id):
     try:
-        event = EventService.get_event_detail(event_id)
+        include_past = request.args.get('include_past', 'false').lower() == 'true'
+        event = EventService.get_event_detail(event_id, include_past=include_past)
         return jsonify({'event': event}), 200
     except ValueError as e:
         return jsonify({'error': str(e)}), 404

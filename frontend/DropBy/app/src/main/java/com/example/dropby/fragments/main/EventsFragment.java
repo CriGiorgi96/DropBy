@@ -181,6 +181,7 @@ public class EventsFragment extends Fragment {
                 null,
                 null,
                 onlyUpcoming,
+                null,
                 selectedStartDate,
                 selectedEndDate
         ).enqueue(new Callback<EventsResponse>() {
@@ -218,7 +219,9 @@ public class EventsFragment extends Fragment {
         List<Event> filtered = new ArrayList<>();
         for (Event e : allEvents) {
             boolean titleMatch = e.getTitle()    != null && e.getTitle().toLowerCase(Locale.getDefault()).contains(query);
-            boolean cityMatch  = e.getCity()     != null && e.getCity().toLowerCase(Locale.getDefault()).contains(query);
+            Event.EventReplica nextR = e.getNextReplica();
+            String city = nextR != null && nextR.getLocationCity() != null ? nextR.getLocationCity() : "";
+            boolean cityMatch  = !city.isEmpty() && city.toLowerCase(Locale.getDefault()).contains(query);
             boolean catMatch   = e.getCategory() != null && e.getCategory().toLowerCase(Locale.getDefault()).contains(query);
             if (query.isEmpty() || titleMatch || cityMatch || catMatch) filtered.add(e);
         }

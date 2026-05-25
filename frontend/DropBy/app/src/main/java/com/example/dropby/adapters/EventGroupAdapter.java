@@ -87,14 +87,32 @@ public class EventGroupAdapter extends RecyclerView.Adapter<EventGroupAdapter.Vi
             if (listener != null) listener.onGroupClick(group);
         });
 
-        // Bottone azioni rapide: visibile solo se loggato
+        // Tre bottoni espliciti: visibili solo se loggato
         SharedPreferences prefs = ctx.getSharedPreferences("app", Context.MODE_PRIVATE);
         boolean isLogged = prefs.getString("token", null) != null;
-        holder.btnActions.setVisibility(isLogged ? View.VISIBLE : View.GONE);
-        holder.btnActions.setOnClickListener(v -> {
-            Activity activity = (Activity) ctx;
-            new EventActionsHelper(activity, group.getRepresentative()).showMenu(v);
-        });
+        int btnVis = isLogged ? View.VISIBLE : View.GONE;
+
+        if (holder.btnFavorite != null) {
+            holder.btnFavorite.setVisibility(btnVis);
+            holder.btnFavorite.setOnClickListener(v -> {
+                Activity activity = (Activity) ctx;
+                new EventActionsHelper(activity, group.getRepresentative()).addToFavorites();
+            });
+        }
+        if (holder.btnReminder != null) {
+            holder.btnReminder.setVisibility(btnVis);
+            holder.btnReminder.setOnClickListener(v -> {
+                Activity activity = (Activity) ctx;
+                new EventActionsHelper(activity, group.getRepresentative()).showReminderPicker();
+            });
+        }
+        if (holder.btnPropose != null) {
+            holder.btnPropose.setVisibility(btnVis);
+            holder.btnPropose.setOnClickListener(v -> {
+                Activity activity = (Activity) ctx;
+                new EventActionsHelper(activity, group.getRepresentative()).showProposeFriendDialog();
+            });
+        }
     }
 
     @Override
@@ -104,7 +122,7 @@ public class EventGroupAdapter extends RecyclerView.Adapter<EventGroupAdapter.Vi
         ImageView     poster;
         TextView      title, category;
         LinearLayout  datesContainer;
-        ImageButton   btnActions;
+        ImageButton   btnFavorite, btnReminder, btnPropose;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -112,7 +130,9 @@ public class EventGroupAdapter extends RecyclerView.Adapter<EventGroupAdapter.Vi
             title          = itemView.findViewById(R.id.groupTitleText);
             category       = itemView.findViewById(R.id.groupCategoryText);
             datesContainer = itemView.findViewById(R.id.groupDatesContainer);
-            btnActions     = itemView.findViewById(R.id.btnEventGroupActions);
+            btnFavorite    = itemView.findViewById(R.id.btnFavorite);
+            btnReminder    = itemView.findViewById(R.id.btnReminder);
+            btnPropose     = itemView.findViewById(R.id.btnPropose);
         }
     }
 }

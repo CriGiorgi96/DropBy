@@ -71,9 +71,11 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         }
 
         void bind(Event event, OnEventClickListener listener) {
-            dateBadgeTextView.setText(textOrFallback(event.getDate(), "Data da definire"));
+            Event.EventReplica next = event.getNextReplica();
+            String datePart = next != null ? next.getDatePart() : null;
+            dateBadgeTextView.setText(textOrFallback(datePart, "Data da definire"));
             titleTextView.setText(textOrFallback(event.getTitle(), "Senza titolo"));
-            metaTextView.setText(buildMeta(event));
+            metaTextView.setText(buildMeta(event, next));
             descriptionTextView.setText(textOrFallback(event.getDescription(), ""));
 
             String imageUrl = event.getMainImage() != null ? event.getMainImage().getUrl() : null;
@@ -86,10 +88,10 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
             });
         }
 
-        private String buildMeta(Event event) {
+        private String buildMeta(Event event, Event.EventReplica next) {
             StringBuilder builder = new StringBuilder();
-            appendPart(builder, event.getCity());
-            appendPart(builder, event.getStartTime());
+            appendPart(builder, next != null ? next.getLocationName() : null);
+            appendPart(builder, next != null ? next.getTimePart()     : null);
             appendPart(builder, event.getCategory());
             return builder.toString();
         }

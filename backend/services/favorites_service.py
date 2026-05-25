@@ -17,7 +17,11 @@ class FavoritesService:
 
     @staticmethod
     def get_favorites(user_id):
-        return FavoriteRepository.find_by_user(user_id)
+        try:
+            rows = FavoriteRepository.find_by_user(user_id)
+            return [r for r in rows if r and r.get("title") is not None]
+        except Exception:
+            return []
 
     @staticmethod
     def is_favorite(user_id, event_id):
