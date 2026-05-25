@@ -253,7 +253,7 @@ public class HomeFragment extends Fragment {
         Event.EventReplica next = event.getNextReplica();
         String ticketUrl = next != null ? next.getTicketUrl() : null;
         if (ticketUrl == null || ticketUrl.trim().isEmpty()) {
-            Toast.makeText(requireContext(), "Biglietto non disponibile per questo spettacolo.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), getString(R.string.ticket_not_available_for_show), Toast.LENGTH_SHORT).show();
             return;
         }
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(ticketUrl.trim()));

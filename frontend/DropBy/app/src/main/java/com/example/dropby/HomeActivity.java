@@ -28,6 +28,8 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import com.example.dropby.fragments.auth.LoginFragment;
+import com.example.dropby.fragments.auth.RegisterFragment;
 import com.example.dropby.fragments.main.EventsFragment;
 import com.example.dropby.fragments.main.FaqFragment;
 import com.example.dropby.fragments.main.FavoritesFragment;
@@ -277,9 +279,18 @@ public class HomeActivity extends AppCompatActivity {
                 else if (id == R.id.nav_right_reminders)     target = new NotificationManagementFragment(); // <--- Salvato!
                 else if (id == R.id.nav_right_logout)        { logout(); return true; }
             } else {
-                if      (id == R.id.nav_right_login)    { launchAuth("login");    return true; }
-                else if (id == R.id.nav_right_register) { launchAuth("register"); return true; }
-                else if (id == R.id.nav_right_exit)     { goToStart();            return true; }
+                if (id == R.id.nav_right_login) {
+                    openFragment(new LoginFragment(), true);
+                    closeBothDrawers();
+                    return true;
+                } else if (id == R.id.nav_right_register) {
+                    openFragment(new RegisterFragment(), true);
+                    closeBothDrawers();
+                    return true;
+                } else if (id == R.id.nav_right_exit) {
+                    goToStart();
+                    return true;
+                }
             }
 
             if (target != null) openFragment(target, true);

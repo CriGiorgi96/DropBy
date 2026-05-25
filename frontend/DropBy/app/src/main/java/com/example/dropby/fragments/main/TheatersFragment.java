@@ -91,7 +91,7 @@ public class TheatersFragment extends Fragment {
                             allLocations = response.body().getLocations();
                             showLocations(allLocations);
                         } else {
-                            statusText.setText(R.string.server_error + response.code());
+                            statusText.setText(getString(R.string.server_error, response.code()));
                             showErrorState();
                         }
                     }

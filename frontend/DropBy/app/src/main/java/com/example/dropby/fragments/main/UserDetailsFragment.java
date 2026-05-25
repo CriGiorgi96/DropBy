@@ -51,7 +51,7 @@ public class UserDetailsFragment extends Fragment {
         btnBack.setOnClickListener(v -> requireActivity().getSupportFragmentManager().popBackStack());
 
         if (targetUserId == -1) {
-            Toast.makeText(requireContext(), "Utente non trovato", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), getString(R.string.user_not_found), Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -69,7 +69,7 @@ public class UserDetailsFragment extends Fragment {
                         if (!isAdded()) return;
                         if (!response.isSuccessful() || response.body() == null) {
                             Toast.makeText(requireContext(),
-                                    "Impossibile caricare il profilo", Toast.LENGTH_SHORT).show();
+                                    getString(R.string.error_loading_profile), Toast.LENGTH_SHORT).show();
                             requireActivity().getSupportFragmentManager().popBackStack();
                             return;
                         }
@@ -87,7 +87,7 @@ public class UserDetailsFragment extends Fragment {
                     @Override
                     public void onFailure(@NonNull Call<Map<String, Object>> call, @NonNull Throwable t) {
                         if (isAdded()) Toast.makeText(requireContext(),
-                                "Errore caricamento profilo", Toast.LENGTH_SHORT).show();
+                                getString(R.string.error_loading_profile), Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -99,7 +99,7 @@ public class UserDetailsFragment extends Fragment {
         String username   = (String) data.get("username");
         String profileImg = (String) data.get("profile_image");
 
-        tvUsername.setText(username != null ? username : "Utente");
+        tvUsername.setText(username != null ? username : getString(R.string.user_fallback));
 
         Object loadSource;
         if (isServerFilename(profileImg)) {
@@ -143,7 +143,7 @@ public class UserDetailsFragment extends Fragment {
                                     .commit();
                         } else {
                             Toast.makeText(requireContext(),
-                                    "Evento non trovato", Toast.LENGTH_SHORT).show();
+                                    getString(R.string.event_not_found), Toast.LENGTH_SHORT).show();
                         }
                     }
 
@@ -151,7 +151,7 @@ public class UserDetailsFragment extends Fragment {
                     public void onFailure(@NonNull retrofit2.Call<ApiService.EventWrapper> call,
                                           @NonNull Throwable t) {
                         if (isAdded()) Toast.makeText(requireContext(),
-                                "Errore di rete", Toast.LENGTH_SHORT).show();
+                                getString(R.string.network_error), Toast.LENGTH_SHORT).show();
                     }
                 });
     }

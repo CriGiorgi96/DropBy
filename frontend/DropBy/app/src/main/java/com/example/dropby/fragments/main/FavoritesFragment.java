@@ -49,7 +49,7 @@ public class FavoritesFragment extends Fragment {
     }
 
     private void loadFavorites() {
-        setStatus("Caricamento preferiti…");
+        setStatus(getString(R.string.loading_favorites));
         ApiClient.getApiService().getFavorites()
                 .enqueue(new Callback<ApiService.FavoritesWrapper>() {
                     @Override
@@ -75,7 +75,7 @@ public class FavoritesFragment extends Fragment {
                             });
                         } else {
                             requireActivity().runOnUiThread(() -> {
-                                if (isAdded()) setStatus("Errore caricamento preferiti");
+                                if (isAdded()) setStatus(getString(R.string.error_loading_favorites));;
                             });
                         }
                     }
@@ -83,7 +83,7 @@ public class FavoritesFragment extends Fragment {
                     public void onFailure(Call<ApiService.FavoritesWrapper> call, Throwable t) {
                         Log.e("FAV_DEBUG", "onFailure: " + t.getMessage(), t);
                         if (isAdded()) requireActivity().runOnUiThread(
-                                () -> { if (isAdded()) setStatus("Errore di rete"); });
+                                () -> { if (isAdded()) setStatus(getString(R.string.network_error)); });
                     }
                 });
     }
@@ -106,7 +106,7 @@ public class FavoritesFragment extends Fragment {
                                     .commit();
                         } else {
                             Toast.makeText(requireContext(),
-                                    "Evento non trovato", Toast.LENGTH_SHORT).show();
+                                    getString(R.string.event_not_found), Toast.LENGTH_SHORT).show();
                         }
                     }
                     @Override
@@ -124,7 +124,7 @@ public class FavoritesFragment extends Fragment {
                     public void onResponse(Call<GenericResponse> call,
                                            Response<GenericResponse> response) {
                         if (!isAdded()) return;
-                        Toast.makeText(requireContext(), "Rimosso dai preferiti", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), getString(R.string.removed_from_favorites), Toast.LENGTH_SHORT).show();
                         loadFavorites();
                     }
                     @Override public void onFailure(Call<GenericResponse> call, Throwable t) {}

@@ -29,7 +29,7 @@
             android:layout_weight="1"
             android:textStyle="bold"
             android:textSize="14sp"
-            android:textColor="#333333" />
+            android:textColor="@color/db_text_secondary" />
 
         <TextView
             android:id="@+id/reviewStars"
@@ -47,7 +47,7 @@
         android:layout_marginTop="6dp"
         android:layout_marginStart="50dp"
         android:textSize="13sp"
-        android:textColor="#555555" />
+        android:textColor="@color/db_text_hint" />
 
     <TextView
         android:id="@+id/reviewEventTitle"
@@ -67,13 +67,13 @@
         android:layout_marginTop="4dp"
         android:layout_marginStart="50dp"
         android:textSize="12sp"
-        android:textColor="#9C7BB8"
+        android:textColor="@color/db_text_secondary"
         android:visibility="gone" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginTop="8dp"
-        android:background="#EEEEEE" />
+        android:background="@color/db_background" />
 
 </LinearLayout>

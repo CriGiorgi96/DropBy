@@ -95,7 +95,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     // Dati
     private List<Location> allLocations = new ArrayList<>();
-    private String selectedCity = "Tutte le città";
+    private String selectedCity;
     private int selectedRadiusKm = 50;
 
     @Nullable
@@ -109,6 +109,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        selectedCity = getString(R.string.all_cities);
 
         citySpinner   = view.findViewById(R.id.citySpinner);
         radiusSeekBar = view.findViewById(R.id.radiusSeekBar);
@@ -284,14 +286,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     }
 
     private void updateRadiusLabel(int km) {
-        radiusLabel.setText("Raggio: " + km + " km");
+        radiusLabel.setText(getString(R.string.radius_km, km));
     }
 
     // ── CARICAMENTO TEATRI ────────────────────────────────────────────────────
 
     private void loadAllTheaters() {
         statusText.setVisibility(View.VISIBLE);
-        statusText.setText("Caricamento teatri…");
+        statusText.setText(getString(R.string.theatersStatusText));
 
         ApiClient.getApiService().getLocations(null, null)
                 .enqueue(new Callback<LocationsResponse>() {
@@ -304,13 +306,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                             statusText.setVisibility(View.GONE);
                             if (googleMap != null) applyFilter();
                         } else {
-                            statusText.setText("Errore caricamento teatri");
+                            statusText.setText(getString(R.string.error_loading_theaters));
                         }
                     }
                     @Override
                     public void onFailure(@NonNull Call<LocationsResponse> call, @NonNull Throwable t) {
                         if (!isAdded()) return;
-                        statusText.setText("Rete assente");
+                        statusText.setText(getString(R.string.network_absent));
                     }
                 });
     }

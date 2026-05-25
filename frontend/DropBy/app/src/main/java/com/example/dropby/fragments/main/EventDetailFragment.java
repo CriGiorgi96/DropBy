@@ -166,7 +166,7 @@ public class EventDetailFragment extends Fragment {
             return;
         }
 
-        String label = en ? "More details →" : "Per più dettagli →";
+        String label = getString(R.string.more_details);
         android.text.SpannableString ss = new android.text.SpannableString(label);
         ss.setSpan(new android.text.style.UnderlineSpan(), 0, label.length(), 0);
         tv.setText(ss);
@@ -189,7 +189,7 @@ public class EventDetailFragment extends Fragment {
             String time  = r.getTimePart();
             labels[i] = venue + (city.isEmpty() ? "" : " · " + city)
                     + "\n" + date + (time.isEmpty() ? "" : " · " + time);
-            if (r.isPast()) labels[i] += " ⚠ già avvenuto";
+            if (r.isPast()) labels[i] += getString(R.string.already_happened_warning);
         }
 
         final int[] selected = {0};
@@ -220,7 +220,7 @@ public class EventDetailFragment extends Fragment {
 
     private void openTicketUrl(String url) {
         if (url == null || url.isEmpty()) {
-            Toast.makeText(requireContext(), "URL biglietti non disponibile", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), getString(R.string.ticket_url_not_available), Toast.LENGTH_SHORT).show();
             return;
         }
         startActivity(new android.content.Intent(
@@ -432,7 +432,7 @@ public class EventDetailFragment extends Fragment {
                                 isFavorite = false;
                                 updateFavoriteIcon();
                                 Toast.makeText(requireContext(),
-                                        "Rimosso dai preferiti", Toast.LENGTH_SHORT).show();
+                                        getString(R.string.removed_from_favorites), Toast.LENGTH_SHORT).show();
                             }
                         }
                         @Override
@@ -456,7 +456,7 @@ public class EventDetailFragment extends Fragment {
                                 updateFavoriteIcon();   // aggiorna stella immediatamente
                                 Log.d("FAV_ICON", "addFavorite OK (" + response.code() + ") → star=FULL");
                                 Toast.makeText(requireContext(),
-                                        "Aggiunto ai preferiti", Toast.LENGTH_SHORT).show();
+                                        getString(R.string.added_to_favorites), Toast.LENGTH_SHORT).show();
                             } else {
                                 Log.w("FAV_ICON", "addFavorite failed HTTP=" + response.code());
                             }
@@ -476,9 +476,9 @@ public class EventDetailFragment extends Fragment {
         android.widget.PopupMenu popup =
                 new android.widget.PopupMenu(requireContext(), anchor);
         popup.getMenu().add(0, 1, 0,
-                isFavorite ? "Rimuovi dai preferiti" : "Aggiungi ai preferiti");
-        popup.getMenu().add(0, 2, 1, "Imposta promemoria");
-        popup.getMenu().add(0, 3, 2, "Proponi ad un amico");
+                isFavorite ? getString(R.string.remove_from_favorites) : getString(R.string.add_to_favorites));
+        popup.getMenu().add(0, 2, 1, getString(R.string.set_reminder));
+        popup.getMenu().add(0, 3, 2, getString(R.string.propose_to_friend));
         popup.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
                 case 1: toggleFavorite();          break;
@@ -494,7 +494,7 @@ public class EventDetailFragment extends Fragment {
 
     private void showProposeFriendDialog() {
         android.app.AlertDialog loading = new android.app.AlertDialog.Builder(requireContext())
-                .setMessage("Caricamento amici...")
+                .setMessage(getString(R.string.loading_friends))
                 .setCancelable(false)
                 .show();
 
@@ -509,16 +509,16 @@ public class EventDetailFragment extends Fragment {
                                 || response.body().friends == null
                                 || response.body().friends.isEmpty()) {
                             Toast.makeText(requireContext(),
-                                    "Nessun amico trovato", Toast.LENGTH_SHORT).show();
+                                    R.string.no_friend_found, Toast.LENGTH_SHORT).show();
                             return;
                         }
                         List<Friend> friends = response.body().friends;
                         String[] names = new String[friends.size()];
                         for (int i = 0; i < friends.size(); i++) names[i] = friends.get(i).getUsername();
                         new android.app.AlertDialog.Builder(requireContext())
-                                .setTitle("Proponi \"" + event.getTitle() + "\" a:")
+                                .setTitle(getString(R.string.propose_event_to, event.getTitle()))
                                 .setItems(names, (dialog, which) -> submitProposal(friends.get(which)))
-                                .setNegativeButton("Annulla", null)
+                                .setNegativeButton(android.R.string.cancel, null)
                                 .show();
                     }
                     @Override
@@ -526,7 +526,7 @@ public class EventDetailFragment extends Fragment {
                                           @NonNull Throwable t) {
                         if (!isAdded()) return;
                         loading.dismiss();
-                        Toast.makeText(requireContext(), "Errore di rete", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), R.string.network_error, Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -551,13 +551,13 @@ public class EventDetailFragment extends Fragment {
                                     Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(requireContext(),
-                                    "Errore nell'invio della proposta", Toast.LENGTH_SHORT).show();
+                                    R.string.proposal_send_error, Toast.LENGTH_SHORT).show();
                         }
                     }
                     @Override
                     public void onFailure(@NonNull Call<GenericResponse> call, @NonNull Throwable t) {
                         if (isAdded())
-                            Toast.makeText(requireContext(), "Rete assente", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(requireContext(), R.string.network_absent, Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -602,7 +602,7 @@ public class EventDetailFragment extends Fragment {
                                 && response.body().reviews != null) {
                             List<Review> reviews = response.body().reviews;
                             if (reviews.isEmpty() && status != null) {
-                                status.setText("Nessuna recensione per questo evento");
+                                status.setText(getString(R.string.no_reviews_for_event));
                                 status.setVisibility(View.VISIBLE);
                             } else {
                                 reviewAdapter.update(reviews);
@@ -660,11 +660,11 @@ public class EventDetailFragment extends Fragment {
             int    rating  = (int) ratingBar.getRating();
             String comment = commentInput.getText().toString().trim();
             if (rating < 1) {
-                Toast.makeText(requireContext(), "Seleziona almeno 1 stella", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), R.string.select_at_least_one_star, Toast.LENGTH_SHORT).show();
                 return;
             }
             if (comment.isEmpty()) {
-                commentInput.setError("Scrivi un commento");
+                commentInput.setError(getString(R.string.write_comment));
                 return;
             }
             submitBtn.setEnabled(false);
@@ -682,10 +682,10 @@ public class EventDetailFragment extends Fragment {
                                 locationSpinner.setSelection(0);
                                 submitBtn.setEnabled(false);
                                 Toast.makeText(requireContext(),
-                                        "Recensione inviata!", Toast.LENGTH_SHORT).show();
+                                        R.string.review_sent, Toast.LENGTH_SHORT).show();
                                 loadReviews(view);
                             } else {
-                                String msg = "Errore invio recensione";
+                                String msg = getString(R.string.review_send_error);
                                 try {
                                     if (response.errorBody() != null) {
                                         org.json.JSONObject err =
@@ -754,7 +754,7 @@ public class EventDetailFragment extends Fragment {
                         }
 
                         List<String> locLabels = new ArrayList<>();
-                        locLabels.add("Seleziona luogo…");
+                        locLabels.add(getString(R.string.select_place));
                         locLabels.addAll(locNames);
 
                         ArrayAdapter<String> locAdap = new ArrayAdapter<>(requireContext(),
@@ -781,7 +781,7 @@ public class EventDetailFragment extends Fragment {
                                 } else {
                                     submitBtn.setEnabled(false);
                                     List<String> dLabels = new ArrayList<>();
-                                    dLabels.add("Seleziona data…");
+                                    dLabels.add(getString(R.string.select_date));
                                     for (Event.EventReplica r : dates) {
                                         String ds = formatEventDate(r.getDatePart());
                                         String ts = r.getTimePart();
@@ -829,7 +829,7 @@ public class EventDetailFragment extends Fragment {
                         != android.content.pm.PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{"android.permission.POST_NOTIFICATIONS"}, 1001);
             Toast.makeText(requireContext(),
-                    "Concedi il permesso per le notifiche nelle impostazioni",
+                    R.string.notification_permission_needed,
                     Toast.LENGTH_LONG).show();
             return;
         }
@@ -840,7 +840,7 @@ public class EventDetailFragment extends Fragment {
                 cal.set(java.util.Calendar.MILLISECOND, 0);
                 if (cal.getTimeInMillis() <= System.currentTimeMillis()) {
                     Toast.makeText(requireContext(),
-                            "Scegli una data futura", Toast.LENGTH_SHORT).show();
+                            R.string.choose_future_date, Toast.LENGTH_SHORT).show();
                     return;
                 }
                 scheduleReminder(cal);
@@ -874,10 +874,10 @@ public class EventDetailFragment extends Fragment {
                             ReminderScheduler.schedule(requireContext(), event.getId(),
                                     event.getTitle(), cal.getTimeInMillis());
                             Toast.makeText(requireContext(),
-                                    "Promemoria impostato!", Toast.LENGTH_SHORT).show();
+                                    R.string.reminder_set, Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(requireContext(),
-                                    "Errore impostazione promemoria", Toast.LENGTH_SHORT).show();
+                                    R.string.reminder_set_error, Toast.LENGTH_SHORT).show();
                         }
                     }
                     @Override

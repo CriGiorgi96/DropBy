@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#FFF8F5FC">
+    android:background="@color/db_background">
 
     <TextView
         android:layout_width="match_parent"
@@ -13,7 +13,7 @@
         android:text="@string/friends_title"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:textColor="#333333" />
+        android:textColor="@color/db_text_primary" />
 
     <!-- Barra ricerca utenti -->
     <LinearLayout
@@ -41,7 +41,7 @@
             android:layout_marginStart="8dp"
             android:backgroundTint="#7B1FA2"
             android:text="@string/search"
-            android:textColor="@android:color/white" />
+            android:textColor="@color/db_text_primary" />
 
     </LinearLayout>
 
@@ -51,7 +51,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:contentDescription="@string/tabLayout"
-        android:background="#FFFFFF" />
+        android:background="@color/db_surface" />
 
     <!-- Status (caricamento / errore / vuoto) -->
     <TextView
@@ -60,7 +60,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="16dp"
-        android:textColor="#9E9E9E"
+        android:textColor="@color/db_text_secondary"
         android:visibility="gone" />
 
     <androidx.recyclerview.widget.RecyclerView

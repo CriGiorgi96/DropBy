@@ -114,7 +114,7 @@ public class FaqFragment extends Fragment {
         questionTextView.setTextSize(17);
         questionTextView.setTypeface(null, Typeface.BOLD);
         questionTextView.setTextColor(
-                ContextCompat.getColor(getContext(), android.R.color.black)
+                ContextCompat.getColor(getContext(), R.color.db_text_primary)
         );
 
         LinearLayout.LayoutParams qParams =
@@ -146,7 +146,9 @@ public class FaqFragment extends Fragment {
 
         answerTextView.setPadding(answerPaddingPx, 0, answerPaddingPx, answerPaddingPx);
         answerTextView.setVisibility(View.GONE);
-        answerTextView.setTextColor(0xFF555555);
+        answerTextView.setTextColor(
+                ContextCompat.getColor(requireContext(), R.color.db_text_secondary)
+        );
 
         headerLayout.setOnClickListener(v -> {
             if (answerTextView.getVisibility() == View.GONE) {
@@ -165,7 +167,9 @@ public class FaqFragment extends Fragment {
         divider.setLayoutParams(new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, 1
         ));
-        divider.setBackgroundColor(0xFFDDDDDD);
+        divider.setBackgroundColor(
+                ContextCompat.getColor(requireContext(), R.color.db_divider)
+        );
 
         itemContainer.addView(divider);
 

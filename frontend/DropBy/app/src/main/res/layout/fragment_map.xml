@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFF8F5FC">
+    android:background="@color/db_background">
 
     <!-- ── BARRA FILTRI ── -->
     <androidx.cardview.widget.CardView
@@ -12,7 +12,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="12dp"
-        app:cardBackgroundColor="#FFFFFF"
+        app:cardBackgroundColor="@color/db_surface"
         app:cardCornerRadius="16dp"
         app:cardElevation="6dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -37,7 +37,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:text="@string/default_radius"
-                android:textColor="#6A6274"
+                android:textColor="@color/db_text_secondary"
                 android:textSize="13sp"
                 android:visibility="gone" />
 
@@ -59,7 +59,7 @@
                 android:layout_marginTop="10dp"
                 android:backgroundTint="#7B1FA2"
                 android:text="@string/search_theatres"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/db_text_primary"
                 android:textSize="14sp" />
 
         </LinearLayout>
@@ -72,7 +72,7 @@
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="4dp"
         android:gravity="center"
-        android:textColor="#9E9E9E"
+        android:textColor="@color/db_text_secondary"
         android:textSize="13sp"
         android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/filterCard"

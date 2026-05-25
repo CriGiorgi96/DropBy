@@ -31,7 +31,7 @@
             android:paddingStart="12dp"
             android:paddingTop="10dp"
             android:paddingEnd="12dp"
-            android:textColor="@color/black"
+            android:textColor="@color/db_text_primary"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -43,7 +43,7 @@
             android:paddingTop="4dp"
             android:paddingEnd="12dp"
             android:paddingBottom="12dp"
-            android:textColor="#FF555555"
+            android:textColor="@color/db_text_secondary"
             android:textSize="14sp" />
 
     </LinearLayout>

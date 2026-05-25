@@ -40,7 +40,7 @@ public class UrlConfigFragment extends Fragment {
                 newUrl = "http://" + newUrl;
             }
             ApiClient.setCustomBaseUrl(newUrl);
-            Toast.makeText(getContext(), "URL salvato", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getString(R.string.url_saved), Toast.LENGTH_SHORT).show();
             requireActivity().onBackPressed();
         });
 

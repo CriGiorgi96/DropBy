@@ -19,8 +19,23 @@
     <string name="go_to_register">Non hai un account? Registrati</string>
     <string name="go_to_login">Hai già un account? Accedi</string>
     <string name="validation">Accetto termini e condizioni</string>
+    <string name="invalid_email">Email invalida</string>
+    <string name="min_6_char">Minimo 6 caratteri</string>
+    <string name="email_not_verified">Email non verificata. Controlla la tua casella.</string>
+    <string name="invalid_credentials">Credenziali non valide</string>
+    <string name="insert_name">Inserisci nome</string>
+    <string name="insert_last_name">Inserisci cognome</string>
+    <string name="insert_birthday">Inserisci data di nascita</string>
+    <string name="insert_email">Inserisci email</string>
+    <string name="insert_password">Inserisci password</string>
+    <string name="select_gender">Seleziona il genere</string>
+    <string name="accept_terms">Accetta i termini e condizioni</string>
+    <string name="error_while_signing_up">Errore durante la registrazione: %1$s</string>
+    <string name="terms_conditions">Termini e condizioni</string>
+    <string name="error_loading_terms">Errore nel caricamento dei termini</string>
     <string name="greeting">Ciao, Spettatore!</string>
     <string name="profile_settings">Impostazioni Profilo</string>
+    <string name="updated_profile">Profilo aggiornato</string>
     <string name="logout">Logout</string>
     <string name="gender_male">M</string>
     <string name="gender_female">F</string>
@@ -34,6 +49,7 @@
     <string name="settings_title">Impostazioni</string>
     <string name="go_to_general_settings">Generali</string>
     <string name="go_to_profile_settings">Profilo</string>
+    <string name="my_profile">Il mio profilo</string>
     <string name="go_to_notification_settings">Notifiche</string>
     <string name="home_navbar">Home</string>
     <string name="events_navbar">Spettacoli</string>
@@ -42,7 +58,6 @@
     <string name="login_register">Accedi/Registrati</string>
     <string name="choose_profile_picture">Cambia immagine profilo</string>
     <string name="save_changes">Salva modifiche</string>
-    <string name="insert_username">Inserisci nome utente</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="search_hint">Cerca…</string>
@@ -50,7 +65,7 @@
     <string name="eventsStatusText">Caricamento eventi…</string>
     <string name="faq_title">Come funziona DropBy</string>
     <string name="theatersStatusText">Caricamento teatri…</string>
-    <string name="server_error">Errore server</string>
+    <string name="server_error">Errore server: %1$d</string>
     <string name="no_connection_server">Rete assente o server spento</string>
     <string name="no_theater_found">Nessun teatro trovato per: </string>
     <string name="no_event_found">Nessun evento disponibile</string>
@@ -70,6 +85,7 @@
     <string name="friends_tab_list">I miei amici</string>
     <string name="friends_tab_requests">Richieste</string>
     <string name="friends_tab_search">Cerca</string>
+    <string name="favorites">Preferiti</string>
     <string name="favorites_title">I miei preferiti</string>
     <string name="notifications_title">Notifiche</string>
     <string name="proposals_title">Proposte eventi</string>
@@ -97,8 +113,23 @@
     <string name="general_settings">Impostazioni Generali</string>
     <string name="default_images">Immagini di default</string>
     <string name="url_config">Configurazione URL</string>
+    <string name="save_url_btn">Salva URL</string>
 
     <string name="zero_notifications">0</string>
+    <string name="insert_username">Inserisci un nome utente</string>
+    <string name="fill_password_fields">Completa tutti i campi password</string>
+    <string name="passwords_not_matching">Le password non coincidono</string>
+    <string name="min_char_password">Password minima 6 caratteri</string>
+    <string name="username_already_exists">Username già in uso</string>
+    <string name="error_username_verification">Errore verifica username</string>
+    <string name="impossible_to_read_image">Impossibile leggere l\'immagine</string>
+    <string name="failed_avatar_upload">Upload dell\'avatar fallito</string>
+    <string name="upload_error">Errore nell\'upload</string>
+    <string name="save_profile_upload_error">Errore nel salvataggio del profilo</string>
+    <string name="current_password_wrong">La password corrente è errata</string>
+    <string name="wrong_confirm_input">Parola di conferma errata</string>
+    <string name="invalid_session">Sessione invalida</string>
+    <string name="error_while_deleting_account">Errore durante l\'eliminazione dell\'account</string>
     <string name="change_password">Cambia password</string>
     <string name="current_password">Password corrente</string>
     <string name="new_password">Nuova password</string>
@@ -126,7 +157,6 @@
     <string name="user_avatar">Avatar utente</string>
 
     <string name="next_shows">Prossimi spettacoli</string>
-    <string name="add_to_favourites">Aggiungi ai preferiti</string>
     <string name="buy_tickets">ACQUISTA BIGLIETTI</string>
     <string name="buy">Acquista</string>
     <string name="reviews">Recensioni</string>
@@ -159,7 +189,6 @@
     <string name="theatre_dance">Danza teatrale</string>
     <string name="contemporary_theatre">Teatro contemporaneo</string>"
     <string name="tap_for_details">Tap per dettagli ›</string>
-    <string name="delete">Elimina</string>
     <string name="filter_on">Filtra per…</string>
     <string name="filter_using_category">Filtra per genere</string>
     <string name="filter_using_date">Filtra per data</string>
@@ -172,6 +201,7 @@
     <string name="latest_news">Ultime notizie</string>
     <string name="mark_all">Segna tutte</string>
 
+    <string name="reminders">Promemoria</string>
     <string name="active_remiders">Promemoria attivi</string>
     <string name="floor_plan">Planimetria</string>
     <string name="floor_plan_title">Planimetria %1$s</string>
@@ -180,9 +210,6 @@
     <string name="scheduled">In programma</string>
     <string name="search_theatre_city">Cerca un teatro o una città…</string>
     <string name="event_action">Azioni Evento</string>
-    <string name="add_to_favorites">Salva nei preferiti</string>
-    <string name="set_reminder">Imposta promemoria</string>
-    <string name="propose_to_friend">Proponi a un amico</string>
 
     <string name="verify_your_account">Verifica il tuo account</string>
     <string name="sent_code_to_email">Abbiamo inviato un codice alla tua email</string>
@@ -197,5 +224,96 @@
     <string name="show_already_happened_title">Spettacolo già avvenuto</string>
     <string name="show_already_happened_message">Lo spettacolo è già avvenuto, vuoi comunque proseguire all\'acquisto?</string>
     <string name="proceed_anyway">Prosegui comunque</string>
+
+    <string name="otp_sent_to">Abbiamo inviato un codice a %1$s</string>
+    <string name="insert_otp_code">Inserisci il codice a 6 cifre</string>
+    <string name="account_verified">Account verificato!</string>
+    <string name="invalid_or_expired_code">Codice non valido o scaduto</string>
+    <string name="verification_error_code">Errore verifica (%1$d)</string>
+    <string name="network_absent">Rete assente</string>
+    <string name="new_code_sent_to">Nuovo codice inviato a %1$s</string>
+    <string name="sending_error">Errore nell\'invio</string>
+
+    <string name="loading_favorites">Caricamento preferiti…</string>
+    <string name="error_loading_favorites">Errore caricamento preferiti</string>
+    <string name="event_not_found">Evento non trovato</string>
+    <string name="removed_from_favorites">Rimosso dai preferiti</string>
+    <string name="added_to_favorites">Aggiunto ai preferiti</string>
+    <string name="remove_from_favorites">Rimuovi dai preferiti</string>
+    <string name="add_to_favorites">Aggiungi ai preferiti</string>
+
+    <string name="loading_friends">Caricamento amici…</string>
+    <string name="loading_requests">Caricamento richieste…</string>
+    <string name="insert_at_least_two_chars">Inserisci almeno 2 caratteri</string>
+    <string name="searching">Ricerca…</string>
+    <string name="no_user_found">Nessun utente trovato</string>
+    <string name="search_error">Errore ricerca</string>
+    <string name="error_sending_request">Errore invio richiesta</string>
+
+    <string name="ticket_not_available_for_show">Biglietto non disponibile per questo spettacolo.</string>
+    <string name="all_cities">Tutte le città</string>
+    <string name="radius_km">Raggio: %1$d km</string>
+    <string name="error_loading_theaters">Errore caricamento teatri</string>
+
+    <string name="more_details">Per più dettagli →</string>
+    <string name="already_happened_warning"> ⚠ già avvenuto</string>
+    <string name="ticket_url_not_available">URL biglietti non disponibile</string>
+    <string name="set_reminder">Imposta promemoria</string>
+    <string name="propose_to_friend">Proponi a un amico</string>
+    <string name="loading_friends_dialog">Caricamento amici...</string>
+    <string name="no_friend_found">Nessun amico trovato</string>
+    <string name="proposal_already_sent_or_not_friend">Proposta già inviata o utente non amico</string>
+    <string name="proposal_send_error">Errore nell\'invio della proposta</string>
+    <string name="no_reviews_for_event">Nessuna recensione per questo evento</string>
+    <string name="select_at_least_one_star">Seleziona almeno 1 stella</string>
+    <string name="write_comment">Scrivi un commento</string>
+    <string name="review_sent">Recensione inviata!</string>
+    <string name="review_send_error">Errore invio recensione</string>
+    <string name="select_place">Seleziona luogo…</string>
+    <string name="select_date">Seleziona data…</string>
+    <string name="notification_permission_needed">Concedi il permesso per le notifiche nelle impostazioni</string>
+    <string name="choose_future_date">Scegli una data futura</string>
+    <string name="reminder_set">Promemoria impostato!</string>
+    <string name="reminder_set_error">Errore impostazione promemoria</string>
+    <string name="propose_event_to">Proponi %1$d a: </string>
+
+    <string name="loading_reminders">Caricamento promemoria…</string>
+    <string name="no_active_reminders">Nessun promemoria attivo</string>
+    <string name="error_loading_reminders">Errore caricamento promemoria</string>
+    <string name="reminder_removed">Promemoria rimosso</string>
+
+    <string name="loading_notifications">Caricamento notifiche…</string>
+    <string name="error_loading_notifications">Errore caricamento notifiche</string>
+    <string name="delete_notification_confirm">Eliminare questa notifica?</string>
+
+    <string name="delete">Elimina</string>
+    <string name="cancel">Annulla</string>
+    <string name="confirm_button">Conferma</string>
+
+    <string name="a_friend">Un amico</string>
+    <string name="proposal_message">%1$s ti ha proposto:\n"%2$s"</string>
+    <string name="proposal_response_sent">Risposta inviata %1$s</string>
+    <string name="proposal_response_error">Errore nell\'invio della risposta</string>
+
+    <string name="loading_proposals">Caricamento proposte…</string>
+    <string name="error_loading_proposals">Errore caricamento proposte</string>
+
+    <string name="no_written_reviews">Non hai ancora scritto recensioni.</string>
+    <string name="error_loading_reviews">Impossibile caricare le recensioni.</string>
+    <string name="network_error_retry">Errore di rete. Riprova.</string>
+    <string name="delete_review_confirm">Eliminare la recensione per "%1$s"?</string>
+    <string name="unknown_event">Evento sconosciuto</string>
+
+    <string name="config_password_hint">Inserisci la password di configurazione</string>
+    <string name="config_access_title">Accesso configurazione</string>
+    <string name="config_access_message">Inserisci la password per accedere alle impostazioni URL.</string>
+    <string name="password_required">Password obbligatoria</string>
+    <string name="wrong_password">Password errata</string>
+
+    <string name="url_saved">URL salvato</string>
+
+    <string name="user_not_found">Utente non trovato</string>
+    <string name="error_loading_profile">Impossibile caricare il profilo</string>
+    <string name="user_fallback">Utente</string>
 
 </resources>

@@ -52,7 +52,7 @@ public class NotificationsFragment extends Fragment {
     }
 
     private void loadNotifications() {
-        setStatus("Caricamento notifiche…");
+        setStatus(getString(R.string.loading_notifications));
         ApiClient.getApiService().getNotifications(false)
                 .enqueue(new Callback<ApiService.NotificationsWrapper>() {
                     @Override
@@ -71,13 +71,13 @@ public class NotificationsFragment extends Fragment {
                                 recyclerView.setVisibility(View.VISIBLE);
                             }
                         } else {
-                            setStatus("Errore caricamento notifiche");
+                            setStatus(getString(R.string.error_loading_notifications));
                         }
                     }
                     @Override
                     public void onFailure(@NonNull Call<ApiService.NotificationsWrapper> call,
                                           @NonNull Throwable t) {
-                        if (isAdded()) setStatus("Errore di rete");
+                        if (isAdded()) setStatus(getString(R.string.network_error));
                     }
                 });
     }
@@ -126,9 +126,9 @@ public class NotificationsFragment extends Fragment {
     private void confirmDelete(Notification notif) {
         if (!isAdded()) return;
         new AlertDialog.Builder(requireContext())
-                .setMessage("Eliminare questa notifica?")
-                .setPositiveButton("Elimina", (d, w) -> deleteNotification(notif))
-                .setNegativeButton("Annulla", null)
+                .setMessage(R.string.delete_notification_confirm)
+                .setPositiveButton(R.string.delete, (d, w) -> deleteNotification(notif))
+                .setNegativeButton(R.string.cancel, null)
                 .show();
     }
 

@@ -5,6 +5,7 @@
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="12dp"
     android:layout_marginTop="8dp"
+    android:background="@color/db_surface"
     app:cardCornerRadius="12dp"
     app:cardElevation="3dp">
 
@@ -35,7 +36,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="15sp"
                 android:textStyle="bold"
-                android:textColor="#333333"
+                android:textColor="@color/db_text_primary"
                 android:maxLines="2"
                 android:ellipsize="end" />
 
@@ -53,7 +54,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:textSize="12sp"
-                android:textColor="#666666" />
+                android:textColor="@color/db_text_secondary" />
 
         </LinearLayout>
 

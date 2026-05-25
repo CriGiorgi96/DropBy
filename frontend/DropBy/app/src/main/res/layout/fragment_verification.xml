@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFF8F5FC">
+    android:background="@color/db_background">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -25,7 +25,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/verify_your_account"
-            android:textColor="#1A1A2E"
+            android:textColor="@color/db_text_primary"
             android:textSize="24sp"
             android:textStyle="bold"
             android:gravity="center"
@@ -37,7 +37,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/sent_code_to_email"
-            android:textColor="#6A6274"
+            android:textColor="@color/db_text_secondary"
             android:textSize="14sp"
             android:gravity="center"
             android:layout_marginBottom="32dp" />
@@ -70,7 +70,7 @@
             android:layout_height="52dp"
             android:text="@string/verify"
             android:backgroundTint="#7B1FA2"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/white"
             android:textSize="16sp"
             android:layout_marginBottom="16dp" />
 
@@ -81,7 +81,7 @@
             android:layout_height="wrap_content"
             android:text="@string/did_not_receive_code"
             android:backgroundTint="@android:color/transparent"
-            android:textColor="#7B1FA2"
+            android:textColor="@color/db_text_secondary"
             android:textSize="14sp" />
 
     </LinearLayout>

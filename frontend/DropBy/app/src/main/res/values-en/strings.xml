@@ -19,8 +19,23 @@
     <string name="go_to_register">Don\'t have an account? Sign up</string>
     <string name="go_to_login">Already have an account? Log in</string>
     <string name="validation">I accept terms and conditions</string>
+    <string name="invalid_email">Invalid email</string>
+    <string name="min_6_char">6 characters minimum</string>
+    <string name="email_not_verified">Email not verified. Check your inbox.</string>
+    <string name="invalid_credentials">Invalid credentials</string>
+    <string name="insert_name">Insert first name</string>
+    <string name="insert_last_name">Insert last name</string>
+    <string name="insert_birthday">Insert date of birth</string>
+    <string name="insert_email">Insert email</string>
+    <string name="insert_password">Insert password</string>
+    <string name="select_gender">Select gender</string>
+    <string name="accept_terms">Accept terms and conditions</string>
+    <string name="error_while_signing_up">Error while signing up: %1$s</string>
+    <string name="terms_conditions">Terms and conditions</string>
+    <string name="error_loading_terms">Error while loading terms</string>
     <string name="greeting">Hello, Spectator!</string>
     <string name="profile_settings">Profile Settings</string>
+    <string name="updated_profile">Profile updated</string>
     <string name="logout">Logout</string>
     <string name="gender_male">M</string>
     <string name="gender_female">F</string>
@@ -34,6 +49,7 @@
     <string name="settings_title">Settings</string>
     <string name="go_to_general_settings">General</string>
     <string name="go_to_profile_settings">Profile</string>
+    <string name="my_profile">My profile</string>
     <string name="go_to_notification_settings">Notifications</string>
     <string name="home_navbar">Home</string>
     <string name="events_navbar">Shows</string>
@@ -42,14 +58,13 @@
     <string name="login_register">Login/Register</string>
     <string name="choose_profile_picture">Change profile picture</string>
     <string name="save_changes">Save changes</string>
-    <string name="insert_username">Enter username</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="search_hint">Search…</string>
     <string name="search_button_desc">Run search</string>
     <string name="eventsStatusText">Loading events…</string>
     <string name="faq_title">How DropBy works</string>
     <string name="theatersStatusText">Loading theaters…</string>
-    <string name="server_error">Server error</string>
+    <string name="server_error">Server Error: %1$d</string>
     <string name="no_connection_server">No network or server is offline</string>
     <string name="no_theater_found">No theater found for: </string>
     <string name="no_event_found">No events available</string>
@@ -67,6 +82,7 @@
     <string name="friends_tab_list">My friends</string>
     <string name="friends_tab_requests">Requests</string>
     <string name="friends_tab_search">Search</string>
+    <string name="favorites">Favorites</string>
     <string name="favorites_title">My favorites</string>
     <string name="notifications_title">Notifications</string>
     <string name="proposals_title">Event proposals</string>
@@ -94,8 +110,23 @@
     <string name="general_settings">General Settings</string>
     <string name="default_images">Default images</string>
     <string name="url_config">URL configuration</string>
+    <string name="save_url_btn">Save URL</string>
 
     <string name="zero_notifications">0</string>
+    <string name="insert_username">Insert username</string>
+    <string name="fill_password_fields">Fill all password fields</string>
+    <string name="passwords_not_matching">Passwords don\'t match</string>
+    <string name="min_char_password">Password minimum 6 characters</string>
+    <string name="username_already_exists">Username already in use</string>
+    <string name="error_username_verification">Error verifying username</string>
+    <string name="impossible_to_read_image">Impossible to read image</string>
+    <string name="failed_avatar_upload">Avatar upload failed</string>
+    <string name="upload_error">Upload error</string>
+    <string name="save_profile_upload_error">Error saving profile</string>
+    <string name="current_password_wrong">Current password is wrong</string>
+    <string name="wrong_confirm_input">Wrong confirm input</string>
+    <string name="invalid_session">Invalid session</string>
+    <string name="error_while_deleting_account">Error while deleting the account</string>
     <string name="change_password">Change password</string>
     <string name="current_password">Current password</string>
     <string name="new_password">New password</string>
@@ -123,7 +154,6 @@
     <string name="user_avatar">User avatar</string>
 
     <string name="next_shows">Upcoming shows</string>
-    <string name="add_to_favourites">Add to favorites</string>
     <string name="buy_tickets">BUY TICKETS</string>
     <string name="buy">Buy</string>
     <string name="reviews">Reviews</string>
@@ -156,7 +186,6 @@
     <string name="theatre_dance">Theatrical dance</string>
     <string name="contemporary_theatre">Contemporary theater</string>
     <string name="tap_for_details">Tap for details ›</string>
-    <string name="delete">Delete</string>
     <string name="filter_on">Filter by…</string>
     <string name="filter_using_category">Filter by genre</string>
     <string name="filter_using_date">Filter by date</string>
@@ -169,6 +198,7 @@
     <string name="latest_news">Latest news</string>
     <string name="mark_all">Mark all</string>
 
+    <string name="reminders">Reminders</string>
     <string name="active_remiders">Active reminders</string>
     <string name="floor_plan">Floor plan</string>
     <string name="floor_plan_title">Floor plan %1$s</string>
@@ -183,5 +213,96 @@
     <string name="six_character_code">6-digit code</string>
     <string name="verify">Verify</string>
     <string name="did_not_receive_code">Didn\'t receive the code? Resend</string>
+
+    <string name="otp_sent_to">We sent a code to %1$s</string>
+    <string name="insert_otp_code">Enter the 6-digit code</string>
+    <string name="account_verified">Account verified!</string>
+    <string name="invalid_or_expired_code">Invalid or expired code</string>
+    <string name="verification_error_code">Verification error (%1$d)</string>
+    <string name="network_absent">No network connection</string>
+    <string name="new_code_sent_to">New code sent to %1$s</string>
+    <string name="sending_error">Sending error</string>
+
+    <string name="loading_favorites">Loading favourites…</string>
+    <string name="error_loading_favorites">Error loading favourites</string>
+    <string name="event_not_found">Event not found</string>
+    <string name="removed_from_favorites">Removed from favourites</string>
+    <string name="added_to_favorites">Added to favourites</string>
+    <string name="remove_from_favorites">Remove from favourites</string>
+    <string name="add_to_favorites">Add to favourites</string>
+
+    <string name="loading_friends">Loading friends…</string>
+    <string name="loading_requests">Loading requests…</string>
+    <string name="insert_at_least_two_chars">Enter at least 2 characters</string>
+    <string name="searching">Searching…</string>
+    <string name="no_user_found">No user found</string>
+    <string name="search_error">Search error</string>
+    <string name="error_sending_request">Error sending request</string>
+
+    <string name="ticket_not_available_for_show">Ticket not available for this show.</string>
+    <string name="all_cities">All cities</string>
+    <string name="radius_km">Radius: %1$d km</string>
+    <string name="error_loading_theaters">Error loading theatres</string>
+
+    <string name="more_details">More details →</string>
+    <string name="already_happened_warning"> ⚠ already happened</string>
+    <string name="ticket_url_not_available">Ticket URL not available</string>
+    <string name="set_reminder">Set reminder</string>
+    <string name="propose_to_friend">Suggest to a friend</string>
+    <string name="loading_friends_dialog">Loading friends...</string>
+    <string name="no_friend_found">No friend found</string>
+    <string name="proposal_already_sent_or_not_friend">Proposal already sent or user is not a friend</string>
+    <string name="proposal_send_error">Error sending proposal</string>
+    <string name="no_reviews_for_event">No reviews for this event</string>
+    <string name="select_at_least_one_star">Select at least 1 star</string>
+    <string name="write_comment">Write a comment</string>
+    <string name="review_sent">Review sent!</string>
+    <string name="review_send_error">Error sending review</string>
+    <string name="select_place">Select place…</string>
+    <string name="select_date">Select date…</string>
+    <string name="notification_permission_needed">Allow notification permission in settings</string>
+    <string name="choose_future_date">Choose a future date</string>
+    <string name="reminder_set">Reminder set!</string>
+    <string name="reminder_set_error">Error setting reminder</string>
+    <string name="propose_event_to">Propose %1$d to: </string>
+
+    <string name="loading_reminders">Loading reminders…</string>
+    <string name="no_active_reminders">No active reminders</string>
+    <string name="error_loading_reminders">Error loading reminders</string>
+    <string name="reminder_removed">Reminder removed</string>
+
+    <string name="loading_notifications">Loading notifications…</string>
+    <string name="error_loading_notifications">Error loading notifications</string>
+    <string name="delete_notification_confirm">Delete this notification?</string>
+
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
+    <string name="confirm_button">Confirm</string>
+
+    <string name="a_friend">A friend</string>
+    <string name="proposal_message">%1$s suggested:\n"%2$s"</string>
+    <string name="proposal_response_sent">Response sent %1$s</string>
+    <string name="proposal_response_error">Error sending response</string>
+
+    <string name="loading_proposals">Loading proposals…</string>
+    <string name="error_loading_proposals">Error loading proposals</string>
+
+    <string name="no_written_reviews">You haven’t written any reviews yet.</string>
+    <string name="error_loading_reviews">Unable to load reviews.</string>
+    <string name="network_error_retry">Network error. Try again.</string>
+    <string name="delete_review_confirm">Delete the review for "%1$s"?</string>
+    <string name="unknown_event">Unknown event</string>
+
+    <string name="config_password_hint">Enter the configuration password</string>
+    <string name="config_access_title">Configuration access</string>
+    <string name="config_access_message">Enter the password to access URL settings.</string>
+    <string name="password_required">Password required</string>
+    <string name="wrong_password">Wrong password</string>
+
+    <string name="url_saved">URL saved</string>
+
+    <string name="user_not_found">User not found</string>
+    <string name="error_loading_profile">Unable to load profile</string>
+    <string name="user_fallback">User</string>
 
 </resources>

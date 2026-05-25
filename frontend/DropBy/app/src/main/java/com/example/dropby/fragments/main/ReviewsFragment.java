@@ -65,7 +65,7 @@ public class ReviewsFragment extends Fragment {
                                 && response.body().reviews != null) {
                             List<Review> reviews = response.body().reviews;
                             if (reviews.isEmpty()) {
-                                statusText.setText("Non hai ancora scritto recensioni.");
+                                statusText.setText(getString(R.string.no_written_reviews));
                                 statusText.setVisibility(View.VISIBLE);
                                 rv.setVisibility(View.GONE);
                             } else {
@@ -75,7 +75,7 @@ public class ReviewsFragment extends Fragment {
                                 rv.setAdapter(myAdapter);
                             }
                         } else {
-                            statusText.setText("Impossibile caricare le recensioni.");
+                            statusText.setText(getString(R.string.error_loading_reviews));
                             statusText.setVisibility(View.VISIBLE);
                         }
                     }
@@ -84,7 +84,7 @@ public class ReviewsFragment extends Fragment {
                     public void onFailure(@NonNull Call<ApiService.ReviewsWrapper> call,
                                           @NonNull Throwable t) {
                         if (!isAdded()) return;
-                        statusText.setText("Errore di rete. Riprova.");
+                        statusText.setText(getString(R.string.network_error_retry));
                         statusText.setVisibility(View.VISIBLE);
                     }
                 });
@@ -93,9 +93,9 @@ public class ReviewsFragment extends Fragment {
     private void confirmDelete(Review review) {
         if (!isAdded()) return;
         new AlertDialog.Builder(requireContext())
-                .setMessage("Eliminare la recensione per \"" + review.getEventTitle() + "\"?")
-                .setPositiveButton("Elimina", (d, w) -> deleteReview(review))
-                .setNegativeButton("Annulla", null)
+                .setMessage(getString(R.string.delete_review_confirm, review.getEventTitle()))
+                .setPositiveButton(R.string.delete, (d, w) -> deleteReview(review))
+                .setNegativeButton(R.string.cancel, null)
                 .show();
     }
 
@@ -139,7 +139,8 @@ public class ReviewsFragment extends Fragment {
         public void onBindViewHolder(@NonNull VH h, int pos) {
             Review r = items.get(pos);
 
-            h.eventTitle.setText(r.getEventTitle() != null ? r.getEventTitle() : "Evento sconosciuto");
+            h.eventTitle.setText(r.getEventTitle() != null ? r.getEventTitle()
+                    : h.eventTitle.getContext().getString(R.string.unknown_event));
             h.stars.setText(r.getStarsString());
             h.comment.setText(r.getComment() != null ? r.getComment() : "");
             h.eventDate.setText(formatDate(r.getEventDate()));

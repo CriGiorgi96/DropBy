@@ -135,7 +135,7 @@
                     android:background="@drawable/badge_background"
                     android:gravity="center"
                     android:text="@string/zero_notifications"
-                    android:textColor="@android:color/white"
+                    android:textColor="@color/db_text_primary"
                     android:textSize="11sp"
                     android:textStyle="bold"
                     android:visibility="gone" />

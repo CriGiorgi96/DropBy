@@ -48,7 +48,7 @@ public class NotificationManagementFragment extends Fragment {
     }
 
     private void loadReminders() {
-        setStatus("Caricamento promemoria…");
+        setStatus(getString(R.string.loading_reminders));
         ApiClient.getApiService().getReminders()
                 .enqueue(new Callback<ApiService.RemindersWrapper>() {
                     @Override
@@ -59,20 +59,20 @@ public class NotificationManagementFragment extends Fragment {
                                 && response.body().reminders != null) {
                             List<Reminder> list = response.body().reminders;
                             if (list.isEmpty()) {
-                                setStatus("Nessun promemoria attivo");
+                                setStatus(getString(R.string.no_active_reminders));
                             } else {
                                 statusText.setVisibility(View.GONE);
                                 adapter.update(list);
                                 recyclerView.setVisibility(View.VISIBLE);
                             }
                         } else {
-                            setStatus("Errore caricamento promemoria");
+                            setStatus(getString(R.string.error_loading_reminders));
                         }
                     }
                     @Override
                     public void onFailure(@NonNull Call<ApiService.RemindersWrapper> call,
                                           @NonNull Throwable t) {
-                        if (isAdded()) setStatus("Errore di rete");
+                        if (isAdded()) setStatus(getString(R.string.network_error));
                     }
                 });
     }
@@ -87,7 +87,7 @@ public class NotificationManagementFragment extends Fragment {
                         if (response.isSuccessful()) {
                             ReminderScheduler.cancel(requireContext(), reminder.getEventId());
                             Toast.makeText(requireContext(),
-                                    "Promemoria rimosso", Toast.LENGTH_SHORT).show();
+                                    R.string.reminder_removed, Toast.LENGTH_SHORT).show();
                             loadReminders();
                         }
                     }

@@ -32,21 +32,21 @@ public class SettingsFragment extends Fragment {
     private void showConfigPasswordDialog() {
         EditText passwordInput = new EditText(requireContext());
         passwordInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        passwordInput.setHint("Inserisci la password di configurazione");
+        passwordInput.setHint(getString(R.string.config_password_hint));
 
         AlertDialog dialog = new AlertDialog.Builder(requireContext())
-                .setTitle("Accesso configurazione")
-                .setMessage("Inserisci la password per accedere alle impostazioni URL.")
+                .setTitle(getString(R.string.config_access_title))
+                .setMessage(getString(R.string.config_access_message))
                 .setView(passwordInput)
-                .setPositiveButton("Conferma", null)
-                .setNegativeButton("Annulla", null)
+                .setPositiveButton(getString(R.string.confirm_button), null)
+                .setNegativeButton(getString(R.string.cancel), null)
                 .create();
 
         dialog.setOnShowListener(d -> {
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(btn -> {
                 String password = passwordInput.getText().toString().trim();
                 if (password.isEmpty()) {
-                    passwordInput.setError("Password obbligatoria");
+                    passwordInput.setError(getString(R.string.password_required));
                     return;
                 }
                 if (CONFIG_PASSWORD.equals(password)) {
@@ -57,7 +57,7 @@ public class SettingsFragment extends Fragment {
                             .addToBackStack(null)
                             .commit();
                 } else {
-                    Toast.makeText(requireContext(), "Password errata", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), getString(R.string.wrong_password), Toast.LENGTH_SHORT).show();
                 }
             });
         });

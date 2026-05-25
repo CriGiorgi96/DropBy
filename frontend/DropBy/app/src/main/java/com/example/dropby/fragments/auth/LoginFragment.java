@@ -13,6 +13,8 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.dropby.AuthActivity;
@@ -34,6 +36,22 @@ public class LoginFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        if (requireActivity() instanceof HomeActivity) {
+            ViewCompat.setOnApplyWindowInsetsListener(view, (v, insets) -> {
+                int statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top;
+                int toolbarHeight = getResources().getDimensionPixelSize(R.dimen.toolbar_height);
+
+                v.setPadding(
+                        v.getPaddingLeft(),
+                        toolbarHeight + statusBarHeight,
+                        v.getPaddingRight(),
+                        v.getPaddingBottom()
+                );
+
+                return insets;
+            });
+        }
+
         EditText    etEmail        = view.findViewById(R.id.etEmail);
         EditText    etPassword     = view.findViewById(R.id.etPassword);
         Button      btnLogin       = view.findViewById(R.id.btnLogin);
@@ -41,8 +59,16 @@ public class LoginFragment extends Fragment {
         ImageButton btnBackToStart = view.findViewById(R.id.btnBackToStart);
         ProgressBar progressBar    = view.findViewById(R.id.progressBar);
 
-        btnBackToStart.setOnClickListener(v ->
-                requireActivity().getSupportFragmentManager().popBackStack());
+        btnBackToStart.setOnClickListener(v -> {
+            if (requireActivity() instanceof HomeActivity) {
+                requireActivity().getSupportFragmentManager().popBackStack();
+            } else if (requireActivity() instanceof AuthActivity) {
+                requireActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.auth_fragment_container, new StartFragment())
+                        .commit();
+            }
+        });
 
         btnGoRegister.setOnClickListener(v -> {
             if (getActivity() instanceof AuthActivity)
@@ -54,10 +80,10 @@ public class LoginFragment extends Fragment {
             String password = etPassword.getText().toString();
 
             if (TextUtils.isEmpty(email) || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                etEmail.setError("Email non valida"); return;
+                etEmail.setError(getString(R.string.invalid_email)); return;
             }
             if (TextUtils.isEmpty(password) || password.length() < 6) {
-                etPassword.setError("Minimo 6 caratteri"); return;
+                etPassword.setError(getString(R.string.min_6_char)); return;
             }
 
             progressBar.setVisibility(View.VISIBLE);
@@ -85,12 +111,13 @@ public class LoginFragment extends Fragment {
                             } else if (response.code() == 403) {
                                 // Email non verificata — porta al fragment OTP
                                 Toast.makeText(getContext(),
-                                        "Email non verificata. Controlla la tua casella.",
+                                        R.string.email_not_verified,
                                         Toast.LENGTH_LONG).show();
 
                             } else {
                                 Toast.makeText(getContext(),
-                                        "Credenziali non valide", Toast.LENGTH_LONG).show();
+                                        R.string.invalid_credentials,
+                                        Toast.LENGTH_LONG).show();
                             }
                         }
 
@@ -100,7 +127,7 @@ public class LoginFragment extends Fragment {
                             progressBar.setVisibility(View.GONE);
                             btnLogin.setEnabled(true);
                             Toast.makeText(getContext(),
-                                    "Rete assente o server spento", Toast.LENGTH_LONG).show();
+                                    R.string.no_connection_server, Toast.LENGTH_LONG).show();
                         }
                     });
         });

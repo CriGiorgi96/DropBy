@@ -15,14 +15,14 @@
          Nero profondo + oro ambrato: fa risaltare i drappeggi rossi e il logo. -->
 
     <!-- Sfondi -->
-    <color name="db_background">#121212</color>      <!-- antracite profondo, stile Spotify    -->
-    <color name="db_surface">#1E1E1E</color>          <!-- card, dialog: si stacca dallo sfondo -->
-    <color name="db_surface_variant">#252525</color>  <!-- input, chip, tag                     -->
+    <color name="db_background">#ffffff</color>      <!-- bianco    -->
+    <color name="db_surface">#ffffff</color>          <!-- card, dialog: bianco -->
+    <color name="db_surface_variant">#d4d4d4</color>  <!-- input, chip, tag                     -->
 
     <!-- Testi -->
-    <color name="db_text_primary">#F5F5DC</color>    <!-- crema/avorio: morbido, elegante       -->
-    <color name="db_text_secondary">#9E9E9E</color>  <!-- grigio medio per metadati             -->
-    <color name="db_text_hint">#616161</color>        <!-- placeholder / hint                    -->
+    <color name="db_text_primary">#000000</color>    <!-- nero -->
+    <color name="db_text_secondary">#333333</color>  <!-- grigio medio per metadati -->
+    <color name="db_text_hint">#666666</color>        <!-- placeholder / hint -->
 
     <!-- Accent — oro morbido del logo: elegante su sfondo nero -->
     <color name="db_accent">#DFB76C</color>           <!-- oro caldo: pulsanti, badge, link      -->
@@ -30,9 +30,9 @@
     <color name="db_accent_light">#231800</color>     <!-- badge/chip: sfondo oro molto scuro    -->
 
     <!-- Utility -->
-    <color name="db_divider">#2C2C2C</color>          <!-- separatori quasi invisibili           -->
-    <color name="db_error">#CF6679</color>            <!-- rosso attenuato per dark mode         -->
-    <color name="db_success">#81C784</color>          <!-- verde attenuato per dark mode         -->
+    <color name="db_divider">#d4d4d4</color>          <!-- separatori quasi invisibili           -->
+    <color name="db_error">#ad2432</color>            <!-- rosso per light mode         -->
+    <color name="db_success">#1d8f3b</color>          <!-- verde per light mode         -->
     <color name="db_ripple">#1ADFB76C</color>         <!-- ripple oro, 10 % opacità              -->
 
 </resources>

@@ -146,22 +146,22 @@ public class ProfileSettingsFragment extends Fragment {
         String confirmPwd   = editConfirmPassword.getText().toString();
 
         if (TextUtils.isEmpty(username)) {
-            editUsername.setError("Inserisci un nome utente");
+            editUsername.setError(getString(R.string.insert_username));
             return;
         }
 
         boolean changingPassword = !currentPwd.isEmpty() || !newPwd.isEmpty() || !confirmPwd.isEmpty();
         if (changingPassword) {
             if (currentPwd.isEmpty() || newPwd.isEmpty() || confirmPwd.isEmpty()) {
-                Toast.makeText(requireContext(), "Compila tutti i campi password", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), R.string.fill_password_fields, Toast.LENGTH_SHORT).show();
                 return;
             }
             if (!newPwd.equals(confirmPwd)) {
-                editConfirmPassword.setError("Le password non coincidono");
+                editConfirmPassword.setError(getString(R.string.passwords_not_matching));
                 return;
             }
             if (newPwd.length() < 6) {
-                editNewPassword.setError("Password minima 6 caratteri");
+                editNewPassword.setError(getString(R.string.min_char_password));
                 return;
             }
         }
@@ -192,16 +192,16 @@ public class ProfileSettingsFragment extends Fragment {
                             if (Boolean.TRUE.equals(avail)) {
                                 proceedWithSave(username, currentPwd, newPwd, changingPassword);
                             } else {
-                                editUsername.setError("Username già in uso");
+                                editUsername.setError(getString(R.string.username_already_exists));
                             }
                         } else {
-                            Toast.makeText(requireContext(), "Errore verifica username", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(requireContext(), R.string.error_username_verification, Toast.LENGTH_SHORT).show();
                         }
                     }
 
                     @Override
                     public void onFailure(@NonNull Call<Map<String, Object>> call, @NonNull Throwable t) {
-                        if (isAdded()) Toast.makeText(requireContext(), "Errore di rete", Toast.LENGTH_SHORT).show();
+                        if (isAdded()) Toast.makeText(requireContext(), R.string.network_error, Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -227,7 +227,7 @@ public class ProfileSettingsFragment extends Fragment {
         try {
             bytes = readBytes(pendingUploadUri);
         } catch (IOException e) {
-            Toast.makeText(requireContext(), "Impossibile leggere l'immagine", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), R.string.impossible_to_read_image, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -253,13 +253,13 @@ public class ProfileSettingsFragment extends Fragment {
                             selectedImageValue = filename != null ? filename : "";
                             callUpdateProfile(username, currentPwd, newPwd, changingPassword, filename);
                         } else {
-                            Toast.makeText(requireContext(), "Upload avatar fallito", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(requireContext(), R.string.failed_avatar_upload, Toast.LENGTH_SHORT).show();
                         }
                     }
 
                     @Override
                     public void onFailure(@NonNull Call<Map<String, Object>> call, @NonNull Throwable t) {
-                        if (isAdded()) Toast.makeText(requireContext(), "Errore upload", Toast.LENGTH_SHORT).show();
+                        if (isAdded()) Toast.makeText(requireContext(), R.string.upload_error, Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -291,12 +291,12 @@ public class ProfileSettingsFragment extends Fragment {
                         if (response.isSuccessful() && response.body() != null) {
                             onProfileSavedSuccessfully(username, response.body());
                         } else {
-                            String msg = "Errore salvataggio profilo";
+                            String msg = getString(R.string.save_profile_upload_error);
                             try {
                                 if (response.errorBody() != null) {
                                     String err = response.errorBody().string();
-                                    if (err.contains("Password corrente errata")) msg = "Password corrente errata";
-                                    else if (err.contains("Username già in uso"))  msg = "Username già in uso";
+                                    if (err.contains(getString(R.string.current_password_wrong))) msg = getString(R.string.current_password_wrong);
+                                    else if (err.contains(getString(R.string.username_already_exists)))  msg = "Username già in uso";
                                 }
                             } catch (IOException ignored) { }
                             Toast.makeText(requireContext(), msg, Toast.LENGTH_LONG).show();
@@ -305,7 +305,7 @@ public class ProfileSettingsFragment extends Fragment {
 
                     @Override
                     public void onFailure(@NonNull Call<Map<String, Object>> call, @NonNull Throwable t) {
-                        if (isAdded()) Toast.makeText(requireContext(), "Errore di rete", Toast.LENGTH_SHORT).show();
+                        if (isAdded()) Toast.makeText(requireContext(), R.string.network_error, Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -344,7 +344,7 @@ public class ProfileSettingsFragment extends Fragment {
             ((HomeActivity) requireActivity()).refreshProfileUi();
         }
 
-        Toast.makeText(requireContext(), "Profilo aggiornato", Toast.LENGTH_SHORT).show();
+        Toast.makeText(requireContext(), R.string.updated_profile, Toast.LENGTH_SHORT).show();
         requireActivity().getSupportFragmentManager().popBackStack();
     }
 
@@ -366,12 +366,12 @@ public class ProfileSettingsFragment extends Fragment {
         dialogView.findViewById(R.id.btnDeleteConfirm).setOnClickListener(v -> {
             String input = etConfirm.getText().toString().trim();
             if (!"CONFERMA".equals(input)) {
-                Toast.makeText(requireContext(), "Parola di conferma errata", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), R.string.wrong_confirm_input, Toast.LENGTH_SHORT).show();
                 return;
             }
             int userId = prefs.getInt("userId", -1);
             if (userId == -1) {
-                Toast.makeText(requireContext(), "Sessione non valida", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), R.string.invalid_session, Toast.LENGTH_SHORT).show();
                 return;
             }
             performDeleteAccount(userId, prefs, dialog);
@@ -401,7 +401,7 @@ public class ProfileSettingsFragment extends Fragment {
                             requireActivity().finish();
                         } else {
                             Toast.makeText(requireContext(),
-                                    "Errore durante l'eliminazione dell'account",
+                                    R.string.error_while_deleting_account,
                                     Toast.LENGTH_LONG).show();
                         }
                     }
@@ -410,7 +410,7 @@ public class ProfileSettingsFragment extends Fragment {
                     public void onFailure(@NonNull Call<com.example.dropby.models.GenericResponse> call,
                                           @NonNull Throwable t) {
                         if (isAdded()) {
-                            Toast.makeText(requireContext(), "Errore di rete", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(requireContext(), R.string.network_error, Toast.LENGTH_SHORT).show();
                         }
                     }
                 });

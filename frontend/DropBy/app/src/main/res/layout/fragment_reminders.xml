@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#FFF8F5FC">
+    android:background="@color/db_background">
 
     <TextView
         android:layout_width="match_parent"
@@ -15,7 +15,7 @@
         android:text="@string/active_remiders"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:textColor="#333333" />
+        android:textColor="@color/db_text_primary" />
 
     <TextView
         android:id="@+id/remindersStatusText"
@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="20dp"
-        android:textColor="#9E9E9E"
+        android:textColor="@color/db_text_secondary"
         android:visibility="gone" />
 
     <androidx.recyclerview.widget.RecyclerView

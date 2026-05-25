@@ -94,7 +94,7 @@ public class FriendsFragment extends Fragment {
     }
 
     private void loadFriends() {
-        setStatus("Caricamento amici…");
+        setStatus(getString(R.string.loading_friends));;
         ApiClient.getApiService().getFriends().enqueue(new Callback<ApiService.FriendsWrapper>() {
             @Override
             public void onResponse(Call<ApiService.FriendsWrapper> call,
@@ -115,7 +115,7 @@ public class FriendsFragment extends Fragment {
     }
 
     private void loadRequests() {
-        setStatus("Caricamento richieste…");
+        setStatus(getString(R.string.loading_requests));;
         ApiClient.getApiService().getPendingFriendRequests()
                 .enqueue(new Callback<ApiService.FriendRequestsWrapper>() {
                     @Override
@@ -131,7 +131,7 @@ public class FriendsFragment extends Fragment {
                     }
                     @Override
                     public void onFailure(Call<ApiService.FriendRequestsWrapper> call, Throwable t) {
-                        if (isAdded()) setStatus("Errore di rete");
+                        if (isAdded()) setStatus(getString(R.string.network_error));
                     }
                 });
     }
@@ -139,10 +139,10 @@ public class FriendsFragment extends Fragment {
     private void executeSearch() {
         String query = searchInput.getText().toString().trim();
         if (query.length() < 2) {
-            Toast.makeText(requireContext(), "Inserisci almeno 2 caratteri", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), getString(R.string.insert_at_least_two_chars), Toast.LENGTH_SHORT).show();
             return;
         }
-        setStatus("Ricerca…");
+        setStatus(getString(R.string.searching));
         ApiClient.getApiService().searchUsers(query)
                 .enqueue(new Callback<UserSearchResult.Response>() {
                     @Override
@@ -152,17 +152,17 @@ public class FriendsFragment extends Fragment {
                         if (response.isSuccessful() && response.body() != null) {
                             List<UserSearchResult> results = response.body().getUsers();
                             if (results == null || results.isEmpty()) {
-                                setStatus("Nessun utente trovato");
+                                setStatus(getString(R.string.no_user_found));
                                 return;
                             }
                             showFriendsFromSearch(results);
                         } else {
-                            setStatus("Errore ricerca");
+                            setStatus(getString(R.string.search_error));
                         }
                     }
                     @Override
                     public void onFailure(Call<UserSearchResult.Response> call, Throwable t) {
-                        if (isAdded()) setStatus("Errore di rete");
+                        if (isAdded()) setStatus(getString(R.string.network_error));
                     }
                 });
     }
@@ -210,7 +210,7 @@ public class FriendsFragment extends Fragment {
                             if (!isAdded()) return;
                             String msg = (response.isSuccessful() && response.body() != null)
                                     ? response.body().getMessage()
-                                    : "Errore invio richiesta";
+                                    : getString(R.string.error_sending_request);
                             Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show();
                         }
                         @Override public void onFailure(Call<GenericResponse> call, Throwable t) {}

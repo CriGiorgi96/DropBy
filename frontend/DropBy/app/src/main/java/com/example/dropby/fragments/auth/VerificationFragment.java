@@ -58,13 +58,13 @@ public class VerificationFragment extends Fragment {
         Button      btnResend   = view.findViewById(R.id.btnResendOtp);
         ProgressBar progressBar = view.findViewById(R.id.progressBar);
 
-        tvSubtitle.setText("Abbiamo inviato un codice a " + email);
+        tvSubtitle.setText(getString(R.string.otp_sent_to, email));
 
         // ── Verifica OTP ─────────────────────────────────────────────────────
         btnVerify.setOnClickListener(v -> {
             String code = etOtp.getText().toString().trim();
             if (TextUtils.isEmpty(code) || code.length() != 6) {
-                etOtp.setError("Inserisci il codice a 6 cifre");
+                etOtp.setError(getString(R.string.insert_otp_code));
                 return;
             }
             progressBar.setVisibility(View.VISIBLE);
@@ -83,7 +83,7 @@ public class VerificationFragment extends Fragment {
                             if (response.isSuccessful() && response.body() != null) {
                                 OtpResponse body = response.body();
                                 Toast.makeText(getContext(),
-                                        "Account verificato!", Toast.LENGTH_SHORT).show();
+                                        getString(R.string.account_verified), Toast.LENGTH_SHORT).show();
                                 launchHome(body.userId, body.username,
                                         body.email   != null ? body.email   : "",
                                         body.gender  != null ? body.gender  : "guest",
@@ -92,8 +92,8 @@ public class VerificationFragment extends Fragment {
                                         body.privateFavorites, body.privateReviews);
                             } else {
                                 String err = response.code() == 400
-                                        ? "Codice non valido o scaduto"
-                                        : "Errore verifica (" + response.code() + ")";
+                                        ? getString(R.string.invalid_or_expired_code)
+                                        : getString(R.string.verification_error_code, response.code());
                                 etOtp.setError(err);
                                 Toast.makeText(getContext(), err, Toast.LENGTH_LONG).show();
                             }
@@ -104,7 +104,7 @@ public class VerificationFragment extends Fragment {
                             if (!isAdded()) return;
                             progressBar.setVisibility(View.GONE);
                             btnVerify.setEnabled(true);
-                            Toast.makeText(getContext(), "Rete assente", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(), getString(R.string.network_absent), Toast.LENGTH_LONG).show();
                         }
                     });
         });
@@ -125,8 +125,8 @@ public class VerificationFragment extends Fragment {
                             btnResend.setEnabled(true);
                             Toast.makeText(getContext(),
                                     response.isSuccessful()
-                                            ? "Nuovo codice inviato a " + email
-                                            : "Errore nell'invio",
+                                            ? getString(R.string.new_code_sent_to, email)
+                                            : getString(R.string.sending_error),
                                     Toast.LENGTH_LONG).show();
                         }
 
@@ -135,7 +135,7 @@ public class VerificationFragment extends Fragment {
                             if (!isAdded()) return;
                             progressBar.setVisibility(View.GONE);
                             btnResend.setEnabled(true);
-                            Toast.makeText(getContext(), "Rete assente", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(), getString(R.string.network_absent), Toast.LENGTH_LONG).show();
                         }
                     });
         });

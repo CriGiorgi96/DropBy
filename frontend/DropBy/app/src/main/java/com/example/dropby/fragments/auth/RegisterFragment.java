@@ -29,9 +29,12 @@ import java.util.Locale;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.dropby.AuthActivity;
+import com.example.dropby.HomeActivity;
 import com.example.dropby.R;
 import com.example.dropby.models.RegisterRequest;
 import com.example.dropby.models.RegisterResponse;
@@ -57,6 +60,22 @@ public class RegisterFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        if (requireActivity() instanceof HomeActivity) {
+            ViewCompat.setOnApplyWindowInsetsListener(view, (v, insets) -> {
+                int statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top;
+                int toolbarHeight = getResources().getDimensionPixelSize(R.dimen.toolbar_height);
+
+                v.setPadding(
+                        v.getPaddingLeft(),
+                        toolbarHeight + statusBarHeight,
+                        v.getPaddingRight(),
+                        v.getPaddingBottom()
+                );
+
+                return insets;
+            });
+        }
 
         EditText etFirstName = view.findViewById(R.id.etFirstName);
         EditText etLastName  = view.findViewById(R.id.etLastName);
@@ -105,8 +124,16 @@ public class RegisterFragment extends Fragment {
         TextView tvPrivacy = view.findViewById(R.id.tvPrivacy);
         setupPrivacyLink(tvPrivacy);
 
-        btnBackToStart.setOnClickListener(v ->
-                requireActivity().getSupportFragmentManager().popBackStack());
+        btnBackToStart.setOnClickListener(v -> {
+            if (requireActivity() instanceof HomeActivity) {
+                requireActivity().getSupportFragmentManager().popBackStack();
+            } else if (requireActivity() instanceof AuthActivity) {
+                requireActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.auth_fragment_container, new StartFragment())
+                        .commit();
+            }
+        });
 
         btnGoLogin.setOnClickListener(v -> {
             if (getActivity() instanceof AuthActivity) {
@@ -123,32 +150,32 @@ public class RegisterFragment extends Fragment {
             String password  = etPassword.getText().toString();
             int genderId     = rgGender.getCheckedRadioButtonId();
 
-            if (TextUtils.isEmpty(firstName)) { etFirstName.setError("Inserisci il nome"); return; }
-            if (TextUtils.isEmpty(lastName))  { etLastName.setError("Inserisci il cognome"); return; }
-            if (TextUtils.isEmpty(username))  { etUsername.setError("Inserisci username"); return; }
+            if (TextUtils.isEmpty(firstName)) { etFirstName.setError(getString(R.string.insert_name)); return; }
+            if (TextUtils.isEmpty(lastName))  { etLastName.setError(getString(R.string.insert_last_name)); return; }
+            if (TextUtils.isEmpty(username))  { etUsername.setError(getString(R.string.insert_username)); return; }
 
             if (TextUtils.isEmpty(email) || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                etEmail.setError("Email non valida"); return;
+                etEmail.setError(getString(R.string.invalid_email)); return;
             }
 
             if (birthdayIso.isEmpty()) {
-                etBirthday.setError("Seleziona la data di nascita");
+                etBirthday.setError(getString(R.string.insert_birthday));
                 return;
             }
 
             if (TextUtils.isEmpty(password) || password.length() < 6) {
-                etPassword.setError("Minimo 6 caratteri"); return;
+                etPassword.setError(getString(R.string.min_6_char)); return;
             }
 
             if (genderId == -1) {
-                Toast.makeText(getContext(), "Seleziona il genere", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), R.string.select_gender, Toast.LENGTH_SHORT).show();
                 return;
             }
 
             if (!cbPrivacy.isChecked()) {
-                cbPrivacy.setError("Accetta i termini");
+                cbPrivacy.setError(getString(R.string.accept_terms));
                 Toast.makeText(getContext(),
-                        "Devi accettare i termini e condizioni",
+                        R.string.accept_terms,
                         Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -181,7 +208,7 @@ public class RegisterFragment extends Fragment {
                                 openVerification(body.userId, body.email);
                             } else {
                                 Toast.makeText(getContext(),
-                                        "Errore registrazione (" + response.code() + ")",
+                                        getString(R.string.error_while_signing_up, response.code()),
                                         Toast.LENGTH_LONG).show();
                             }
                         }
@@ -196,7 +223,7 @@ public class RegisterFragment extends Fragment {
                             btnRegister.setEnabled(true);
 
                             Toast.makeText(getContext(),
-                                    "Rete assente o server spento",
+                                    R.string.no_connection_server,
                                     Toast.LENGTH_LONG).show();
                         }
                     });
@@ -214,7 +241,7 @@ public class RegisterFragment extends Fragment {
 
     private void setupPrivacyLink(TextView textView) {
         String fullText = getString(R.string.validation);
-        String linkText = "termini e condizioni";
+        String linkText = getString(R.string.terms_conditions);
 
         int start = fullText.indexOf(linkText);
         int end = start + linkText.length();
@@ -263,9 +290,9 @@ public class RegisterFragment extends Fragment {
         scrollView.addView(textView);
 
         new AlertDialog.Builder(requireContext())
-                .setTitle("Termini e Condizioni")
+                .setTitle(R.string.terms_conditions)
                 .setView(scrollView)
-                .setPositiveButton("Chiudi", (d, w) -> d.dismiss())
+                .setPositiveButton(R.string.close_button, (d, w) -> d.dismiss())
                 .show();
     }
 
@@ -286,7 +313,7 @@ public class RegisterFragment extends Fragment {
             is.close();
 
         } catch (Exception e) {
-            return "Errore nel caricamento dei termini.";
+            return getString(R.string.error_loading_terms);
         }
 
         return sb.toString();
