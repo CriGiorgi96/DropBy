@@ -264,7 +264,11 @@ public class EventDetailFragment extends Fragment {
                         }
                     }
                     @Override
-                    public void onFailure(@NonNull Call<ApiService.EventWrapper> call, @NonNull Throwable t) {}
+                    public void onFailure(@NonNull Call<ApiService.EventWrapper> call,
+                                          @NonNull Throwable t) {
+                        android.util.Log.e("REPLICA_FILTER",
+                                "reloadEventWithPast failed: " + t.getMessage(), t);
+                    }
                 });
     }
 
@@ -276,7 +280,12 @@ public class EventDetailFragment extends Fragment {
         LinearLayout container = view.findViewById(R.id.eventDetailReplicasContainer);
         if (label == null || container == null) return;
 
-        List<Event.EventReplica> replicas = event.getReplicas();
+        // La search API può restituire tutte le repliche (is_past incluso) anche a fronte
+        // di una checkbox non spuntata. Leggiamo sempre lo stato reale del widget.
+        boolean showPast = (checkShowPast != null && checkShowPast.isChecked());
+        List<Event.EventReplica> replicas = showPast
+                ? event.getReplicas()
+                : event.getUpcomingReplicas();
 
         if (replicas == null || replicas.isEmpty()) {
             label.setVisibility(View.GONE);
@@ -634,28 +643,8 @@ public class EventDetailFragment extends Fragment {
                 .getSharedPreferences("app", requireContext().MODE_PRIVATE);
         if (prefs.getString("token", null) == null) return;
 
-        // Se ci sono spettacoli futuri: mostra box informativo, nascondi form
-        if (isEventInFuture()) {
-            formLayout.setVisibility(View.VISIBLE);
-            view.findViewById(R.id.reviewSpinnerSection).setVisibility(View.GONE);
-            view.findViewById(R.id.reviewRatingBar).setVisibility(View.GONE);
-            view.findViewById(R.id.reviewCommentInput).setVisibility(View.GONE);
-            view.findViewById(R.id.btnSubmitReview).setVisibility(View.GONE);
-            view.findViewById(R.id.reviewFutureInfoBox).setVisibility(View.VISIBLE);
-
-            Event.EventReplica next = event.getNextReplica();
-            TextView futureBoxDate     = view.findViewById(R.id.futureBoxDate);
-            TextView futureBoxLocation = view.findViewById(R.id.futureBoxLocation);
-            TextView futureBoxCity     = view.findViewById(R.id.futureBoxCity);
-            if (futureBoxDate     != null && next != null)
-                futureBoxDate.setText(formatEventDate(next.getDatePart()));
-            if (futureBoxLocation != null)
-                futureBoxLocation.setText(safe(event.getNextLocationName()));
-            if (futureBoxCity     != null && next != null)
-                futureBoxCity.setText(safe(next.getLocationCity()));
-            return;
-        }
-
+        // Il form è sempre visibile; è loadReplicasForSpinners a decidere se mostrare
+        // gli spinner (repliche passate presenti) o il future-info-box (solo repliche future).
         formLayout.setVisibility(View.VISIBLE);
 
         Spinner   locationSpinner = view.findViewById(R.id.reviewLocationSpinner);
@@ -714,15 +703,16 @@ public class EventDetailFragment extends Fragment {
                     });
         });
 
-        loadReplicasForSpinners(locationSpinner, dateSpinner, dateLabel, submitBtn);
+        loadReplicasForSpinners(view, locationSpinner, dateSpinner, dateLabel, submitBtn);
     }
 
     /**
-     * Carica le repliche passate (include_past=true) e popola gli spinner
-     * del form di recensione.  Il submit usa sempre event.getId() come target.
+     * Carica le repliche passate (include_past=true) e popola gli spinner del form.
+     * Decide anche se mostrare il future-info-box (nessuna replica passata + evento futuro)
+     * o abilitare il submit diretto (evento legacy senza repliche).
      */
-    private void loadReplicasForSpinners(Spinner locationSpinner, Spinner dateSpinner,
-                                         View dateLabel, Button submitBtn) {
+    private void loadReplicasForSpinners(View parentView, Spinner locationSpinner,
+                                         Spinner dateSpinner, View dateLabel, Button submitBtn) {
         ApiClient.getApiService()
                 .getEventDetail(event.getId(), true)
                 .enqueue(new Callback<ApiService.EventWrapper>() {
@@ -741,9 +731,29 @@ public class EventDetailFragment extends Fragment {
                             }
                         }
 
-                        // Se non ci sono repliche passate, abilita subito il submit
                         if (pastReplicas.isEmpty()) {
-                            submitBtn.setEnabled(true);
+                            if (isEventInFuture()) {
+                                // Evento puramente futuro: mostra box informativo, nascondi form
+                                parentView.findViewById(R.id.reviewSpinnerSection).setVisibility(View.GONE);
+                                parentView.findViewById(R.id.reviewRatingBar).setVisibility(View.GONE);
+                                parentView.findViewById(R.id.reviewCommentInput).setVisibility(View.GONE);
+                                submitBtn.setVisibility(View.GONE);
+                                parentView.findViewById(R.id.reviewFutureInfoBox).setVisibility(View.VISIBLE);
+                                Event.EventReplica next = event.getNextReplica();
+                                TextView futureBoxDate     = parentView.findViewById(R.id.futureBoxDate);
+                                TextView futureBoxLocation = parentView.findViewById(R.id.futureBoxLocation);
+                                TextView futureBoxCity     = parentView.findViewById(R.id.futureBoxCity);
+                                if (futureBoxDate     != null && next != null)
+                                    futureBoxDate.setText(formatEventDate(next.getDatePart()));
+                                if (futureBoxLocation != null)
+                                    futureBoxLocation.setText(safe(event.getNextLocationName()));
+                                if (futureBoxCity     != null && next != null)
+                                    futureBoxCity.setText(safe(next.getLocationCity()));
+                            } else {
+                                // Nessuna replica passata e nessun futuro: evento legacy,
+                                // consenti la recensione direttamente.
+                                submitBtn.setEnabled(true);
+                            }
                             return;
                         }
 

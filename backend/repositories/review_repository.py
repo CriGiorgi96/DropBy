@@ -1,6 +1,35 @@
 from database import Database
 from helpers.format_helper import dict_format, dict_format_single
 
+# Frammenti SQL riusati in più query dello stesso repository.
+# Nessun valore utente interpolato → nessun rischio SQL injection.
+_DATE_COALESCE = """COALESCE(
+        (SELECT to_char(MIN(eri.show_date), 'YYYY-MM-DD')
+         FROM event_replicas eri
+         WHERE eri.event_id = e.id AND eri.show_date >= NOW()),
+        NULLIF(e.event_date::TEXT, '')
+    ) AS event_date"""
+
+_CITY_COALESCE = """COALESCE(
+        NULLIF(e.city, ''),
+        (SELECT li.city FROM event_replicas eri
+         JOIN locations li ON li.id = eri.location_id
+         WHERE eri.event_id = e.id ORDER BY eri.show_date LIMIT 1)
+    ) AS event_city"""
+
+# SELECT base condivisa da find_by_event (entrambi i branch prod/evento singolo)
+_REVIEW_SELECT = f"""
+    SELECT r.*, u.username, u.profile_image,
+           {_DATE_COALESCE},
+           {_CITY_COALESCE},
+           l.name AS location_name
+    FROM reviews r
+    JOIN users u  ON r.user_id  = u.id
+    JOIN events e ON r.event_id = e.id
+    LEFT JOIN locations l ON l.id = e.location_id
+"""
+
+
 class ReviewRepository:
     @staticmethod
     def create(review_data):
@@ -30,15 +59,6 @@ class ReviewRepository:
 
         # 2. Carica recensioni per tutte le repliche della stessa produzione
         #    (o solo questo evento se production_id è assente)
-        _REVIEW_SELECT = """
-            SELECT r.*, u.username, u.profile_image,
-                   e.event_date, e.city AS event_city,
-                   l.name AS location_name
-            FROM reviews r
-            JOIN users u  ON r.user_id  = u.id
-            JOIN events e ON r.event_id = e.id
-            LEFT JOIN locations l ON l.id = e.location_id
-        """
         if prod_id > 0:
             rows = conn.run(
                 _REVIEW_SELECT + "WHERE e.production_id = :prod_id ORDER BY r.created_at DESC",
@@ -56,9 +76,10 @@ class ReviewRepository:
         db = Database()
         conn = db.get_connection()
         rows = conn.run(
-            """SELECT r.id, r.user_id, r.rating, r.comment, r.created_at,
+            f"""SELECT r.id, r.user_id, r.rating, r.comment, r.created_at,
                       e.id AS event_id, e.title AS event_title,
-                      e.event_date, e.city AS event_city,
+                      {_DATE_COALESCE},
+                      {_CITY_COALESCE},
                       u.username, u.profile_image
                FROM reviews r
                JOIN events e ON r.event_id = e.id

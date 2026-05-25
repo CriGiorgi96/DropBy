@@ -1,6 +1,21 @@
 from database import Database
 from helpers.format_helper import dict_format, dict_format_single
 
+_DATE_COALESCE = """COALESCE(
+        (SELECT to_char(MIN(eri.show_date), 'YYYY-MM-DD')
+         FROM event_replicas eri
+         WHERE eri.event_id = e.id AND eri.show_date >= NOW()),
+        NULLIF(e.event_date::TEXT, '')
+    ) AS event_date"""
+
+_CITY_COALESCE = """COALESCE(
+        NULLIF(e.city, ''),
+        (SELECT li.city FROM event_replicas eri
+         JOIN locations li ON li.id = eri.location_id
+         WHERE eri.event_id = e.id ORDER BY eri.show_date LIMIT 1)
+    ) AS event_city"""
+
+
 class NotificationRepository:
     @staticmethod
     def create(notification_data):
@@ -113,8 +128,10 @@ class NotificationRepository:
         db = Database()
         conn = db.get_connection()
         rows = conn.run(
-            """SELECT r.id, r.event_id, r.remind_at, r.created_at,
-                      e.title AS event_title, e.event_date, e.city AS event_city
+            f"""SELECT r.id, r.event_id, r.remind_at, r.created_at,
+                      e.title AS event_title,
+                      {_DATE_COALESCE},
+                      {_CITY_COALESCE}
                FROM event_reminders r
                JOIN events e ON r.event_id = e.id
                WHERE r.user_id = :uid

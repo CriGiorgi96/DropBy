@@ -3,8 +3,6 @@ package com.example.dropby.models;
 import androidx.annotation.Nullable;
 import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
-import java.util.List;
-
 public class FavoriteItem implements Serializable {
 
     @SerializedName("favorite_id")
@@ -24,16 +22,15 @@ public class FavoriteItem implements Serializable {
     @SerializedName("city")
     private String city;
 
-    @SerializedName("event_date")
+    // "event_date" = alias SQL del repository; "show_date" = colonna nativa event_replicas
+    @SerializedName(value = "event_date", alternate = {"show_date"})
+    @Nullable
     private String eventDate;
 
-    // Il backend può restituire price come stringa o come numero decimale
+    // Il backend invia price come REAL (numero JSON); Double evita JsonSyntaxException
     @SerializedName("price")
     @Nullable
-    private Object price;
-
-    @SerializedName("images")
-    private List<Event.EventImage> images;
+    private Double price;
 
     @SerializedName("image_url")
     private String imageUrl;
@@ -43,16 +40,24 @@ public class FavoriteItem implements Serializable {
 
     public int    getFavoriteId()  { return favoriteId != null ? favoriteId : 0; }
     public int    getEventId()     { return eventId    != null ? eventId    : 0; }
-    public String getTitle()       { return title; }
-    public String getCategory()    { return category; }
-    public String getCity()        { return city; }
-    public String getEventDate()   { return eventDate; }
-    public String getPrice()       { return price != null ? price.toString() : null; }
-    public String getCreatedAt()   { return createdAt; }
+    public String getTitle()       { return title    != null ? title    : ""; }
+    public String getCategory()    { return category != null ? category : ""; }
+    public String getCity()        { return city     != null ? city     : ""; }
+    public String getCreatedAt()   { return createdAt != null ? createdAt : ""; }
+    public String getPrice()       { return (price != null && price > 0) ? String.format("%.2f €", price) : "Gratuito"; }
+
+    /**
+     * Restituisce la parte data in formato "YYYY-MM-DD".
+     * Gestisce sia date pure ("2026-06-15") che timestamp ISO ("2026-06-15T20:00:00").
+     * Ritorna "" se il campo è assente o null (mai NullPointerException nel Fragment).
+     */
+    public String getEventDate() {
+        if (eventDate == null || eventDate.isEmpty()) return "";
+        int t = eventDate.indexOf('T');
+        return t > 0 ? eventDate.substring(0, t) : eventDate;
+    }
 
     public String getMainImageUrl() {
-        if (imageUrl != null && !imageUrl.isEmpty()) return imageUrl;
-        if (images  != null && !images.isEmpty())   return images.get(0).getUrl();
-        return null;
+        return (imageUrl != null && !imageUrl.isEmpty()) ? imageUrl : null;
     }
 }
