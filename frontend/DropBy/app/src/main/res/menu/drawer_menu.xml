@@ -3,32 +3,32 @@
 
     <item
         android:id="@+id/nav_home"
-        android:icon="@android:drawable/ic_menu_today"
+        android:icon="@drawable/home"
         android:title="@string/home_navbar" />
 
     <item
         android:id="@+id/nav_events"
-        android:icon="@android:drawable/ic_menu_agenda"
+        android:icon="@drawable/spotlight"
         android:title="@string/events_navbar" />
 
     <item
         android:id="@+id/nav_theaters"
-        android:icon="@android:drawable/ic_menu_directions"
+        android:icon="@drawable/theatre"
         android:title="@string/theaters_navbar" />
 
     <item
         android:id="@+id/nav_map"
-        android:icon="@android:drawable/ic_dialog_map"
+        android:icon="@drawable/map"
         android:title="@string/map_navbar" />
 
     <item
         android:id="@+id/nav_settings"
-        android:icon="@android:drawable/ic_menu_edit"
+        android:icon="@drawable/settings"
         android:title="@string/settings_title" />
 
     <item
         android:id="@+id/nav_faq"
-        android:icon="@android:drawable/ic_menu_help"
+        android:icon="@drawable/conversation"
         android:title="@string/faq_navbar" />
 
 

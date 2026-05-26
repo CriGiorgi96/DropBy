@@ -30,10 +30,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
-<<<<<<< HEAD
 import retrofit2.http.Part;
-=======
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -43,7 +40,6 @@ public interface ApiService {
 
     @GET("api/events/search")
     Call<EventsResponse> searchEvents(
-<<<<<<< HEAD
             @Query("city")          String city,
             @Query("category")      String category,
             @Query("date")          String date,
@@ -53,13 +49,6 @@ public interface ApiService {
             @Query("include_past")  Boolean includePast,
             @Query("start_date")    String startDate,
             @Query("end_date")      String endDate
-=======
-            @Query("city")        String city,
-            @Query("category")    String category,
-            @Query("date")        String date,
-            @Query("query")       String query,
-            @Query("location_id") Integer locationId
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
     );
 
     @GET("api/events/{eventId}")
@@ -67,8 +56,6 @@ public interface ApiService {
             @Path("eventId")       int eventId,
             @Query("include_past") Boolean includePast
     );
-
-    // ── LOCATION ─────────────────────────────────────────────────────────────
 
     // ── LOCATION ─────────────────────────────────────────────────────────────
 
@@ -83,8 +70,6 @@ public interface ApiService {
             @Path("locationId")    int locationId,
             @Query("include_past") Boolean includePast
     );
-
-    // ── AUTH ─────────────────────────────────────────────────────────────────
 
     // ── AUTH ─────────────────────────────────────────────────────────────────
 
@@ -106,7 +91,6 @@ public interface ApiService {
     @GET("api/auth/search")
     Call<UserSearchResult.Response> searchUsers(@Query("q") String query);
 
-<<<<<<< HEAD
     @GET("api/auth/check-username")
     Call<Map<String, Object>> checkUsername(@Query("username") String username);
 
@@ -133,8 +117,6 @@ public interface ApiService {
     @GET("api/users/{userId}/reviews")
     Call<ReviewsWrapper> getUserReviews(@Path("userId") int userId);
 
-=======
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
     // ── AMICIZIE ─────────────────────────────────────────────────────────────
 
     @POST("api/friends/request")
@@ -160,12 +142,9 @@ public interface ApiService {
     @GET("api/reviews/user")
     Call<ReviewsWrapper> getUserReviews();
 
-<<<<<<< HEAD
     @DELETE("api/reviews/{reviewId}")
     Call<GenericResponse> deleteReview(@Path("reviewId") int reviewId);
 
-=======
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
     // ── PREFERITI ────────────────────────────────────────────────────────────
 
     @POST("api/favorites/")
@@ -185,12 +164,9 @@ public interface ApiService {
     @PUT("api/notifications/{id}/read")
     Call<GenericResponse> markNotificationRead(@Path("id") int notifId);
 
-<<<<<<< HEAD
     @DELETE("api/notifications/{id}")
     Call<GenericResponse> deleteNotification(@Path("id") int notifId);
 
-=======
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
     // ── PROMEMORIA ───────────────────────────────────────────────────────────
 
     @GET("api/reminders/")
@@ -222,7 +198,6 @@ public interface ApiService {
 
     // ── WRAPPER CLASSI (risposte lista) ──────────────────────────────────────
 
-<<<<<<< HEAD
     class EventWrapper {
         @com.google.gson.annotations.SerializedName("event")
         public Event event;
@@ -230,57 +205,36 @@ public interface ApiService {
 
     class FriendsWrapper {
         @com.google.gson.annotations.SerializedName("friends")
-=======
-    class FriendsWrapper {
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
         public List<Friend> friends;
     }
 
     class FriendRequestsWrapper {
-<<<<<<< HEAD
         @com.google.gson.annotations.SerializedName("requests")
-=======
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
         public List<Friend> requests;
     }
 
     class ReviewsWrapper {
-<<<<<<< HEAD
         @com.google.gson.annotations.SerializedName("reviews")
-=======
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
         public List<Review> reviews;
     }
 
     class FavoritesWrapper {
-<<<<<<< HEAD
         @com.google.gson.annotations.SerializedName("favorites")
-=======
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
         public List<FavoriteItem> favorites;
     }
 
     class NotificationsWrapper {
-<<<<<<< HEAD
         @com.google.gson.annotations.SerializedName("notifications")
-=======
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
         public List<Notification> notifications;
     }
 
     class ProposalsWrapper {
-<<<<<<< HEAD
         @com.google.gson.annotations.SerializedName("proposals")
-=======
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
         public List<Proposal> proposals;
     }
 
     class RemindersWrapper {
-<<<<<<< HEAD
         @com.google.gson.annotations.SerializedName("reminders")
-=======
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
         public List<Reminder> reminders;
     }
 }

@@ -74,7 +74,7 @@
     <style name="DropBy.NavSubheader">
         <item name="android:textSize">11sp</item>
         <item name="android:textAllCaps">true</item>
-        <item name="android:textColor">@color/db_text_secondary</item>
+        <item name="android:textColor">@color/white</item>
         <item name="android:fontFamily">@font/body_font</item>
         <item name="fontFamily">@font/body_font</item>
         <item name="android:letterSpacing">0.08</item>
@@ -83,7 +83,7 @@
     <!-- ThemeOverlay per NavigationView destra: sovrascrive textAppearanceOverline per subheader -->
     <style name="DropBy.RightNavTheme" parent="ThemeOverlay.MaterialComponents">
         <item name="textAppearanceOverline">@style/DropBy.NavSubheader</item>
-        <item name="android:textColorSecondary">@color/db_text_secondary</item>
+        <item name="android:textColorSecondary">@color/white</item>
     </style>
 
     <!-- Font styles -->
@@ -115,6 +115,11 @@
     <style name="AppEditText" parent="Widget.AppCompat.EditText">
         <item name="android:fontFamily">@font/body_font</item>
         <item name="fontFamily">@font/body_font</item>
+    </style>
+
+    <style name="DrawerGroupTextStyle">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
 

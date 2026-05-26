@@ -14,7 +14,6 @@ def get_notifications(current_user):
         return jsonify({'notifications': notifs}), 200
     except Exception as e:
         traceback.print_exc()
-<<<<<<< HEAD
         return jsonify({'error': str(e)}), 500
 
 @notifications_bp.route('/<int:notif_id>', methods=['DELETE'])
@@ -24,8 +23,6 @@ def delete_notification(current_user, notif_id):
         result = NotificationsService.delete_notification(notif_id, current_user['user_id'])
         return jsonify(result), 200
     except Exception as e:
-=======
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
         return jsonify({'error': str(e)}), 500
 
 @notifications_bp.route('/<int:notif_id>/read', methods=['PUT'])
@@ -35,7 +32,6 @@ def mark_read(current_user, notif_id):
         result = NotificationsService.mark_read(notif_id, current_user['user_id'])
         return jsonify(result), 200
     except Exception as e:
-<<<<<<< HEAD
         traceback.print_exc()
         return jsonify({'error': str(e)}), 500
 
@@ -47,8 +43,6 @@ def mark_all_read(current_user):
         return jsonify(result), 200
     except Exception as e:
         traceback.print_exc()
-=======
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
         return jsonify({'error': str(e)}), 500
 
 # ---- Promemoria eventi ----

@@ -45,11 +45,7 @@ public class ProposalsFragment extends Fragment {
     }
 
     private void loadProposals() {
-<<<<<<< HEAD
         setStatus(getString(R.string.loading_proposals));
-=======
-        setStatus("Caricamento proposte…");
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
         ApiClient.getApiService().getReceivedProposals()
                 .enqueue(new Callback<ApiService.ProposalsWrapper>() {
                     @Override
@@ -67,22 +63,14 @@ public class ProposalsFragment extends Fragment {
                                 recyclerView.setVisibility(View.VISIBLE);
                             }
                         } else {
-<<<<<<< HEAD
                             setStatus(getString(R.string.error_loading_proposals));
-=======
-                            setStatus("Errore caricamento proposte");
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
                         }
                     }
 
                     @Override
                     public void onFailure(@NonNull Call<ApiService.ProposalsWrapper> call,
                                           @NonNull Throwable t) {
-<<<<<<< HEAD
                         if (isAdded()) setStatus(getString(R.string.network_error));;
-=======
-                        if (isAdded()) setStatus("Errore di rete");
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
                     }
                 });
     }

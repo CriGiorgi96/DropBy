@@ -9,14 +9,15 @@
     <color name="theater_velvet">#8B1020</color>
     <color name="theater_gold">#D6B56D</color>
     <color name="theater_surface">#FFFFF8F6</color>
+    <color name="favorite_empty_tint">#BBBBBB</color>
 
     <!-- ── Palette DropBy — Gala Teatrale Notturno ───────────────────────────
          Nero profondo + oro ambrato: fa risaltare i drappeggi rossi e il logo. -->
 
     <!-- Sfondi -->
-    <color name="db_background">#121212</color>      <!-- antracite profondo, stile Spotify    -->
-    <color name="db_surface">#1E1E1E</color>          <!-- card, dialog: si stacca dallo sfondo -->
-    <color name="db_surface_variant">#252525</color>  <!-- input, chip, tag                     -->
+    <color name="db_background">#2b2238</color>      <!-- antracite profondo, stile Spotify    -->
+    <color name="db_surface">#322a4d</color>          <!-- card, dialog: si stacca dallo sfondo -->
+    <color name="db_surface_variant">#443c5e</color>  <!-- input, chip, tag                     -->
 
     <!-- Testi -->
     <color name="db_text_primary">#F5F5DC</color>    <!-- crema/avorio: morbido, elegante       -->
@@ -26,7 +27,7 @@
     <!-- Accent — oro morbido del logo: elegante su sfondo nero -->
     <color name="db_accent">#DFB76C</color>           <!-- oro caldo: pulsanti, badge, link      -->
     <color name="db_accent_dark">#C89A4E</color>      <!-- oro scuro: pressed / variante         -->
-    <color name="db_accent_light">#231800</color>     <!-- badge/chip: sfondo oro molto scuro    -->
+    <color name="db_accent_light">#996803</color>     <!-- badge/chip: sfondo oro molto scuro    -->
 
     <!-- Utility -->
     <color name="db_divider">#2C2C2C</color>          <!-- separatori quasi invisibili           -->

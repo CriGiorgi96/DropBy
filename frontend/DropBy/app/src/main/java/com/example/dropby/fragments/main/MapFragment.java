@@ -110,11 +110,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-<<<<<<< HEAD
         selectedCity = getString(R.string.all_cities);
 
-=======
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
         citySpinner   = view.findViewById(R.id.citySpinner);
         radiusSeekBar = view.findViewById(R.id.radiusSeekBar);
         radiusLabel   = view.findViewById(R.id.radiusLabel);
@@ -296,11 +293,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     private void loadAllTheaters() {
         statusText.setVisibility(View.VISIBLE);
-<<<<<<< HEAD
         statusText.setText(getString(R.string.theatersStatusText));
-=======
-        statusText.setText("Caricamento teatri…");
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 
         ApiClient.getApiService().getLocations(null, null)
                 .enqueue(new Callback<LocationsResponse>() {
@@ -313,21 +306,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                             statusText.setVisibility(View.GONE);
                             if (googleMap != null) applyFilter();
                         } else {
-<<<<<<< HEAD
                             statusText.setText(getString(R.string.error_loading_theaters));
-=======
-                            statusText.setText("Errore caricamento teatri");
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
                         }
                     }
                     @Override
                     public void onFailure(@NonNull Call<LocationsResponse> call, @NonNull Throwable t) {
                         if (!isAdded()) return;
-<<<<<<< HEAD
                         statusText.setText(getString(R.string.network_absent));
-=======
-                        statusText.setText("Rete assente");
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
                     }
                 });
     }

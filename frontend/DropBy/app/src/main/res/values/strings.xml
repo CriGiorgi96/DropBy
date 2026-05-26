@@ -85,18 +85,11 @@
     <string name="friends_tab_list">I miei amici</string>
     <string name="friends_tab_requests">Richieste</string>
     <string name="friends_tab_search">Cerca</string>
-<<<<<<< HEAD
     <string name="favorites">Preferiti</string>
     <string name="favorites_title">I miei preferiti</string>
     <string name="notifications_title">Notifiche</string>
     <string name="proposals_title">Proposte eventi</string>
     <string name="reviews_title">Recensioni</string>
-=======
-    <string name="favorites_title">I miei preferiti</string>
-    <string name="notifications_title">Notifiche</string>
-    <string name="proposals_title">Proposte eventi</string>
-    <string name="reviews_title">Le mie recensioni</string>
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
     <string name="send_friend_request">Aggiungi amico</string>
     <string name="accept">Accetta</string>
     <string name="reject">Rifiuta</string>
@@ -109,11 +102,7 @@
     <string name="mark_read">Segna come letto</string>
     <string name="propose_event">Proponi evento</string>
     <string name="write_review">Scrivi una recensione</string>
-<<<<<<< HEAD
     <string name="rating_hint">Valutazione (1–5 stelle)</string>
-=======
-    <string name="rating_hint">Valutazione (1-5 stelle)</string>
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
     <string name="comment_hint">Commento…</string>
     <string name="submit">Invia</string>
     <string name="login_required">Devi essere loggato per usare questa funzione</string>
@@ -124,7 +113,6 @@
     <string name="general_settings">Impostazioni Generali</string>
     <string name="default_images">Immagini di default</string>
     <string name="url_config">Configurazione URL</string>
-<<<<<<< HEAD
     <string name="save_url_btn">Salva URL</string>
 
     <string name="zero_notifications">0</string>
@@ -327,9 +315,5 @@
     <string name="user_not_found">Utente non trovato</string>
     <string name="error_loading_profile">Impossibile caricare il profilo</string>
     <string name="user_fallback">Utente</string>
-=======
-
-    <string name="zero_notifications">0</string>
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 
 </resources>

@@ -118,7 +118,6 @@ def search_users(current_user):
         return jsonify({'users': users}), 200
     except Exception:
         traceback.print_exc()
-<<<<<<< HEAD
         return jsonify({'error': 'Errore ricerca utenti'}), 500
 
 
@@ -192,6 +191,3 @@ def upload_avatar(current_user):
         traceback.print_exc()
         return jsonify({'error': 'Errore upload avatar'}), 500
 
-=======
-        return jsonify({'error': 'Errore ricerca utenti'}), 500
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)

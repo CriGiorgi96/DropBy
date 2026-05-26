@@ -43,32 +43,10 @@ class FavoriteRepository:
     def remove(user_id, event_id):
         db = Database()
         conn = db.get_connection()
-<<<<<<< HEAD
         conn.run(
             "DELETE FROM favorites WHERE user_id = :user_id AND event_id = :event_id",
             user_id=user_id, event_id=event_id
         )
-=======
-        rows = conn.run(
-            """SELECT f.id AS favorite_id, f.created_at, f.event_id,
-                      e.title, e.category, e.city, e.event_date, e.price
-               FROM favorites f
-               JOIN events e ON f.event_id = e.id
-               WHERE f.user_id = :user_id
-               ORDER BY f.created_at DESC""",
-            user_id=user_id
-        )
-        return dict_format(conn, rows)
-
-    @staticmethod
-    def remove(user_id, event_id):
-        db = Database()
-        conn = db.get_connection()
-        conn.run(
-            "DELETE FROM favorites WHERE user_id = :user_id AND event_id = :event_id",
-            user_id=user_id, event_id=event_id
-        )
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
         conn.run("COMMIT")
 
     @staticmethod

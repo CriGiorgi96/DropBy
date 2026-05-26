@@ -233,7 +233,6 @@ class AuthService:
         }
 
     # ----------------------------
-<<<<<<< HEAD
     # CHECK USERNAME AVAILABILITY
     # ----------------------------
     @staticmethod
@@ -300,8 +299,6 @@ class AuthService:
         }
 
     # ----------------------------
-=======
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
     # SEARCH USERS
     # ----------------------------
     @staticmethod
@@ -338,12 +335,8 @@ class AuthService:
             "user_id": user["id"],
             "username": user["username"],
             "email": user["email"],
-<<<<<<< HEAD
             "gender": user.get("gender", "guest"),
             "profile_image": user.get("profile_image"),
             "private_favorites": bool(user.get("private_favorites") or False),
             "private_reviews":   bool(user.get("private_reviews")   or False)
-=======
-            "gender": user.get("gender", "guest")
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
         }

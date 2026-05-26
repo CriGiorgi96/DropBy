@@ -1,10 +1,7 @@
 package com.example.dropby.fragments.main;
 
 import android.os.Bundle;
-<<<<<<< HEAD
 import android.util.Log;
-=======
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -16,10 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.dropby.R;
 import com.example.dropby.adapters.FavoriteAdapter;
-<<<<<<< HEAD
 import com.example.dropby.models.Event;
-=======
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 import com.example.dropby.models.FavoriteItem;
 import com.example.dropby.models.GenericResponse;
 import com.example.dropby.network.ApiClient;
@@ -48,29 +42,20 @@ public class FavoritesFragment extends Fragment {
         statusText   = view.findViewById(R.id.favoritesStatusText);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-<<<<<<< HEAD
         adapter = new FavoriteAdapter(new ArrayList<>(), this::onRemoveFavorite, this::openEventDetail);
-=======
-        adapter = new FavoriteAdapter(new ArrayList<>(), this::onRemoveFavorite);
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
         recyclerView.setAdapter(adapter);
 
         loadFavorites();
     }
 
     private void loadFavorites() {
-<<<<<<< HEAD
         setStatus(getString(R.string.loading_favorites));
-=======
-        setStatus("Caricamento preferiti…");
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
         ApiClient.getApiService().getFavorites()
                 .enqueue(new Callback<ApiService.FavoritesWrapper>() {
                     @Override
                     public void onResponse(Call<ApiService.FavoritesWrapper> call,
                                            Response<ApiService.FavoritesWrapper> response) {
                         if (!isAdded()) return;
-<<<<<<< HEAD
                         Log.d("FAV_DEBUG", "HTTP " + response.code()
                                 + " body_null=" + (response.body() == null)
                                 + " favs=" + (response.body() != null && response.body().favorites != null
@@ -92,25 +77,10 @@ public class FavoritesFragment extends Fragment {
                             requireActivity().runOnUiThread(() -> {
                                 if (isAdded()) setStatus(getString(R.string.error_loading_favorites));;
                             });
-=======
-                        if (response.isSuccessful() && response.body() != null
-                                && response.body().favorites != null) {
-                            List<FavoriteItem> list = response.body().favorites;
-                            if (list.isEmpty()) {
-                                setStatus(getString(R.string.no_favorites));
-                            } else {
-                                statusText.setVisibility(View.GONE);
-                                adapter.update(list);
-                                recyclerView.setVisibility(View.VISIBLE);
-                            }
-                        } else {
-                            setStatus("Errore caricamento preferiti");
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
                         }
                     }
                     @Override
                     public void onFailure(Call<ApiService.FavoritesWrapper> call, Throwable t) {
-<<<<<<< HEAD
                         Log.e("FAV_DEBUG", "onFailure: " + t.getMessage(), t);
                         if (isAdded()) requireActivity().runOnUiThread(
                                 () -> { if (isAdded()) setStatus(getString(R.string.network_error)); });
@@ -143,9 +113,6 @@ public class FavoritesFragment extends Fragment {
                     public void onFailure(Call<ApiService.EventWrapper> call, Throwable t) {
                         if (isAdded()) Toast.makeText(requireContext(),
                                 "Errore di rete", Toast.LENGTH_SHORT).show();
-=======
-                        if (isAdded()) setStatus("Errore di rete");
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
                     }
                 });
     }
@@ -157,11 +124,7 @@ public class FavoritesFragment extends Fragment {
                     public void onResponse(Call<GenericResponse> call,
                                            Response<GenericResponse> response) {
                         if (!isAdded()) return;
-<<<<<<< HEAD
                         Toast.makeText(requireContext(), getString(R.string.removed_from_favorites), Toast.LENGTH_SHORT).show();
-=======
-                        Toast.makeText(requireContext(), "Rimosso dai preferiti", Toast.LENGTH_SHORT).show();
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
                         loadFavorites();
                     }
                     @Override public void onFailure(Call<GenericResponse> call, Throwable t) {}

@@ -46,11 +46,7 @@ public class ProposalResponseBottomSheet extends BottomSheetDialogFragment {
         ProposalResponseBottomSheet sheet = new ProposalResponseBottomSheet();
         Bundle args = new Bundle();
         args.putInt(ARG_EVENT_ID, eventId);
-<<<<<<< HEAD
         args.putString(ARG_FROM_USERNAME, fromUsername);
-=======
-        args.putString(ARG_FROM_USERNAME, fromUsername != null ? fromUsername : "Un amico");
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
         args.putString(ARG_EVENT_TITLE,   eventTitle   != null ? eventTitle   : "");
         sheet.setArguments(args);
         return sheet;
@@ -80,22 +76,15 @@ public class ProposalResponseBottomSheet extends BottomSheetDialogFragment {
         Button   btnThumbDown = view.findViewById(R.id.btnThumbDown);
         Button   btnMaybe     = view.findViewById(R.id.btnMaybe);
 
-<<<<<<< HEAD
         tvMessage.setText(getString(R.string.proposal_message, fromUsername, eventTitle));
-=======
-        tvMessage.setText(fromUsername + " ti ha proposto:\n\"" + eventTitle + "\"");
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 
         btnThumbUp.setOnClickListener(v   -> sendResponse(eventId, "👍", btnThumbUp, btnThumbDown, btnMaybe));
         btnThumbDown.setOnClickListener(v -> sendResponse(eventId, "👎", btnThumbUp, btnThumbDown, btnMaybe));
         btnMaybe.setOnClickListener(v     -> sendResponse(eventId, "🤔", btnThumbUp, btnThumbDown, btnMaybe));
-<<<<<<< HEAD
 
         if (fromUsername == null || fromUsername.trim().isEmpty()) {
             fromUsername = getString(R.string.a_friend);
         }
-=======
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
     }
 
     private void sendResponse(int eventId, String emoji,
@@ -114,20 +103,12 @@ public class ProposalResponseBottomSheet extends BottomSheetDialogFragment {
                         if (!isAdded()) return;
                         if (response.isSuccessful()) {
                             Toast.makeText(requireContext(),
-<<<<<<< HEAD
                                     getString(R.string.proposal_response_sent, emoji), Toast.LENGTH_SHORT).show();
-=======
-                                    "Risposta inviata " + emoji, Toast.LENGTH_SHORT).show();
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
                             dismiss();
                         } else {
                             for (Button b : buttons) b.setEnabled(true);
                             Toast.makeText(requireContext(),
-<<<<<<< HEAD
                                     getString(R.string.proposal_response_error), Toast.LENGTH_SHORT).show();
-=======
-                                    "Errore nell'invio della risposta", Toast.LENGTH_SHORT).show();
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
                         }
                     }
 
@@ -137,11 +118,7 @@ public class ProposalResponseBottomSheet extends BottomSheetDialogFragment {
                         if (!isAdded()) return;
                         for (Button b : buttons) b.setEnabled(true);
                         Toast.makeText(requireContext(),
-<<<<<<< HEAD
                                 getString(R.string.network_absent), Toast.LENGTH_SHORT).show();
-=======
-                                "Rete assente", Toast.LENGTH_SHORT).show();
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
                     }
                 });
     }

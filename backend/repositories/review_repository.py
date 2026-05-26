@@ -70,25 +70,6 @@ class ReviewRepository:
         return dict_format(conn, rows)
 
     @staticmethod
-<<<<<<< HEAD
-=======
-    def find_by_user(user_id):
-        db = Database()
-        conn = db.get_connection()
-        rows = conn.run(
-            """SELECT r.id, r.rating, r.comment, r.created_at,
-                      e.id AS event_id, e.title AS event_title,
-                      e.event_date, e.city AS event_city
-               FROM reviews r
-               JOIN events e ON r.event_id = e.id
-               WHERE r.user_id = :user_id
-               ORDER BY r.created_at DESC""",
-            user_id=user_id
-        )
-        return dict_format(conn, rows)
-
-    @staticmethod
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
     def find_by_user_and_event(user_id, event_id):
         db = Database()
         conn = db.get_connection()
@@ -97,7 +78,6 @@ class ReviewRepository:
             user_id=user_id, event_id=event_id
         )
         return dict_format_single(conn, rows)
-<<<<<<< HEAD
 
     @staticmethod
     def delete(review_id, user_id):
@@ -108,5 +88,3 @@ class ReviewRepository:
             id=review_id, uid=user_id
         )
         conn.run("COMMIT")
-=======
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)

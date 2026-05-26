@@ -5,36 +5,24 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-<<<<<<< HEAD
 import android.util.Log;
-=======
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 import android.view.ViewGroup;
 import android.view.Menu;
 import android.view.View;
 import android.widget.FrameLayout;
-<<<<<<< HEAD
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.graphics.Rect;
 import android.view.MotionEvent;
-=======
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
-<<<<<<< HEAD
 import androidx.core.os.LocaleListCompat;
-=======
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
@@ -50,11 +38,7 @@ import com.example.dropby.fragments.main.HomeFragment;
 import com.example.dropby.fragments.main.MapFragment;
 import com.example.dropby.fragments.main.NotificationManagementFragment; // Mantenuto per i tuoi Promemoria
 import com.example.dropby.fragments.main.NotificationsFragment;
-<<<<<<< HEAD
 import com.example.dropby.fragments.main.set.ProfileSettingsFragment;
-=======
-import com.example.dropby.fragments.main.ProfileFragment;
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 import com.example.dropby.fragments.main.ProposalsFragment;
 import com.example.dropby.fragments.main.ReviewsFragment;
 import com.example.dropby.fragments.main.SettingsFragment;
@@ -72,10 +56,7 @@ public class HomeActivity extends AppCompatActivity {
     private NavigationView navRight;
     private TextView notificationBadge;
     private NotificationPoller notificationPoller;
-<<<<<<< HEAD
     private FrameLayout fragmentContainer;
-=======
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,10 +69,7 @@ public class HomeActivity extends AppCompatActivity {
         );
 
         setContentView(R.layout.activity_home);
-<<<<<<< HEAD
         UiSoundPlayer.init(this);
-=======
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -99,7 +77,6 @@ public class HomeActivity extends AppCompatActivity {
         // FIX BUG: Collegamento del badge delle notifiche (mancava nel codice della collega)
         notificationBadge = findViewById(R.id.notificationBadge);
 
-<<<<<<< HEAD
         // Far si che toccando il fragment Container si chiuda il drawer
         fragmentContainer = findViewById(R.id.fragment_container);
 
@@ -112,17 +89,6 @@ public class HomeActivity extends AppCompatActivity {
             int navRightInset = navBars.right;
             int navBottomInset = navBars.bottom;
 
-=======
-        // Gestione dei margini di sistema (Status Bar e Navigation Bar)
-        ViewCompat.setOnApplyWindowInsetsListener(toolbar, (view, insets) -> {
-            int statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top;
-            Insets navBars = insets.getInsets(WindowInsetsCompat.Type.navigationBars());
-
-            int navLeftInset = navBars.left;
-            int navRightInset = navBars.right;
-            int navBottomInset = navBars.bottom;
-
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
             view.setPadding(
                     navLeftInset,
                     statusBarHeight,
@@ -140,16 +106,9 @@ public class HomeActivity extends AppCompatActivity {
             navLeft.setPadding(navLeftInset, lp.height, 0, navBottomInset);
             navRight.setPadding(0, lp.height, navRightInset, navBottomInset);
 
-<<<<<<< HEAD
             fragmentContainer.setPadding(
                     navLeftInset,
                     statusBarHeight,
-=======
-            FrameLayout fragmentContainer = findViewById(R.id.fragment_container);
-            fragmentContainer.setPadding(
-                    navLeftInset,
-                    lp.height,
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
                     navRightInset,
                     0
             );
@@ -160,12 +119,7 @@ public class HomeActivity extends AppCompatActivity {
         // Il click sul logo della toolbar riporta alla HomeFragment
         findViewById(R.id.toolbarLogo).setOnClickListener(v -> {
             openFragment(new HomeFragment(), false);
-<<<<<<< HEAD
             closeBothDrawers();
-=======
-            closeLeftDrawer();
-            closeRightDrawer();
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
         });
 
         ImageView toolbarProfileButton = findViewById(R.id.toolbarUserButton);
@@ -227,10 +181,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private void setupLeftDrawer() {
         navLeft.setNavigationItemSelectedListener(item -> {
-<<<<<<< HEAD
             UiSoundPlayer.playButtonClick(this);
-=======
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
             int id = item.getItemId();
             Fragment target = null;
 
@@ -240,15 +191,10 @@ public class HomeActivity extends AppCompatActivity {
             else if (id == R.id.nav_map)       target = new MapFragment();
             else if (id == R.id.nav_settings)  target = new SettingsFragment();
             else if (id == R.id.nav_faq)       target = new FaqFragment();
-<<<<<<< HEAD
-=======
-            else if (id == R.id.nav_logout)    { logout(); return true; }
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 
             if (target != null) {
                 openFragment(target, false);
             }
-<<<<<<< HEAD
             closeBothDrawers();
             return true;
         });
@@ -288,15 +234,6 @@ public class HomeActivity extends AppCompatActivity {
 
     private void toggleLeftDrawer() {
         UiSoundPlayer.playMenuOpen(this);
-=======
-            closeLeftDrawer();
-            closeRightDrawer();
-            return true;
-        });
-    }
-
-    private void toggleLeftDrawer() {
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
         leftOpen = !leftOpen;
         leftDrawerPanel.animate()
                 .translationX(leftOpen ? 0 : -leftDrawerPanel.getWidth())
@@ -305,10 +242,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void closeLeftDrawer() {
-<<<<<<< HEAD
         if (leftOpen) UiSoundPlayer.playMenuOpen(this);
-=======
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
         leftOpen = false;
         leftDrawerPanel.animate()
                 .translationX(-leftDrawerPanel.getWidth())
@@ -330,10 +264,6 @@ public class HomeActivity extends AppCompatActivity {
         setMenuItemVisible(menu, R.id.nav_right_proposals,     isLogged);
         setMenuItemVisible(menu, R.id.nav_right_notifications, isLogged);
         setMenuItemVisible(menu, R.id.nav_right_reminders,     isLogged); // <--- Salvato!
-<<<<<<< HEAD
-=======
-        setMenuItemVisible(menu, R.id.nav_right_settings,      isLogged);
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
         setMenuItemVisible(menu, R.id.nav_right_logout,        isLogged);
 
         // Submenu headers
@@ -346,26 +276,18 @@ public class HomeActivity extends AppCompatActivity {
         setMenuItemVisible(menu, R.id.nav_right_exit,     !isLogged);
 
         navRight.setNavigationItemSelectedListener(item -> {
-<<<<<<< HEAD
             UiSoundPlayer.playButtonClick(this);
-=======
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
             int id = item.getItemId();
             Fragment target = null;
 
             if (isLogged) {
-<<<<<<< HEAD
                 if      (id == R.id.nav_right_profile)       target = new ProfileSettingsFragment();
-=======
-                if      (id == R.id.nav_right_profile)       target = new ProfileFragment();
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
                 else if (id == R.id.nav_right_favorites)     target = new FavoritesFragment();
                 else if (id == R.id.nav_right_reviews)       target = new ReviewsFragment();
                 else if (id == R.id.nav_right_friends)       target = new FriendsFragment();
                 else if (id == R.id.nav_right_proposals)     target = new ProposalsFragment();
                 else if (id == R.id.nav_right_notifications) target = new NotificationsFragment();
                 else if (id == R.id.nav_right_reminders)     target = new NotificationManagementFragment(); // <--- Salvato!
-<<<<<<< HEAD
                 else if (id == R.id.nav_right_logout)        { logout(); return true; }
             } else {
                 if (id == R.id.nav_right_login) {
@@ -384,19 +306,6 @@ public class HomeActivity extends AppCompatActivity {
 
             if (target != null) openFragment(target, true);
             closeBothDrawers();
-=======
-                else if (id == R.id.nav_right_settings)      target = new SettingsFragment();
-                else if (id == R.id.nav_right_logout)        { logout(); return true; }
-            } else {
-                if      (id == R.id.nav_right_login)    { launchAuth("login");    return true; }
-                else if (id == R.id.nav_right_register) { launchAuth("register"); return true; }
-                else if (id == R.id.nav_right_exit)     { goToStart();            return true; }
-            }
-
-            if (target != null) openFragment(target, true);
-            closeRightDrawer();
-            closeLeftDrawer();
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
             return true;
         });
     }
@@ -446,10 +355,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void toggleRightDrawer() {
-<<<<<<< HEAD
         UiSoundPlayer.playMenuOpen(this);
-=======
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
         rightOpen = !rightOpen;
         rightDrawerPanel.animate()
                 .translationX(rightOpen ? 0 : rightDrawerPanel.getWidth())
@@ -458,10 +364,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void closeRightDrawer() {
-<<<<<<< HEAD
         if (rightOpen) UiSoundPlayer.playMenuOpen(this);
-=======
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
         rightOpen = false;
         rightDrawerPanel.animate()
                 .translationX(rightDrawerPanel.getWidth())
@@ -484,7 +387,6 @@ public class HomeActivity extends AppCompatActivity {
         if (notificationPoller != null) notificationPoller.stop();
 
         SharedPreferences prefs = getSharedPreferences("app", MODE_PRIVATE);
-<<<<<<< HEAD
 
         // ── DEBUG LOG: stato prefs PRIMA del logout ──────────────────────────
         Log.d("DEBUG_PREFS", "[LOGOUT] userId="      + prefs.getInt("userId", -1)
@@ -493,18 +395,10 @@ public class HomeActivity extends AppCompatActivity {
                 + " | username="   + prefs.getString("username", ""));
         // ─────────────────────────────────────────────────────────────────────
 
-=======
-        String profileImageType = prefs.getString("profileImageType", "");
-        String profileImageValue = prefs.getString("profileImageValue", "");
-        String gender = prefs.getString("gender", "guest");
-
-        // Rimuove solo le credenziali lasciando intatte le preferenze grafiche locali
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
         prefs.edit()
                 .remove("token")
                 .remove("userType")
                 .remove("email")
-<<<<<<< HEAD
                 .remove("username")
                 .remove("userId")
                 .remove("profileImageType")
@@ -516,13 +410,6 @@ public class HomeActivity extends AppCompatActivity {
 
         Log.d("DEBUG_PREFS", "[LOGOUT] SharedPreferences azzerate completamente");
 
-=======
-                .putString("profileImageType", profileImageType)
-                .putString("profileImageValue", profileImageValue)
-                .putString("gender", gender)
-                .apply();
-
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
         com.example.dropby.network.ApiClient.setCustomBaseUrl(com.example.dropby.network.ApiClient.getBaseUrl());
 
         Intent intent = new Intent(this, AuthActivity.class);
@@ -558,14 +445,11 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
-<<<<<<< HEAD
     private void closeBothDrawers() {
         closeLeftDrawer();
         closeRightDrawer();
     }
 
-=======
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
     // ── NOTIFICHE POLLING ────────────────────────────────────────────────────
 
     private void startNotificationPoller() {
@@ -593,15 +477,12 @@ public class HomeActivity extends AppCompatActivity {
 
     // ── LAYOUT ───────────────────────────────────────────────────────────────
 
-<<<<<<< HEAD
     @Override
     protected void onDestroy() {
         UiSoundPlayer.release();
         super.onDestroy();
     }
 
-=======
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
     private void setDrawerWidth(View drawer) {
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
@@ -623,7 +504,6 @@ public class HomeActivity extends AppCompatActivity {
         if (avatar == null) return;
         SharedPreferences prefs = getSharedPreferences("app", MODE_PRIVATE);
 
-<<<<<<< HEAD
         String imageType  = prefs.getString("profileImageType", "");
         String imageValue = prefs.getString("profileImageValue", "");
         String gender     = prefs.getString("gender", "guest");
@@ -639,11 +519,6 @@ public class HomeActivity extends AppCompatActivity {
             loadAvatarFromUrl(avatar, url);
             return;
         }
-=======
-        String imageType = prefs.getString("profileImageType", "");
-        String imageValue = prefs.getString("profileImageValue", "");
-        String gender = prefs.getString("gender", "guest");
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 
         if ("custom".equals(imageType) && !imageValue.isEmpty()) {
             avatar.setImageURI(Uri.parse(imageValue));
@@ -651,23 +526,13 @@ public class HomeActivity extends AppCompatActivity {
         }
 
         if ("default".equals(imageType) && !imageValue.isEmpty()) {
-<<<<<<< HEAD
             int resId = getResources().getIdentifier(imageValue, "drawable", getPackageName());
-=======
-            int resId = getResources().getIdentifier(
-                    imageValue,
-                    "drawable",
-                    getPackageName()
-            );
-
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
             if (resId != 0) {
                 avatar.setImageResource(resId);
                 return;
             }
         }
 
-<<<<<<< HEAD
         if ("male".equalsIgnoreCase(gender))        avatar.setImageResource(R.drawable.default_male);
         else if ("female".equalsIgnoreCase(gender)) avatar.setImageResource(R.drawable.default_female);
         else                                        avatar.setImageResource(R.drawable.default_guest);
@@ -695,15 +560,6 @@ public class HomeActivity extends AppCompatActivity {
                 }
             } catch (java.io.IOException ignored) { }
         }).start();
-=======
-        if ("male".equalsIgnoreCase(gender)) {
-            avatar.setImageResource(R.drawable.default_male);
-        } else if ("female".equalsIgnoreCase(gender)) {
-            avatar.setImageResource(R.drawable.default_female);
-        } else {
-            avatar.setImageResource(R.drawable.default_guest);
-        }
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
     }
 
     // Chiamato da ProfileSettingsFragment per aggiornare all'istante
@@ -711,7 +567,6 @@ public class HomeActivity extends AppCompatActivity {
         ImageView toolbarProfileButton = findViewById(R.id.toolbarUserButton);
         loadToolbarProfileImage(toolbarProfileButton);
         updateRightDrawerHeader();
-<<<<<<< HEAD
     }
 
     // ── CHIUSURA DI ENTRAMBI I DRAWER ────────────────────────────────────────
@@ -741,7 +596,5 @@ public class HomeActivity extends AppCompatActivity {
         int y = (int) ev.getRawY();
 
         return rect.contains(x, y);
-=======
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
     }
 }

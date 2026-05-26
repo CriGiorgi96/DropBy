@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-<<<<<<< HEAD
     <!-- ── Preesistente ───────────────────────────────────────────────────── -->
     <dimen name="toolbar_height">85dp</dimen>
 
@@ -25,8 +24,3 @@
     <dimen name="section_spacing">28dp</dimen>
 
 </resources>
-=======
-    <dimen name="toolbar_height">70dp</dimen>
-
-</resources>
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)

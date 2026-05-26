@@ -23,7 +23,6 @@ public class Friend implements Serializable {
     @SerializedName("created_at")
     private String createdAt;
 
-<<<<<<< HEAD
     @SerializedName("profile_image")
     private String profileImage;
 
@@ -34,12 +33,4 @@ public class Friend implements Serializable {
     public String getStatus()       { return status; }
     public String getCreatedAt()    { return createdAt; }
     public String getProfileImage() { return profileImage; }
-=======
-    public int getFriendshipId() { return friendshipId; }
-    public int getUserId()       { return userId; }
-    public String getUsername()  { return username; }
-    public String getEmail()     { return email; }
-    public String getStatus()    { return status; }
-    public String getCreatedAt() { return createdAt; }
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 }

@@ -10,6 +10,7 @@
     <color name="theater_velvet">#8B1020</color>
     <color name="theater_gold">#D6B56D</color>
     <color name="theater_surface">#FFFFF8F6</color>
+    <color name="favorite_empty_tint">#666666</color>
 
     <!-- ── Palette DropBy — Gala Teatrale Notturno ───────────────────────────
          Nero profondo + oro ambrato: fa risaltare i drappeggi rossi e il logo. -->
@@ -27,7 +28,7 @@
     <!-- Accent — oro morbido del logo: elegante su sfondo nero -->
     <color name="db_accent">#DFB76C</color>           <!-- oro caldo: pulsanti, badge, link      -->
     <color name="db_accent_dark">#C89A4E</color>      <!-- oro scuro: pressed / variante         -->
-    <color name="db_accent_light">#231800</color>     <!-- badge/chip: sfondo oro molto scuro    -->
+    <color name="db_accent_light">#996803</color>     <!-- badge/chip: sfondo oro molto scuro    -->
 
     <!-- Utility -->
     <color name="db_divider">#d4d4d4</color>          <!-- separatori quasi invisibili           -->

@@ -24,16 +24,6 @@
         android:hardwareAccelerated="true"
         tools:targetApi="31">
 
-<<<<<<< HEAD
-=======
-        <!--
-            ISTRUZIONI GOOGLE MAPS API KEY:
-            1. Vai su https://console.cloud.google.com/
-            2. Crea un progetto → Abilita "Maps SDK for Android"
-            3. Crea una credenziale API Key → restrizione: app Android (package: com.example.dropby)
-            4. Sostituisci YOUR_GOOGLE_MAPS_API_KEY_HERE con la chiave ottenuta
-        -->
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDQAd9os3OPcNQWKANpP9Uu7poaSiAsiI8" />

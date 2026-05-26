@@ -12,15 +12,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.dropby.R;
 import com.example.dropby.models.Reminder;
 
-<<<<<<< HEAD
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
-=======
-import java.util.List;
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 
 public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.VH> {
 
@@ -52,19 +48,13 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.VH> {
         Reminder r = items.get(pos);
         h.title.setText(r.getEventTitle() != null ? r.getEventTitle() : "Evento");
         h.city.setText(safe(r.getEventCity()));
-<<<<<<< HEAD
         h.date.setText("Data evento: " + formatDate(r.getEventDate()));
         h.remindAt.setText("Promemoria: " + formatDateTime(r.getRemindAt()));
-=======
-        h.date.setText("Data evento: " + safe(r.getEventDate()));
-        h.remindAt.setText("Promemoria: " + safe(r.getRemindAt()));
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
         h.btnDelete.setOnClickListener(v -> listener.onDelete(r));
     }
 
     @Override public int getItemCount() { return items.size(); }
 
-<<<<<<< HEAD
     private String formatDateTime(String raw) {
         if (raw == null || raw.isEmpty()) return "—";
         try {
@@ -110,8 +100,6 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.VH> {
         }
     }
 
-=======
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
     private String safe(String s) { return s != null ? s : "—"; }
 
     static class VH extends RecyclerView.ViewHolder {

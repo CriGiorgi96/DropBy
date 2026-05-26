@@ -144,7 +144,6 @@ class AuthRepository:
             "SELECT id, username, email FROM users WHERE username ILIKE :q LIMIT :lim",
             q=f"%{query}%", lim=limit
         )
-<<<<<<< HEAD
         return dict_format(conn, rows)
 
     @staticmethod
@@ -187,6 +186,3 @@ class AuthRepository:
 
         conn.run(f"UPDATE users SET {', '.join(sets)} WHERE id = :user_id", **params)
         conn.run("COMMIT")
-=======
-        return dict_format(conn, rows)
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)

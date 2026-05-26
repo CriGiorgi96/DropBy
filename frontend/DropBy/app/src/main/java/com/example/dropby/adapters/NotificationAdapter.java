@@ -20,7 +20,6 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
     private List<Notification> items;
     private final Consumer<Notification> onMarkRead;
-<<<<<<< HEAD
     private final Consumer<Notification> onDelete;
 
     public NotificationAdapter(List<Notification> items,
@@ -29,12 +28,6 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         this.items      = new ArrayList<>(items);
         this.onMarkRead = onMarkRead;
         this.onDelete   = onDelete;
-=======
-
-    public NotificationAdapter(List<Notification> items, Consumer<Notification> onMarkRead) {
-        this.items      = new ArrayList<>(items);
-        this.onMarkRead = onMarkRead;
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
     }
 
     public void update(List<Notification> newItems) {
@@ -64,11 +57,8 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         holder.markReadBtn.setOnClickListener(v -> onMarkRead.accept(n));
         holder.markReadBtn.setEnabled(!n.isRead());
         holder.markReadBtn.setAlpha(n.isRead() ? 0.3f : 1f);
-<<<<<<< HEAD
 
         holder.deleteBtn.setOnClickListener(v -> onDelete.accept(n));
-=======
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
     }
 
     @Override
@@ -76,13 +66,8 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
     static class VH extends RecyclerView.ViewHolder {
         TextView type, content, date;
-<<<<<<< HEAD
         View     unreadDot;
         Button   markReadBtn, deleteBtn;
-=======
-        View unreadDot;
-        Button markReadBtn;
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 
         VH(View v) {
             super(v);
@@ -90,12 +75,8 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             content    = v.findViewById(R.id.notifContent);
             date       = v.findViewById(R.id.notifDate);
             unreadDot  = v.findViewById(R.id.unreadDot);
-<<<<<<< HEAD
             markReadBtn = v.findViewById(R.id.btnMarkRead);
             deleteBtn   = v.findViewById(R.id.btnDeleteNotification);
-=======
-            markReadBtn= v.findViewById(R.id.btnMarkRead);
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
         }
     }
 }
