@@ -69,6 +69,7 @@ public class HomeActivity extends AppCompatActivity {
         );
 
         setContentView(R.layout.activity_home);
+        UiSoundPlayer.init(this);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -180,6 +181,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private void setupLeftDrawer() {
         navLeft.setNavigationItemSelectedListener(item -> {
+            UiSoundPlayer.playButtonClick(this);
             int id = item.getItemId();
             Fragment target = null;
 
@@ -203,8 +205,14 @@ public class HomeActivity extends AppCompatActivity {
         ImageButton btnEn = leftHeader != null ? leftHeader.findViewById(R.id.drawerBtnLanguageEn) : null;
         updateDrawerLanguageButtons(btnIt, btnEn);
 
-        if (btnIt != null) btnIt.setOnClickListener(v -> setAppLanguage("it"));
-        if (btnEn != null) btnEn.setOnClickListener(v -> setAppLanguage("en"));
+        if (btnIt != null) btnIt.setOnClickListener(v -> {
+            UiSoundPlayer.playButtonClick(this);
+            setAppLanguage("it");
+        });
+        if (btnEn != null) btnEn.setOnClickListener(v -> {
+            UiSoundPlayer.playButtonClick(this);
+            setAppLanguage("en");
+        });
     }
 
     private void setAppLanguage(String languageTag) {
@@ -225,6 +233,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void toggleLeftDrawer() {
+        UiSoundPlayer.playMenuOpen(this);
         leftOpen = !leftOpen;
         leftDrawerPanel.animate()
                 .translationX(leftOpen ? 0 : -leftDrawerPanel.getWidth())
@@ -233,6 +242,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void closeLeftDrawer() {
+        if (leftOpen) UiSoundPlayer.playMenuOpen(this);
         leftOpen = false;
         leftDrawerPanel.animate()
                 .translationX(-leftDrawerPanel.getWidth())
@@ -266,6 +276,7 @@ public class HomeActivity extends AppCompatActivity {
         setMenuItemVisible(menu, R.id.nav_right_exit,     !isLogged);
 
         navRight.setNavigationItemSelectedListener(item -> {
+            UiSoundPlayer.playButtonClick(this);
             int id = item.getItemId();
             Fragment target = null;
 
@@ -344,6 +355,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void toggleRightDrawer() {
+        UiSoundPlayer.playMenuOpen(this);
         rightOpen = !rightOpen;
         rightDrawerPanel.animate()
                 .translationX(rightOpen ? 0 : rightDrawerPanel.getWidth())
@@ -352,6 +364,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void closeRightDrawer() {
+        if (rightOpen) UiSoundPlayer.playMenuOpen(this);
         rightOpen = false;
         rightDrawerPanel.animate()
                 .translationX(rightDrawerPanel.getWidth())
@@ -463,6 +476,12 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     // ── LAYOUT ───────────────────────────────────────────────────────────────
+
+    @Override
+    protected void onDestroy() {
+        UiSoundPlayer.release();
+        super.onDestroy();
+    }
 
     private void setDrawerWidth(View drawer) {
         DisplayMetrics dm = new DisplayMetrics();

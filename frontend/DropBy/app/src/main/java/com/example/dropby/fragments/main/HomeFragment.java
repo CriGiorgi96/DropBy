@@ -18,6 +18,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.dropby.R;
+import com.example.dropby.UiSoundPlayer;
 import com.example.dropby.models.Event;
 import com.example.dropby.models.EventsResponse;
 import com.example.dropby.network.ApiClient;
@@ -91,6 +92,7 @@ public class HomeFragment extends Fragment {
         featuredEventCard.setOnTouchListener((card, event) -> handleFeaturedSwipe(event));
 
         featuredActionButton.setOnClickListener(button -> {
+            UiSoundPlayer.playButtonClick(requireContext());
             if (featuredEvent != null) {
                 openTicketPage(featuredEvent);
             }

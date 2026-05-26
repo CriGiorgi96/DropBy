@@ -51,6 +51,7 @@ public class EventActionsHelper {
         popup.getMenu().add(0, 2, 1, "Imposta promemoria");
         popup.getMenu().add(0, 3, 2, "Proponi ad un amico");
         popup.setOnMenuItemClickListener(item -> {
+            UiSoundPlayer.playButtonClick(activity);
             int id = item.getItemId();
             if      (id == 1) addToFavorites();
             else if (id == 2) showReminderPicker();
@@ -178,7 +179,10 @@ public class EventActionsHelper {
 
                         new android.app.AlertDialog.Builder(activity)
                                 .setTitle("Proponi \"" + event.getTitle() + "\" a:")
-                                .setItems(names, (d, which) -> submitProposal(friends.get(which)))
+                                .setItems(names, (d, which) -> {
+                                    UiSoundPlayer.playButtonClick(activity);
+                                    submitProposal(friends.get(which));
+                                })
                                 .setNegativeButton("Annulla", null)
                                 .show();
                     }

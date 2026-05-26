@@ -31,6 +31,7 @@ import com.example.dropby.EventActionsHelper;
 import com.example.dropby.LangUtil;
 import com.example.dropby.R;
 import com.example.dropby.ReminderScheduler;
+import com.example.dropby.UiSoundPlayer;
 import com.example.dropby.adapters.ReviewAdapter;
 import com.example.dropby.adapters.TheaterReplicaAdapter;
 import com.example.dropby.models.Event;
@@ -146,7 +147,10 @@ public class EventDetailFragment extends Fragment {
                             && !r.getTicketUrl().isEmpty());
             if (hasTicketUrl) {
                 ticketBtn.setVisibility(View.VISIBLE);
-                ticketBtn.setOnClickListener(v -> showTicketDialog());
+                ticketBtn.setOnClickListener(v -> {
+                    UiSoundPlayer.playButtonClick(requireContext());
+                    showTicketDialog();
+                });
             } else {
                 ticketBtn.setVisibility(View.GONE);
             }
@@ -196,8 +200,12 @@ public class EventDetailFragment extends Fragment {
 
         new android.app.AlertDialog.Builder(requireContext())
                 .setTitle(getString(R.string.choose_theater))
-                .setSingleChoiceItems(labels, 0, (dialog, which) -> selected[0] = which)
+                .setSingleChoiceItems(labels, 0, (dialog, which) -> {
+                    UiSoundPlayer.playButtonClick(requireContext());
+                    selected[0] = which;
+                })
                 .setPositiveButton(getString(R.string.buy_tickets), (dialog, which) -> {
+                    UiSoundPlayer.playButtonClick(requireContext());
                     Event.EventReplica replica = replicas.get(selected[0]);
                     if (replica.isPast()) {
                         showTicketWarningDialog(replica.getTicketUrl());
@@ -213,7 +221,10 @@ public class EventDetailFragment extends Fragment {
         new android.app.AlertDialog.Builder(requireContext())
                 .setTitle(getString(R.string.show_already_happened_title))
                 .setMessage(getString(R.string.show_already_happened_message))
-                .setPositiveButton(getString(R.string.proceed_anyway), (d, w) -> openTicketUrl(ticketUrl))
+                .setPositiveButton(getString(R.string.proceed_anyway), (d, w) -> {
+                    UiSoundPlayer.playButtonClick(requireContext());
+                    openTicketUrl(ticketUrl);
+                })
                 .setNegativeButton(android.R.string.cancel, null)
                 .show();
     }
