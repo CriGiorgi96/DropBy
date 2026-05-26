@@ -3,12 +3,16 @@ package com.example.dropby.adapters;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+<<<<<<< HEAD
 import android.widget.ImageView;
+=======
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+<<<<<<< HEAD
 import com.bumptech.glide.Glide;
 import com.example.dropby.R;
 import com.example.dropby.models.Review;
@@ -43,6 +47,18 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.VH> {
         this.avatarClickListener = avatarClickListener;
         this.reviewClickListener = reviewClickListener;
     }
+=======
+import com.example.dropby.R;
+import com.example.dropby.models.Review;
+
+import java.util.List;
+
+public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.VH> {
+
+    private List<Review> items;
+
+    public ReviewAdapter(List<Review> items) { this.items = items; }
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 
     public void update(List<Review> newItems) {
         this.items = newItems;
@@ -60,6 +76,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.VH> {
     @Override
     public void onBindViewHolder(@NonNull VH holder, int position) {
         Review r = items.get(position);
+<<<<<<< HEAD
 
         holder.username.setText(r.getUsername() != null ? r.getUsername() : "Anonimo");
         holder.stars.setText(r.getStarsString());
@@ -132,11 +149,17 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.VH> {
             holder.avatar.setOnClickListener(null);
             holder.avatar.setAlpha(0.75f);
         }
+=======
+        holder.username.setText(r.getUsername() != null ? r.getUsername() : "Anonimo");
+        holder.stars.setText(r.getStarsString());
+        holder.comment.setText(r.getComment() != null ? r.getComment() : "");
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
     }
 
     @Override
     public int getItemCount() { return items.size(); }
 
+<<<<<<< HEAD
     private String formatDate(String raw) {
         if (raw == null || raw.isEmpty()) return null;
         try {
@@ -162,6 +185,15 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.VH> {
             comment      = v.findViewById(R.id.reviewComment);
             eventTitle   = v.findViewById(R.id.reviewEventTitle);
             locationDate = v.findViewById(R.id.reviewLocationDate);
+=======
+    static class VH extends RecyclerView.ViewHolder {
+        TextView username, stars, comment;
+        VH(View v) {
+            super(v);
+            username = v.findViewById(R.id.reviewUsername);
+            stars    = v.findViewById(R.id.reviewStars);
+            comment  = v.findViewById(R.id.reviewComment);
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
         }
     }
 }

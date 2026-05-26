@@ -5,6 +5,11 @@
 
 -- 1. Colonna otp_code deve essere TEXT per contenere hash bcrypt (~72 char)
 ALTER TABLE users ALTER COLUMN otp_code TYPE TEXT;
+<<<<<<< HEAD
+=======
+ALTER TABLE users ADD COLUMN IF NOT EXISTS total_score INTEGER DEFAULT 0;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS max_score INTEGER DEFAULT 0;
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 
 -- 2. Tabella promemoria eventi (one reminder per user per event)
 CREATE TABLE IF NOT EXISTS event_reminders (

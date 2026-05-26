@@ -4,12 +4,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+<<<<<<< HEAD
 import android.widget.ImageView;
+=======
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+<<<<<<< HEAD
 import com.bumptech.glide.Glide;
 import com.example.dropby.R;
 import com.example.dropby.models.Friend;
@@ -20,6 +24,14 @@ import com.example.dropby.network.GlideHelper;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+=======
+import com.example.dropby.R;
+import com.example.dropby.models.Friend;
+import com.example.dropby.models.UserSearchResult;
+
+import java.util.ArrayList;
+import java.util.List;
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 
 public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
 
@@ -30,6 +42,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
         void onAction(Action action, Object item);
     }
 
+<<<<<<< HEAD
     public interface OnAvatarClickListener {
         void onAvatarClick(int userId);
     }
@@ -44,6 +57,15 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
         this.items.addAll(friends);
         this.listener            = listener;
         this.avatarClickListener = avatarClickListener;
+=======
+    private List<Object> items = new ArrayList<>();
+    private Mode mode = Mode.FRIENDS;
+    private final ActionListener listener;
+
+    public FriendAdapter(List<Friend> friends, ActionListener listener) {
+        this.items.addAll(friends);
+        this.listener = listener;
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
     }
 
     public void update(List<Friend> friends, Mode newMode) {
@@ -79,8 +101,11 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
             holder.actionButtons.setVisibility(View.GONE);
             holder.sendRequestBtn.setVisibility(View.VISIBLE);
             holder.sendRequestBtn.setOnClickListener(v -> listener.onAction(Action.SEND_REQUEST, u));
+<<<<<<< HEAD
             holder.avatar.setImageResource(R.drawable.default_guest);
             holder.avatar.setOnClickListener(null);
+=======
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
         } else if (item instanceof Friend) {
             Friend f = (Friend) item;
             holder.username.setText(f.getUsername());
@@ -95,6 +120,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
                 holder.status.setText("Amico");
                 holder.actionButtons.setVisibility(View.GONE);
             }
+<<<<<<< HEAD
 
             loadAvatar(holder, f.getProfileImage());
 
@@ -135,18 +161,29 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
             || lower.endsWith(".gif");
     }
 
+=======
+        }
+    }
+
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
     @Override
     public int getItemCount() { return items.size(); }
 
     static class VH extends RecyclerView.ViewHolder {
+<<<<<<< HEAD
         ImageView avatar;
+=======
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
         TextView username, status;
         View actionButtons;
         Button acceptBtn, rejectBtn, sendRequestBtn;
 
         VH(View v) {
             super(v);
+<<<<<<< HEAD
             avatar         = v.findViewById(R.id.friendAvatar);
+=======
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
             username       = v.findViewById(R.id.friendUsername);
             status         = v.findViewById(R.id.friendStatus);
             actionButtons  = v.findViewById(R.id.friendActionButtons);

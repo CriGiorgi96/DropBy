@@ -35,6 +35,7 @@ public class AuthActivity extends AppCompatActivity {
             return;
         }
 
+<<<<<<< HEAD
         SharedPreferences settings = getSharedPreferences("app_settings", MODE_PRIVATE);
         String language = settings.getString("language", "it");
 
@@ -42,6 +43,8 @@ public class AuthActivity extends AppCompatActivity {
                 LocaleListCompat.forLanguageTags(language)
         );
 
+=======
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
         setContentView(R.layout.activity_auth);
 
         View authContainer = findViewById(R.id.auth_fragment_container);

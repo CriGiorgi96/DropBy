@@ -5,7 +5,10 @@
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="12dp"
     android:layout_marginTop="8dp"
+<<<<<<< HEAD
     android:background="@color/db_surface"
+=======
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
     app:cardCornerRadius="12dp"
     app:cardElevation="3dp">
 
@@ -21,7 +24,11 @@
             android:layout_height="90dp"
             android:scaleType="centerCrop"
             android:src="@drawable/image_placeholder"
+<<<<<<< HEAD
             android:contentDescription="@string/event_poster" />
+=======
+            android:contentDescription="Locandina evento" />
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 
         <LinearLayout
             android:layout_width="0dp"
@@ -36,7 +43,11 @@
                 android:layout_height="wrap_content"
                 android:textSize="15sp"
                 android:textStyle="bold"
+<<<<<<< HEAD
                 android:textColor="@color/db_text_primary"
+=======
+                android:textColor="#333333"
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
                 android:maxLines="2"
                 android:ellipsize="end" />
 
@@ -54,18 +65,31 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:textSize="12sp"
+<<<<<<< HEAD
                 android:textColor="@color/db_text_secondary" />
+=======
+                android:textColor="#666666" />
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 
         </LinearLayout>
 
         <ImageButton
             android:id="@+id/btnRemoveFavorite"
+<<<<<<< HEAD
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_marginEnd="8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/remove_from_favourites"
             android:src="@drawable/ic_favorite_heart"
+=======
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Rimuovi dai preferiti"
+            android:src="@drawable/baseline_heart_broken_24"
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
             android:padding="8dp" />
 
     </LinearLayout>

@@ -1,12 +1,16 @@
 from flask import Blueprint, request, jsonify
 from services.event_service import EventService
+<<<<<<< HEAD
 from database import Database
 from helpers.format_helper import dict_format, dict_format_single
+=======
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 import traceback
 
 events_bp = Blueprint('events', __name__)
 
 
+<<<<<<< HEAD
 # ── DASHBOARD: GET lista ─────────────────────────────────────────────────────
 
 @events_bp.route('/', methods=['GET'], strict_slashes=False)
@@ -203,6 +207,19 @@ def search_events():
             city, category, date, query, location_id,
             only_upcoming, start_date, end_date, include_past
         )
+=======
+@events_bp.route('/search', methods=['GET'])
+def search_events():
+    try:
+        city        = request.args.get('city')
+        category    = request.args.get('category')
+        date        = request.args.get('date')
+        query       = request.args.get('query')
+        loc_raw     = request.args.get('location_id')
+        location_id = int(loc_raw) if loc_raw and loc_raw.isdigit() else None
+
+        events = EventService.search_events(city, category, date, query, location_id)
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
         return jsonify({'events': events}), 200
     except Exception:
         traceback.print_exc()

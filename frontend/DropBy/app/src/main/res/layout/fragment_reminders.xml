@@ -3,11 +3,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+<<<<<<< HEAD
     android:background="@color/db_background">
+=======
+    android:background="#FFF8F5FC">
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+<<<<<<< HEAD
         android:layout_marginTop="@dimen/toolbar_height"
         android:paddingHorizontal="16dp"
         android:paddingTop="16dp"
@@ -16,6 +21,15 @@
         android:textSize="20sp"
         android:textStyle="bold"
         android:textColor="@color/db_text_primary" />
+=======
+        android:paddingHorizontal="16dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="8dp"
+        android:text="Promemoria attivi"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="#333333" />
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 
     <TextView
         android:id="@+id/remindersStatusText"
@@ -23,7 +37,11 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="20dp"
+<<<<<<< HEAD
         android:textColor="@color/db_text_secondary"
+=======
+        android:textColor="#9E9E9E"
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
         android:visibility="gone" />
 
     <androidx.recyclerview.widget.RecyclerView

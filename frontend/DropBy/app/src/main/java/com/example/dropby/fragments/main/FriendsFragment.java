@@ -59,7 +59,11 @@ public class FriendsFragment extends Fragment {
         searchInput  = view.findViewById(R.id.searchUsersInput);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+<<<<<<< HEAD
         adapter = new FriendAdapter(new ArrayList<>(), this::onFriendAction, this::openUserProfile);
+=======
+        adapter = new FriendAdapter(new ArrayList<>(), this::onFriendAction);
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
         recyclerView.setAdapter(adapter);
 
         TabLayout tabs = view.findViewById(R.id.friendsTabLayout);
@@ -94,7 +98,11 @@ public class FriendsFragment extends Fragment {
     }
 
     private void loadFriends() {
+<<<<<<< HEAD
         setStatus(getString(R.string.loading_friends));;
+=======
+        setStatus("Caricamento amici…");
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
         ApiClient.getApiService().getFriends().enqueue(new Callback<ApiService.FriendsWrapper>() {
             @Override
             public void onResponse(Call<ApiService.FriendsWrapper> call,
@@ -115,7 +123,11 @@ public class FriendsFragment extends Fragment {
     }
 
     private void loadRequests() {
+<<<<<<< HEAD
         setStatus(getString(R.string.loading_requests));;
+=======
+        setStatus("Caricamento richieste…");
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
         ApiClient.getApiService().getPendingFriendRequests()
                 .enqueue(new Callback<ApiService.FriendRequestsWrapper>() {
                     @Override
@@ -131,7 +143,11 @@ public class FriendsFragment extends Fragment {
                     }
                     @Override
                     public void onFailure(Call<ApiService.FriendRequestsWrapper> call, Throwable t) {
+<<<<<<< HEAD
                         if (isAdded()) setStatus(getString(R.string.network_error));
+=======
+                        if (isAdded()) setStatus("Errore di rete");
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
                     }
                 });
     }
@@ -139,10 +155,17 @@ public class FriendsFragment extends Fragment {
     private void executeSearch() {
         String query = searchInput.getText().toString().trim();
         if (query.length() < 2) {
+<<<<<<< HEAD
             Toast.makeText(requireContext(), getString(R.string.insert_at_least_two_chars), Toast.LENGTH_SHORT).show();
             return;
         }
         setStatus(getString(R.string.searching));
+=======
+            Toast.makeText(requireContext(), "Inserisci almeno 2 caratteri", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        setStatus("Ricerca…");
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
         ApiClient.getApiService().searchUsers(query)
                 .enqueue(new Callback<UserSearchResult.Response>() {
                     @Override
@@ -152,17 +175,29 @@ public class FriendsFragment extends Fragment {
                         if (response.isSuccessful() && response.body() != null) {
                             List<UserSearchResult> results = response.body().getUsers();
                             if (results == null || results.isEmpty()) {
+<<<<<<< HEAD
                                 setStatus(getString(R.string.no_user_found));
+=======
+                                setStatus("Nessun utente trovato");
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
                                 return;
                             }
                             showFriendsFromSearch(results);
                         } else {
+<<<<<<< HEAD
                             setStatus(getString(R.string.search_error));
+=======
+                            setStatus("Errore ricerca");
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
                         }
                     }
                     @Override
                     public void onFailure(Call<UserSearchResult.Response> call, Throwable t) {
+<<<<<<< HEAD
                         if (isAdded()) setStatus(getString(R.string.network_error));
+=======
+                        if (isAdded()) setStatus("Errore di rete");
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
                     }
                 });
     }
@@ -210,7 +245,11 @@ public class FriendsFragment extends Fragment {
                             if (!isAdded()) return;
                             String msg = (response.isSuccessful() && response.body() != null)
                                     ? response.body().getMessage()
+<<<<<<< HEAD
                                     : getString(R.string.error_sending_request);
+=======
+                                    : "Errore invio richiesta";
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
                             Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show();
                         }
                         @Override public void onFailure(Call<GenericResponse> call, Throwable t) {}
@@ -218,6 +257,7 @@ public class FriendsFragment extends Fragment {
         }
     }
 
+<<<<<<< HEAD
     private void openUserProfile(int userId) {
         if (!isAdded()) return;
         Bundle bundle = new Bundle();
@@ -231,6 +271,8 @@ public class FriendsFragment extends Fragment {
                 .commit();
     }
 
+=======
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
     private void setStatus(String msg) {
         recyclerView.setVisibility(View.GONE);
         statusText.setText(msg);

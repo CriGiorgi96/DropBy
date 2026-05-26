@@ -52,12 +52,105 @@ public class ProfileSettingsFragment extends Fragment {
 
     private String selectedImageType = "";
     private String selectedImageValue = "";
+<<<<<<< HEAD
     private Uri pendingUploadUri = null;
+=======
+    private ActivityResultLauncher<String[]> imagePickerLauncher;
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 
     private ActivityResultLauncher<String[]> imagePickerLauncher;
 
+<<<<<<< HEAD
     public ProfileSettingsFragment() {
         super(R.layout.fragment_profile_settings);
+=======
+        SharedPreferences prefs = requireActivity().getSharedPreferences("app", Context.MODE_PRIVATE);
+
+        imgProfilePreview = view.findViewById(R.id.imgProfilePreview);
+        Button btnChangeProfileImg = view.findViewById(R.id.btnChangeProfileImg);
+        EditText usernameEditText = view.findViewById(R.id.editUsername);
+        Button saveButton = view.findViewById(R.id.btnSaveProfile);
+        Button backButton = view.findViewById(R.id.btnBackToSettings);
+
+        usernameEditText.setText(prefs.getString("username", "Spettatore"));
+
+        if (selectedImageType.isEmpty()) {
+            selectedImageType = prefs.getString("profileImageType", "");
+        }
+
+        if (selectedImageValue.isEmpty()) {
+            selectedImageValue = prefs.getString("profileImageValue", "");
+        }
+
+        loadProfileImagePreview(prefs);
+
+        btnChangeProfileImg.setOnClickListener(v -> showImageChoiceMenu());
+
+        saveButton.setOnClickListener(v -> {
+            String username = usernameEditText.getText().toString().trim();
+
+            if (TextUtils.isEmpty(username)) {
+                usernameEditText.setError("Inserisci un nome utente");
+                return;
+            }
+
+            prefs.edit()
+                    .putString("username", username)
+                    .putString("profileImageType", selectedImageType)
+                    .putString("profileImageValue", selectedImageValue)
+                    .apply();
+
+            if (requireActivity() instanceof HomeActivity) {
+                ((HomeActivity) requireActivity()).refreshProfileUi();
+            }
+
+            Toast.makeText(requireContext(), "Profilo aggiornato", Toast.LENGTH_SHORT).show();
+            requireActivity().getSupportFragmentManager().popBackStack();
+        });
+
+        backButton.setOnClickListener(v -> requireActivity().getSupportFragmentManager().popBackStack());
+    }
+
+    // Shows options to select profile image
+    private void showImageChoiceMenu() {
+        String[] options = {"Scegli tra immagini predefinite", "Carica dal dispositivo"};
+
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Immagine profilo")
+                .setItems(options, (dialog, which) -> {
+                    if (which == 0) {
+                        openDefaultImagePicker();
+                    } else {
+                        openImageFromDevice();
+                    }
+                })
+                .show();
+    }
+
+    // Chose profile image from default images
+    private void openDefaultImagePicker() {
+        requireActivity()
+                .getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, new DefaultImagesFragment())
+                .addToBackStack(null)
+                .commit();
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        SharedPreferences prefs = requireActivity()
+                .getSharedPreferences("app", Context.MODE_PRIVATE);
+
+        selectedImageType = prefs.getString("profileImageType", "");
+        selectedImageValue = prefs.getString("profileImageValue", "");
+
+        if (imgProfilePreview != null) {
+            loadProfileImagePreview(prefs);
+        }
     }
 
     @Override
@@ -67,6 +160,7 @@ public class ProfileSettingsFragment extends Fragment {
         imagePickerLauncher = registerForActivityResult(
                 new ActivityResultContracts.OpenDocument(),
                 uri -> {
+<<<<<<< HEAD
                     if (uri == null) return;
 
                     requireContext().getContentResolver()
@@ -76,6 +170,33 @@ public class ProfileSettingsFragment extends Fragment {
                     selectedImageType = "custom";
                     selectedImageValue = uri.toString();
                     imgProfilePreview.setImageURI(uri);
+=======
+                    if (uri != null) {
+
+                        requireContext().getContentResolver()
+                                .takePersistableUriPermission(
+                                        uri,
+                                        Intent.FLAG_GRANT_READ_URI_PERMISSION
+                                );
+
+                        selectedImageType = "custom";
+                        selectedImageValue = uri.toString();
+
+                        SharedPreferences prefs = requireActivity()
+                                .getSharedPreferences("app", Context.MODE_PRIVATE);
+
+                        prefs.edit()
+                                .putString("profileImageType", selectedImageType)
+                                .putString("profileImageValue", selectedImageValue)
+                                .apply();
+
+                        imgProfilePreview.setImageURI(uri);
+
+                        if (requireActivity() instanceof HomeActivity) {
+                            ((HomeActivity) requireActivity()).refreshProfileUi();
+                        }
+                    }
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
                 }
         );
     }
@@ -478,6 +599,7 @@ public class ProfileSettingsFragment extends Fragment {
         else                                        imgProfilePreview.setImageResource(R.drawable.default_guest);
     }
 
+<<<<<<< HEAD
     private void loadImageFromUrl(String url) {
         new Thread(() -> {
             try {
@@ -519,5 +641,10 @@ public class ProfileSettingsFragment extends Fragment {
             while ((n = is.read(buf)) != -1) bos.write(buf, 0, n);
             return bos.toByteArray();
         }
+=======
+    // Load profile image from device
+    private void openImageFromDevice() {
+        imagePickerLauncher.launch(new String[]{"image/*"});
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
     }
 }

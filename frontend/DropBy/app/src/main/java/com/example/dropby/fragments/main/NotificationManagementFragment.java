@@ -48,7 +48,11 @@ public class NotificationManagementFragment extends Fragment {
     }
 
     private void loadReminders() {
+<<<<<<< HEAD
         setStatus(getString(R.string.loading_reminders));
+=======
+        setStatus("Caricamento promemoria…");
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
         ApiClient.getApiService().getReminders()
                 .enqueue(new Callback<ApiService.RemindersWrapper>() {
                     @Override
@@ -59,20 +63,32 @@ public class NotificationManagementFragment extends Fragment {
                                 && response.body().reminders != null) {
                             List<Reminder> list = response.body().reminders;
                             if (list.isEmpty()) {
+<<<<<<< HEAD
                                 setStatus(getString(R.string.no_active_reminders));
+=======
+                                setStatus("Nessun promemoria attivo");
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
                             } else {
                                 statusText.setVisibility(View.GONE);
                                 adapter.update(list);
                                 recyclerView.setVisibility(View.VISIBLE);
                             }
                         } else {
+<<<<<<< HEAD
                             setStatus(getString(R.string.error_loading_reminders));
+=======
+                            setStatus("Errore caricamento promemoria");
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
                         }
                     }
                     @Override
                     public void onFailure(@NonNull Call<ApiService.RemindersWrapper> call,
                                           @NonNull Throwable t) {
+<<<<<<< HEAD
                         if (isAdded()) setStatus(getString(R.string.network_error));
+=======
+                        if (isAdded()) setStatus("Errore di rete");
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
                     }
                 });
     }
@@ -87,7 +103,11 @@ public class NotificationManagementFragment extends Fragment {
                         if (response.isSuccessful()) {
                             ReminderScheduler.cancel(requireContext(), reminder.getEventId());
                             Toast.makeText(requireContext(),
+<<<<<<< HEAD
                                     R.string.reminder_removed, Toast.LENGTH_SHORT).show();
+=======
+                                    "Promemoria rimosso", Toast.LENGTH_SHORT).show();
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
                             loadReminders();
                         }
                     }

@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<<<<<<< HEAD
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -7,10 +8,18 @@
     android:layout_marginTop="8dp"
     app:cardCornerRadius="12dp"
     app:cardElevation="2dp">
+=======
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="12dp">
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+<<<<<<< HEAD
         android:orientation="vertical"
         android:padding="14dp">
 
@@ -102,3 +111,41 @@
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>
+=======
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/myReviewEventTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:textColor="#1A1A2E" />
+
+        <TextView
+            android:id="@+id/myReviewStars"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textColor="#FFC107" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/myReviewComment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:textSize="13sp"
+        android:textColor="#555555" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="10dp"
+        android:background="#EEEEEE" />
+
+</LinearLayout>
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)

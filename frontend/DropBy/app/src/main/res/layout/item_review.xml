@@ -1,18 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<<<<<<< HEAD
     xmlns:app="http://schemas.android.com/apk/res-auto"
+=======
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="10dp">
 
+<<<<<<< HEAD
     <!-- Riga avatar + username + stelle -->
+=======
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical">
 
+<<<<<<< HEAD
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/reviewAvatar"
             android:layout_width="40dp"
@@ -22,6 +29,8 @@
             android:src="@drawable/default_guest"
             app:shapeAppearanceOverlay="@style/CircleImage" />
 
+=======
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
         <TextView
             android:id="@+id/reviewUsername"
             android:layout_width="0dp"
@@ -29,7 +38,11 @@
             android:layout_weight="1"
             android:textStyle="bold"
             android:textSize="14sp"
+<<<<<<< HEAD
             android:textColor="@color/db_text_secondary" />
+=======
+            android:textColor="#333333" />
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 
         <TextView
             android:id="@+id/reviewStars"
@@ -44,6 +57,7 @@
         android:id="@+id/reviewComment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+<<<<<<< HEAD
         android:layout_marginTop="6dp"
         android:layout_marginStart="50dp"
         android:textSize="13sp"
@@ -69,11 +83,20 @@
         android:textSize="12sp"
         android:textColor="@color/db_text_secondary"
         android:visibility="gone" />
+=======
+        android:layout_marginTop="4dp"
+        android:textSize="13sp"
+        android:textColor="#555555" />
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginTop="8dp"
+<<<<<<< HEAD
         android:background="@color/db_background" />
+=======
+        android:background="#EEEEEE" />
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 
 </LinearLayout>

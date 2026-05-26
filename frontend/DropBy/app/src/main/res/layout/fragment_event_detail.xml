@@ -44,6 +44,7 @@
                 android:id="@+id/btnFavorite"
                 android:layout_width="44dp"
                 android:layout_height="44dp"
+<<<<<<< HEAD
                 android:layout_gravity="bottom|end"
                 android:layout_margin="12dp"
                 android:background="@drawable/bg_circle_white"
@@ -52,6 +53,14 @@
                 android:src="@drawable/ic_favorite_border"
                 android:scaleType="centerInside"
                 android:adjustViewBounds="true"
+=======
+                android:layout_gravity="top|end"
+                android:layout_margin="12dp"
+                android:background="@drawable/bg_circle_white"
+                android:contentDescription="Aggiungi ai preferiti"
+                android:padding="8dp"
+                android:src="@drawable/ic_favorite_border"
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
                 android:visibility="gone" />
 
         </FrameLayout>
@@ -160,10 +169,17 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+<<<<<<< HEAD
                 android:text="@string/reviews"
                 android:textColor="@color/db_text_primary"
                 android:textSize="20sp"
                 style="@style/AppTitle" />
+=======
+                android:text="Recensioni"
+                android:textColor="#1A1A2E"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/reviewsRecyclerView"
@@ -178,8 +194,13 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:padding="8dp"
+<<<<<<< HEAD
                 android:textColor="@color/db_text_hint"
                 android:textSize="14sp"
+=======
+                android:textColor="#9E9E9E"
+                android:textSize="13sp"
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
                 android:visibility="gone" />
 
             <!-- Form aggiunta recensione (solo per utenti loggati) -->
@@ -197,6 +218,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/write_review"
+<<<<<<< HEAD
                     android:textColor="@color/db_text_primary"
                     android:textSize="14sp"
                     android:textStyle="bold" />
@@ -336,11 +358,21 @@
 
                 </LinearLayout>
 
+=======
+                    android:textColor="#6A1B9A"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
                 <RatingBar
                     android:id="@+id/reviewRatingBar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+<<<<<<< HEAD
                     android:layout_marginTop="14dp"
+=======
+                    android:layout_marginTop="8dp"
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
                     android:numStars="5"
                     android:stepSize="1"
                     android:rating="3" />
@@ -363,7 +395,11 @@
                     android:layout_marginTop="10dp"
                     android:backgroundTint="#7B1FA2"
                     android:text="@string/submit"
+<<<<<<< HEAD
                     android:textColor="@color/db_text_primary" />
+=======
+                    android:textColor="@android:color/white" />
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 
             </LinearLayout>
 

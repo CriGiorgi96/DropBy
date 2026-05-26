@@ -83,6 +83,7 @@ public class VerificationFragment extends Fragment {
                             if (response.isSuccessful() && response.body() != null) {
                                 OtpResponse body = response.body();
                                 Toast.makeText(getContext(),
+<<<<<<< HEAD
                                         getString(R.string.account_verified), Toast.LENGTH_SHORT).show();
                                 launchHome(body.userId, body.username,
                                         body.email   != null ? body.email   : "",
@@ -90,6 +91,13 @@ public class VerificationFragment extends Fragment {
                                         body.token   != null ? body.token   : "",
                                         body.profileImage,
                                         body.privateFavorites, body.privateReviews);
+=======
+                                        "Account verificato!", Toast.LENGTH_SHORT).show();
+                                launchHome(body.userId, body.username,
+                                        body.email   != null ? body.email   : "",
+                                        body.gender  != null ? body.gender  : "guest",
+                                        body.token   != null ? body.token   : "");
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
                             } else {
                                 String err = response.code() == 400
                                         ? getString(R.string.invalid_or_expired_code)
@@ -141,6 +149,7 @@ public class VerificationFragment extends Fragment {
         });
     }
 
+<<<<<<< HEAD
     private void launchHome(int userId, String username, String email, String gender, String token,
                             String profileImage,
                             boolean privateFavorites, boolean privateReviews) {
@@ -166,6 +175,18 @@ public class VerificationFragment extends Fragment {
                 .putString("profileImageValue",   imgValue)
                 .putBoolean("privateFavorites",   privateFavorites)
                 .putBoolean("privateReviews",     privateReviews)
+=======
+    private void launchHome(int userId, String username, String email, String gender, String token) {
+        SharedPreferences prefs = requireActivity()
+                .getSharedPreferences("app", requireContext().MODE_PRIVATE);
+        prefs.edit()
+                .putString("userType", "LOGGED")
+                .putString("username", username != null ? username : "Spettatore")
+                .putString("gender",   gender)
+                .putString("email",    email)
+                .putString("token",    token)
+                .putInt("userId",      userId)
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
                 .apply();
 
 

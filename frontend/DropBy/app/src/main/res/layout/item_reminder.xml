@@ -59,7 +59,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="32dp"
                 android:backgroundTint="#FFEBEE"
+<<<<<<< HEAD
                 android:text="@string/delete"
+=======
+                android:text="Rimuovi"
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
                 android:textColor="#E53935"
                 android:textSize="12sp" />
 

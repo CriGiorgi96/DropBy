@@ -3,6 +3,7 @@
 
     <group android:id="@+id/group_authenticated" android:checkableBehavior="none">
 
+<<<<<<< HEAD
         <item android:id="@+id/nav_right_group_account" android:title="Account">
 
             <menu>
@@ -38,6 +39,22 @@
         </item>
 
 
+=======
+        <item
+            android:id="@+id/nav_right_profile"
+            android:icon="@android:drawable/ic_menu_my_calendar"
+            android:title="Il mio profilo" />
+
+        <item
+            android:id="@+id/nav_right_favorites"
+            android:icon="@android:drawable/btn_star_big_on"
+            android:title="Preferiti" />
+
+        <item
+            android:id="@+id/nav_right_reviews"
+            android:icon="@android:drawable/ic_menu_edit"
+            android:title="Le mie recensioni" />
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 
     </group>
 
@@ -46,18 +63,49 @@
             <item
                 android:id="@+id/nav_right_friends"
                 android:icon="@android:drawable/ic_menu_share"
+<<<<<<< HEAD
                 android:title="@string/friends_title" />
+=======
+                android:title="Amici" />
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 
             <item
                 android:id="@+id/nav_right_proposals"
                 android:icon="@android:drawable/ic_menu_send"
+<<<<<<< HEAD
                 android:title="@string/proposals_title" />
+=======
+                android:title="Proposte eventi" />
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 
             <item
                 android:id="@+id/nav_right_notifications"
                 android:icon="@android:drawable/ic_dialog_info"
+<<<<<<< HEAD
                 android:title="@string/notifications_title" />
 
+=======
+                android:title="Notifiche" />
+
+            <item
+                android:id="@+id/nav_right_reminders"
+                android:icon="@android:drawable/ic_menu_agenda"
+                android:title="Promemoria" />
+        </menu>
+    </item>
+
+    <item android:id="@+id/nav_right_group_account" android:title="Account">
+        <menu>
+            <item
+                android:id="@+id/nav_right_settings"
+                android:icon="@android:drawable/ic_menu_preferences"
+                android:title="Impostazioni" />
+
+            <item
+                android:id="@+id/nav_right_logout"
+                android:icon="@android:drawable/ic_lock_power_off"
+                android:title="Logout" />
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
         </menu>
     </item>
 
@@ -66,17 +114,29 @@
         <item
             android:id="@+id/nav_right_login"
             android:icon="@android:drawable/ic_menu_send"
+<<<<<<< HEAD
             android:title="@string/login_button" />
+=======
+            android:title="Accedi" />
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 
         <item
             android:id="@+id/nav_right_register"
             android:icon="@android:drawable/ic_menu_add"
+<<<<<<< HEAD
             android:title="@string/register_button" />
+=======
+            android:title="Registrati" />
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 
         <item
             android:id="@+id/nav_right_exit"
             android:icon="@android:drawable/ic_lock_power_off"
+<<<<<<< HEAD
             android:title="@string/exit" />
+=======
+            android:title="Esci" />
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 
     </group>
 

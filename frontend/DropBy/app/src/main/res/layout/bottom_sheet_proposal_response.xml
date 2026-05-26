@@ -2,7 +2,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+<<<<<<< HEAD
     android:layout_marginTop="@dimen/toolbar_height"
+=======
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
     android:orientation="vertical"
     android:background="@android:color/white"
     android:paddingBottom="32dp">
@@ -22,11 +25,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
+<<<<<<< HEAD
         android:text="@string/answer_request"
         style="@style/AppTitle"
         android:textSize="12sp"
         android:textAllCaps="true"
         android:textColor="@color/db_text_primary"
+=======
+        android:text="Risposta proposta"
+        android:textSize="12sp"
+        android:textAllCaps="true"
+        android:textColor="#7B1FA2"
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
         android:letterSpacing="0.1"
         android:fontFamily="sans-serif-medium" />
 
@@ -39,7 +49,11 @@
         android:layout_marginTop="8dp"
         android:layout_marginBottom="28dp"
         android:textSize="17sp"
+<<<<<<< HEAD
         android:textColor="@color/db_text_secondary"
+=======
+        android:textColor="#333333"
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
         android:lineSpacingMultiplier="1.3" />
 
     <!-- Separatore -->
@@ -79,7 +93,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
+<<<<<<< HEAD
                 android:text="@string/coming"
+=======
+                android:text="Ci vengo!"
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
                 android:textSize="12sp"
                 android:textColor="#4CAF50"
                 android:fontFamily="sans-serif-medium" />
@@ -107,7 +125,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
+<<<<<<< HEAD
                 android:text="@string/think_about_coming"
+=======
+                android:text="Ci penso"
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
                 android:textSize="12sp"
                 android:textColor="#FF9800"
                 android:fontFamily="sans-serif-medium" />
@@ -135,7 +157,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
+<<<<<<< HEAD
                 android:text="@string/not_coming"
+=======
+                android:text="Non posso"
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
                 android:textSize="12sp"
                 android:textColor="#F44336"
                 android:fontFamily="sans-serif-medium" />

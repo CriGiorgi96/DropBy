@@ -84,6 +84,7 @@ public class RegisterFragment extends Fragment {
         EditText etBirthday  = view.findViewById(R.id.etBirthday);
         EditText etPassword  = view.findViewById(R.id.etPassword);
 
+<<<<<<< HEAD
         // DatePickerDialog al tap sul campo data — età minima 13 anni
         etBirthday.setFocusable(false);
         etBirthday.setClickable(true);
@@ -109,6 +110,21 @@ public class RegisterFragment extends Fragment {
             // Il picker impedisce fisicamente di selezionare date future o sotto i 13 anni
             dialog.getDatePicker().setMaxDate(maxCal.getTimeInMillis());
             dialog.show();
+=======
+        // DatePickerDialog al tap sul campo data
+        etBirthday.setFocusable(false);
+        etBirthday.setClickable(true);
+        etBirthday.setOnClickListener(v -> {
+            Calendar cal = Calendar.getInstance();
+            int y = cal.get(Calendar.YEAR) - 20;
+            int m = cal.get(Calendar.MONTH);
+            int d = cal.get(Calendar.DAY_OF_MONTH);
+            new DatePickerDialog(requireContext(), (picker, year, month, day) -> {
+                birthdayIso = String.format(Locale.US, "%04d-%02d-%02d", year, month + 1, day);
+                etBirthday.setText(String.format(Locale.ITALY, "%02d/%02d/%04d", day, month + 1, year));
+                etBirthday.setError(null);
+            }, y, m, d).show();
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
         });
 
         RadioGroup rgGender  = view.findViewById(R.id.rgGender);
@@ -159,7 +175,11 @@ public class RegisterFragment extends Fragment {
             }
 
             if (birthdayIso.isEmpty()) {
+<<<<<<< HEAD
                 etBirthday.setError(getString(R.string.insert_birthday));
+=======
+                etBirthday.setError("Seleziona la data di nascita");
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
                 return;
             }
 

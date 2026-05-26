@@ -5,7 +5,10 @@
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="12dp"
     android:layout_marginTop="8dp"
+<<<<<<< HEAD
     android:background="@color/db_surface"
+=======
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
     app:cardCornerRadius="12dp"
     app:cardElevation="3dp">
 
@@ -36,7 +39,11 @@
                 android:layout_height="wrap_content"
                 android:textSize="15sp"
                 android:textStyle="bold"
+<<<<<<< HEAD
                 android:textColor="@color/db_text_primary" />
+=======
+                android:textColor="#333333" />
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 
             <TextView
                 android:id="@+id/friendStatus"
@@ -62,7 +69,11 @@
                 android:layout_height="36dp"
                 android:backgroundTint="#4CAF50"
                 android:text="✓"
+<<<<<<< HEAD
                 android:textColor="@color/white"
+=======
+                android:textColor="@android:color/white"
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
                 android:textSize="14sp" />
 
             <Button
@@ -72,7 +83,11 @@
                 android:layout_marginStart="6dp"
                 android:backgroundTint="#F44336"
                 android:text="✗"
+<<<<<<< HEAD
                 android:textColor="@color/white"
+=======
+                android:textColor="@android:color/white"
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
                 android:textSize="14sp" />
 
         </LinearLayout>
@@ -83,8 +98,13 @@
             android:layout_width="wrap_content"
             android:layout_height="36dp"
             android:backgroundTint="#7B1FA2"
+<<<<<<< HEAD
             android:text="@string/add"
             android:textColor="@color/white"
+=======
+            android:text="+ Aggiungi"
+            android:textColor="@android:color/white"
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
             android:textSize="12sp"
             android:visibility="gone" />
 

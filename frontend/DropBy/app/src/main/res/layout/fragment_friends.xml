@@ -3,17 +3,28 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+<<<<<<< HEAD
     android:background="@color/db_background">
+=======
+    android:background="#FFF8F5FC">
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+<<<<<<< HEAD
         android:layout_marginTop="@dimen/toolbar_height"
+=======
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
         android:padding="16dp"
         android:text="@string/friends_title"
         android:textSize="20sp"
         android:textStyle="bold"
+<<<<<<< HEAD
         android:textColor="@color/db_text_primary" />
+=======
+        android:textColor="#333333" />
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 
     <!-- Barra ricerca utenti -->
     <LinearLayout
@@ -40,8 +51,13 @@
             android:layout_height="48dp"
             android:layout_marginStart="8dp"
             android:backgroundTint="#7B1FA2"
+<<<<<<< HEAD
             android:text="@string/search"
             android:textColor="@color/db_text_primary" />
+=======
+            android:text="Cerca"
+            android:textColor="@android:color/white" />
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 
     </LinearLayout>
 
@@ -50,8 +66,12 @@
         android:id="@+id/friendsTabLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+<<<<<<< HEAD
         android:contentDescription="@string/tabLayout"
         android:background="@color/db_surface" />
+=======
+        android:background="#FFFFFF" />
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 
     <!-- Status (caricamento / errore / vuoto) -->
     <TextView
@@ -60,7 +80,11 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="16dp"
+<<<<<<< HEAD
         android:textColor="@color/db_text_secondary"
+=======
+        android:textColor="#9E9E9E"
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
         android:visibility="gone" />
 
     <androidx.recyclerview.widget.RecyclerView

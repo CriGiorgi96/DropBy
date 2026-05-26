@@ -107,6 +107,7 @@
                 android:textColor="#6A6274"
                 android:textSize="14sp" />
 
+<<<<<<< HEAD
             <TextView
                 android:id="@+id/theaterDescriptionText"
                 android:layout_width="match_parent"
@@ -116,6 +117,39 @@
                 android:textColor="#333333"
                 android:textSize="14sp"
                 android:visibility="gone" />
+=======
+            <!-- Pulsanti azione -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/theaterFloorPlanButton"
+                    android:layout_width="0dp"
+                    android:layout_height="42dp"
+                    android:layout_weight="1"
+                    android:backgroundTint="#7B1FA2"
+                    android:text="Planimetria"
+                    android:textColor="#FFFFFF"
+                    android:textSize="13sp"
+                    android:visibility="gone" />
+
+                <Button
+                    android:id="@+id/theaterDirectionsButton"
+                    android:layout_width="0dp"
+                    android:layout_height="42dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:backgroundTint="#1565C0"
+                    android:text="Indicazioni"
+                    android:textColor="#FFFFFF"
+                    android:textSize="13sp"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 
             <!-- Pulsanti azione -->
             <LinearLayout

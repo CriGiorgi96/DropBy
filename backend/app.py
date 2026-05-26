@@ -1,7 +1,8 @@
-from flask import Flask, jsonify, send_from_directory
+from flask import Flask, jsonify, send_from_directory, request
 from flask_cors import CORS
 from database import init_db
 from config import Config
+from repositories.user_repository import UserRepository
 import os
 
 app = Flask(__name__, static_folder='static', static_url_path='/static')
@@ -93,15 +94,48 @@ def home():
         }
     })
 
+@app.route('/submit_score', methods=['POST'])
+def submit_score():
+    data = request.get_json()
+    if not data or 'email' not in data or 'score' not in data:
+        return jsonify({'error': 'email e score sono obbligatori'}), 400
+
+    try:
+        score_value = int(data['score'])
+    except (TypeError, ValueError):
+        return jsonify({'error': 'score deve essere un numero intero'}), 400
+
+    if score_value < 0:
+        return jsonify({'error': 'score non può essere negativo'}), 400
+
+    user = UserRepository.find_by_email(data['email'])
+    if not user:
+        return jsonify({'error': 'Utente non trovato'}), 404
+
+    updated = UserRepository.add_score_to_user(data['email'], score_value)
+    if not updated:
+        return jsonify({'error': 'Impossibile aggiornare lo score'}), 500
+
+    return jsonify({
+        'message': 'Score salvato con successo',
+        'email': data['email'],
+        'total_score': updated['total_score'],
+        'max_score': updated['max_score']
+    }), 200
+
 @app.route('/api/health')
 def health():
     return jsonify({"status": "healthy"})
 
-@app.route('/')
-def index():
-    return app.send_static_file('dashboard.html')
+@app.route('/api/auth/leaderboard', methods=['GET'])
+def get_leaderboard():
+    try:
+        top_players = UserRepository.get_top_users(limit=5)
+        return jsonify(top_players), 200
+    except Exception as e:
+        print(f"Errore leaderboard: {e}")
+        return jsonify({'error': 'Errore nel recupero della classifica'}), 500
 
 if __name__ == '__main__':
     print("🚀 Server avviato con tutti i moduli")
     app.run(host='0.0.0.0', port=5000, debug=True)
-    

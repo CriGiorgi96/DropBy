@@ -10,16 +10,23 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+<<<<<<< HEAD
 import com.bumptech.glide.Glide;
 import com.example.dropby.R;
 import com.example.dropby.models.FavoriteItem;
 import com.example.dropby.network.GlideHelper;
+=======
+import com.example.dropby.R;
+import com.example.dropby.models.FavoriteItem;
+import com.example.dropby.network.ImageLoader;
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 
 import java.util.List;
 import java.util.function.Consumer;
 
 public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.VH> {
 
+<<<<<<< HEAD
     public interface OnFavoriteClickListener {
         void onFavoriteClick(int eventId);
     }
@@ -33,6 +40,14 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.VH> {
         this.items         = items;
         this.onRemove      = onRemove;
         this.clickListener = clickListener;
+=======
+    private List<FavoriteItem> items;
+    private final Consumer<FavoriteItem> onRemove;
+
+    public FavoriteAdapter(List<FavoriteItem> items, Consumer<FavoriteItem> onRemove) {
+        this.items    = items;
+        this.onRemove = onRemove;
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
     }
 
     public void update(List<FavoriteItem> newItems) {
@@ -60,6 +75,7 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.VH> {
         if (item.getEventDate() != null) meta.append(" · ").append(item.getEventDate());
         holder.meta.setText(meta.toString());
 
+<<<<<<< HEAD
         String imgUrl = item.getMainImageUrl();
         if (imgUrl != null && !imgUrl.isEmpty()) {
             Glide.with(holder.image.getContext())
@@ -83,6 +99,11 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.VH> {
         } else {
             holder.removeBtn.setVisibility(View.GONE);
         }
+=======
+        ImageLoader.loadInto(holder.image, item.getMainImageUrl());
+
+        holder.removeBtn.setOnClickListener(v -> onRemove.accept(item));
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
     }
 
     @Override

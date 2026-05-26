@@ -3,12 +3,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+<<<<<<< HEAD
     android:background="@color/db_background">
+=======
+    android:background="#FFF8F5FC">
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+<<<<<<< HEAD
         android:layout_marginTop="@dimen/toolbar_height"
+=======
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:paddingStart="16dp"
@@ -22,15 +29,24 @@
             android:text="@string/notifications_title"
             android:textSize="20sp"
             android:textStyle="bold"
+<<<<<<< HEAD
             android:textColor="@color/db_text_secondary" />
+=======
+            android:textColor="#333333" />
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 
         <Button
             android:id="@+id/markAllReadButton"
             android:layout_width="wrap_content"
             android:layout_height="36dp"
             android:backgroundTint="#7B1FA2"
+<<<<<<< HEAD
             android:text="@string/mark_all"
             android:textColor="@color/db_text_primary"
+=======
+            android:text="Segna tutte"
+            android:textColor="@android:color/white"
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
             android:textSize="12sp" />
 
     </LinearLayout>
@@ -41,7 +57,11 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="20dp"
+<<<<<<< HEAD
         android:textColor="@color/db_text_secondary"
+=======
+        android:textColor="#9E9E9E"
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
         android:visibility="gone" />
 
     <androidx.recyclerview.widget.RecyclerView

@@ -12,6 +12,7 @@ class NotificationsService:
         NotificationRepository.mark_as_read(notification_id, user_id)
         return {'message': 'Notifica segnata come letta'}
 
+<<<<<<< HEAD
     @staticmethod
     def mark_all_read(user_id):
         NotificationRepository.mark_all_read(user_id)
@@ -22,6 +23,8 @@ class NotificationsService:
         NotificationRepository.delete(notification_id, user_id)
         return {'message': 'Notifica eliminata'}
 
+=======
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
     # ---- Promemoria eventi ----
 
     @staticmethod

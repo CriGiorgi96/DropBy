@@ -1,8 +1,12 @@
 package com.example.dropby.fragments.main;
 
+<<<<<<< HEAD
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+=======
+import android.content.Intent;
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;

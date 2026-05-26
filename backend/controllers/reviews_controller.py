@@ -36,6 +36,7 @@ def get_user_reviews(current_user):
         reviews = ReviewsService.get_user_reviews(current_user['user_id'])
         return jsonify({'reviews': reviews}), 200
     except Exception as e:
+<<<<<<< HEAD
         return jsonify({'error': str(e)}), 500
 
 @reviews_bp.route('/<int:review_id>', methods=['DELETE'])
@@ -45,4 +46,6 @@ def delete_review(current_user, review_id):
         result = ReviewsService.delete_review(current_user['user_id'], review_id)
         return jsonify(result), 200
     except Exception as e:
+=======
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
         return jsonify({'error': str(e)}), 500

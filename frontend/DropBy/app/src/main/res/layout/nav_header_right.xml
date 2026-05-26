@@ -4,6 +4,7 @@
     android:layout_height="wrap_content"
     android:background="@android:color/transparent"
     android:orientation="vertical"
+<<<<<<< HEAD
     android:paddingStart="16dp"
     android:paddingTop="8dp"
     android:paddingEnd="16dp"
@@ -15,18 +16,36 @@
         android:layout_height="70dp"
         android:layout_gravity="center_horizontal"
         android:contentDescription="@string/user_avatar"
+=======
+    android:padding="20dp"
+    android:minHeight="160dp">
+
+    <ImageView
+        android:id="@+id/headerAvatar"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:layout_gravity="center_horizontal"
+        android:contentDescription="Avatar utente"
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
         android:src="@drawable/default_guest" />
 
     <TextView
         android:id="@+id/headerUsername"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+<<<<<<< HEAD
         android:layout_marginTop="8dp"
         android:gravity="center"
         android:maxLines="1"
         android:ellipsize="end"
         android:text="@string/guest_username"
         android:textColor="@color/db_text_primary"
+=======
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:text="@string/guest_username"
+        android:textColor="@android:color/white"
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
         android:textSize="16sp"
         android:textStyle="bold" />
 
@@ -36,9 +55,16 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
         android:gravity="center"
+<<<<<<< HEAD
         android:maxLines="1"
         android:ellipsize="end"
         android:textColor="@color/db_text_secondary"
         android:textSize="12sp" />
 
 </LinearLayout>
+=======
+        android:text=""
+        android:textSize="12sp" />
+
+</LinearLayout>
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)

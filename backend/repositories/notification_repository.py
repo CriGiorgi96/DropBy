@@ -35,7 +35,12 @@ class NotificationRepository:
         """
         params = {'user_id': user_id}
         if unread_only:
+<<<<<<< HEAD
             query += " AND n.is_read = false"
+=======
+            # cast esplicito: funziona sia con INTEGER (0/1) che con BOOLEAN
+            query += " AND n.is_read::int = 0"
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
         query += " ORDER BY n.created_at DESC"
         rows = conn.run(query, **params)
         return dict_format(conn, rows)
@@ -45,11 +50,16 @@ class NotificationRepository:
         db = Database()
         conn = db.get_connection()
         conn.run(
+<<<<<<< HEAD
             "UPDATE notifications SET is_read = true WHERE id = :id AND user_id = :user_id",
+=======
+            "UPDATE notifications SET is_read = 1 WHERE id = :id AND user_id = :user_id",
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
             id=notification_id, user_id=user_id
         )
         conn.run("COMMIT")
 
+<<<<<<< HEAD
     @staticmethod
     def mark_all_read(user_id):
         db = Database()
@@ -70,6 +80,8 @@ class NotificationRepository:
         )
         conn.run("COMMIT")
 
+=======
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
     # ---- Promemoria eventi ----
 
     @staticmethod

@@ -104,9 +104,13 @@ public class LoginFragment extends Fragment {
                                 launchHome(body.userId, body.username,
                                         body.gender != null ? body.gender : "guest",
                                         body.email != null ? body.email : "",
+<<<<<<< HEAD
                                         body.token != null ? body.token : "",
                                         body.profileImage,
                                         body.privateFavorites, body.privateReviews);
+=======
+                                        body.token != null ? body.token : "");
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 
                             } else if (response.code() == 403) {
                                 // Email non verificata — porta al fragment OTP
@@ -133,6 +137,7 @@ public class LoginFragment extends Fragment {
         });
     }
 
+<<<<<<< HEAD
     private void launchHome(int userId, String username, String gender, String email, String token,
                             String profileImage,
                             boolean privateFavorites, boolean privateReviews) {
@@ -158,6 +163,18 @@ public class LoginFragment extends Fragment {
                 .putString("profileImageValue",   imgValue)
                 .putBoolean("privateFavorites",   privateFavorites)
                 .putBoolean("privateReviews",     privateReviews)
+=======
+    private void launchHome(int userId, String username, String gender, String email, String token) {
+        SharedPreferences prefs = requireActivity()
+                .getSharedPreferences("app", requireContext().MODE_PRIVATE);
+        prefs.edit()
+                .putString("userType", "LOGGED")
+                .putString("username", username != null ? username : "Spettatore")
+                .putString("gender",   gender)
+                .putString("email",    email)
+                .putString("token",    token)
+                .putInt("userId",      userId)
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
                 .apply();
 
 

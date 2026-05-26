@@ -68,17 +68,17 @@ public class StartFragment extends Fragment {
     }
 
     void launchHome(String userType) {
-        requireActivity()
-                .getSharedPreferences("app", requireContext().MODE_PRIVATE)
-                .edit()
+        android.content.SharedPreferences prefs =
+                requireActivity().getSharedPreferences("app", requireContext().MODE_PRIVATE);
+        // Reset completo + imposta solo i valori guest
+        prefs.edit()
+                .clear()
                 .putString("userType", userType)
                 .putString("username", "Spettatore")
-                .putString("gender", "guest")
-                // BUG FIX: un ospite non deve avere un userId (era hardcoded a 1).
-                // Rimuoviamo qualsiasi userId precedente per evitare che un ospite
-                // acceda a endpoint autenticati come /favorites/user/{userId}.
-                .remove("userId")
+                .putString("gender",   "guest")
                 .apply();
+
+
 
         Intent intent = new Intent(requireActivity(), HomeActivity.class);
         startActivity(intent);

@@ -16,6 +16,11 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS is_verified BOOLEAN DEFAULT FALSE;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS otp_code VARCHAR(10);
 ALTER TABLE users ADD COLUMN IF NOT EXISTS otp_expires_at TIMESTAMP;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS last_login TIMESTAMP;
+<<<<<<< HEAD
+=======
+ALTER TABLE users ADD COLUMN IF NOT EXISTS total_score INTEGER DEFAULT 0;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS max_score INTEGER DEFAULT 0;
+>>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 
 -- ────────────────────────────────────────────────────────────────────────────
 -- 1b. Aggiunge production_id agli eventi (usato per raggruppare repliche)
