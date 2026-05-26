@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:text="@string/settings_title"
         android:textSize="26sp"
-        android:textStyle="bold"
+        style="@style/AppTitle"
         android:layout_marginBottom="32dp" />
 
     <Button
@@ -20,15 +20,5 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/url_config" />
-<<<<<<< HEAD
-=======
-
-    <Button
-        android:id="@+id/btnProfileSettings"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/profile_settings"
-        android:layout_marginTop="16dp" />
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 
 </LinearLayout>

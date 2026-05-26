@@ -5,6 +5,7 @@
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="12dp"
     android:layout_marginTop="8dp"
+    android:background="@color/db_surface"
     app:cardCornerRadius="12dp"
     app:cardElevation="2dp">
 
@@ -19,8 +20,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="#1A1A2E" />
+            style="@style/AppTitle"
+            android:textColor="@color/db_text_primary" />
 
         <TextView
             android:id="@+id/reminderEventCity"
@@ -28,7 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
             android:textSize="13sp"
-            android:textColor="#6A6274" />
+            android:textColor="@color/db_text_secondary" />
 
         <TextView
             android:id="@+id/reminderEventDate"
@@ -36,7 +37,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:textSize="13sp"
-            android:textColor="#6A6274" />
+            android:textColor="@color/db_text_secondary" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -51,20 +52,16 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textSize="13sp"
-                android:textColor="#7B1FA2"
+                android:textColor="@color/db_accent"
                 android:textStyle="bold" />
 
             <Button
                 android:id="@+id/btnDeleteReminder"
                 android:layout_width="wrap_content"
-                android:layout_height="32dp"
-                android:backgroundTint="#FFEBEE"
-<<<<<<< HEAD
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/db_accent_dark"
                 android:text="@string/delete"
-=======
-                android:text="Rimuovi"
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
-                android:textColor="#E53935"
+                android:textColor="@color/db_text_primary"
                 android:textSize="12sp" />
 
         </LinearLayout>

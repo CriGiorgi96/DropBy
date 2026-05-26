@@ -52,7 +52,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/highlights"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/white"
                         android:textSize="13sp"
                         android:textStyle="bold"
                         style="@style/AppTextLight"/>
@@ -63,7 +63,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:maxLines="3"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/white"
                         android:textSize="34sp"
                         style="@style/AppTitle"
                         tools:text="Aida" />
@@ -74,7 +74,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:maxLines="2"
-                        android:textColor="@color/db_text_secondary"
+                        android:textColor="@color/theater_surface"
                         android:textSize="15sp"
                         tools:text="Catania - 2026-01-20 - Opera" />
                     <Button

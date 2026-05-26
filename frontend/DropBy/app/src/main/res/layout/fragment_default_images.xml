@@ -2,7 +2,6 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-<<<<<<< HEAD
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="16dp">
 
@@ -108,88 +107,5 @@
 
         </GridLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
-=======
-    android:padding="16dp">
-
-    <GridLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:columnCount="3">
-
-        <ImageView
-            android:id="@+id/imgDefaultMale"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_margin="8dp"
-            android:src="@drawable/default_male"
-            android:scaleType="centerCrop" />
-
-        <ImageView
-            android:id="@+id/imgDefaultFemale"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_margin="8dp"
-            android:src="@drawable/default_female"
-            android:scaleType="centerCrop" />
-
-        <ImageView
-            android:id="@+id/imgDefaultGuest"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_margin="8dp"
-            android:src="@drawable/default_guest"
-            android:scaleType="centerCrop" />
-
-        <ImageView
-            android:id="@+id/imgDefaultM1"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_margin="8dp"
-            android:src="@drawable/male_01"
-            android:scaleType="centerCrop" />
-
-        <ImageView
-            android:id="@+id/imgDefaultM2"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_margin="8dp"
-            android:src="@drawable/male_02"
-            android:scaleType="centerCrop" />
-
-        <ImageView
-            android:id="@+id/imgDefaultM3"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_margin="8dp"
-            android:src="@drawable/male_03"
-            android:scaleType="centerCrop" />
-
-        <ImageView
-            android:id="@+id/imgDefaultF1"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_margin="8dp"
-            android:src="@drawable/female_01"
-            android:scaleType="centerCrop" />
-
-        <ImageView
-            android:id="@+id/imgDefaultF2"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_margin="8dp"
-            android:src="@drawable/female_02"
-            android:scaleType="centerCrop" />
-
-        <ImageView
-            android:id="@+id/imgDefaultF3"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_margin="8dp"
-            android:src="@drawable/female_03"
-            android:scaleType="centerCrop" />
-
-    </GridLayout>
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 
 </ScrollView>

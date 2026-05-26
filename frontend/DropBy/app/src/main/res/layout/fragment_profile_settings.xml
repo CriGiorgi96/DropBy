@@ -50,7 +50,7 @@
             android:text="@string/profile_settings"
             android:textAlignment="center"
             android:textColor="@color/db_text_primary"
-
+            style="@style/AppTitle"
             android:textSize="24sp"
             app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
             app:layout_constraintStart_toStartOf="@id/guidelineStart"
@@ -87,7 +87,7 @@
             android:layout_marginTop="16dp"
             android:text="@string/username_hint"
             android:textColor="@color/db_text_primary"
-
+            android:textStyle="bold"
             android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
             app:layout_constraintStart_toStartOf="@id/guidelineStart"
@@ -121,6 +121,7 @@
             android:text="@string/change_password"
             android:textColor="@color/db_text_primary"
             android:textSize="20sp"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
             app:layout_constraintStart_toStartOf="@id/guidelineStart"
             app:layout_constraintTop_toBottomOf="@id/dividerPassword" />
@@ -173,6 +174,7 @@
             android:text="@string/privacy"
             android:textColor="@color/db_text_primary"
             android:textSize="20sp"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
             app:layout_constraintStart_toStartOf="@id/guidelineStart"
             app:layout_constraintTop_toBottomOf="@id/dividerPrivacy" />

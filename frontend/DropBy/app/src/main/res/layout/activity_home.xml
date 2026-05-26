@@ -5,22 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-<<<<<<< HEAD
 
-=======
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
     <FrameLayout
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-<<<<<<< HEAD
         android:paddingTop="@dimen/toolbar_height" />
 
     <!-- Drawer sinistro -->
-=======
-        android:paddingTop="?attr/actionBarSize" />
-
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
     <FrameLayout
         android:id="@+id/leftDrawerPanel"
         android:layout_width="200dp"
@@ -33,20 +25,17 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@android:color/transparent"
-<<<<<<< HEAD
             android:paddingTop="100dp"
             android:clipToPadding="false"
+            app:itemTextColor="@color/drawer_item_color"
+            app:itemIconTint="@color/drawer_item_color"
+            app:itemTextAppearance="@style/DrawerGroupTextStyle"
             app:headerLayout="@layout/nav_header_home"
-=======
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
             app:menu="@menu/drawer_menu" />
 
     </FrameLayout>
 
-<<<<<<< HEAD
     <!-- Drawer destro -->
-=======
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
     <FrameLayout
         android:id="@+id/rightDrawerPanel"
         android:layout_width="200dp"
@@ -61,32 +50,25 @@
             android:layoutDirection="rtl"
             android:textDirection="ltr"
             android:background="@android:color/transparent"
-<<<<<<< HEAD
             android:paddingTop="100dp"
             android:clipToPadding="false"
             android:theme="@style/DropBy.RightNavTheme"
+            app:itemTextColor="@color/drawer_item_color"
+            app:itemIconTint="@color/drawer_item_color"
             app:itemIconSize="20dp"
             app:itemTextAppearance="@style/DropBy.NavItemText"
-=======
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
             app:headerLayout="@layout/nav_header_right"
             app:menu="@menu/drawer_right_menu" />
     </FrameLayout>
 
-<<<<<<< HEAD
     <!-- Toolbar -->
-=======
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/toolbar_height"
         android:padding="0dp"
         android:background="@drawable/toolbar"
-<<<<<<< HEAD
         app:elevation="0dp"
-=======
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
         app:contentInsetStart="0dp"
         app:contentInsetEnd="0dp"
         app:contentInsetLeft="0dp"
@@ -95,18 +77,11 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/toolbarLayout"
-<<<<<<< HEAD
             android:paddingHorizontal="10dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <!-- Burger menu - apre il drawer sinistro -->
-=======
-            android:paddingHorizontal="15dp"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
             <ImageButton
                 android:id="@+id/toolbarLeftMenuButton"
                 android:layout_width="48dp"
@@ -119,10 +94,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"/>
 
-<<<<<<< HEAD
             <!-- Logo DropBy - torna alla HomeFragment -->
-=======
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
             <ImageView
                 android:id="@+id/toolbarLogo"
                 android:layout_width="wrap_content"
@@ -139,10 +111,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
 
-<<<<<<< HEAD
             <!-- Icona profilo - apre il drawer destro -->
-=======
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
             <FrameLayout
                 android:id="@+id/userButtonContainer"
                 android:layout_width="wrap_content"
@@ -162,10 +131,7 @@
                     android:contentDescription="@string/user_area"
                     app:shapeAppearanceOverlay="@style/CircleImage" />
 
-<<<<<<< HEAD
                 <!-- Badge notifiche -->
-=======
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
                 <TextView
                     android:id="@+id/notificationBadge"
                     android:layout_width="18dp"
@@ -173,15 +139,9 @@
                     android:layout_gravity="top|end"
                     android:background="@drawable/badge_background"
                     android:gravity="center"
-<<<<<<< HEAD
                     android:text="@string/zero_notifications"
                     android:textColor="@color/db_text_primary"
                     android:textSize="11sp"
-=======
-                    android:text="0"
-                    android:textColor="@android:color/white"
-                    android:textSize="10sp"
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
                     android:textStyle="bold"
                     android:visibility="gone" />
 
@@ -191,8 +151,4 @@
 
     </androidx.appcompat.widget.Toolbar>
 
-<<<<<<< HEAD
 </FrameLayout>
-=======
-</FrameLayout>
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)

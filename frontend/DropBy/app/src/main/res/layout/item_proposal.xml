@@ -27,7 +27,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textSize="12sp"
-                android:textColor="#7B1FA2" />
+                android:textColor="@color/db_accent_dark" />
 
             <TextView
                 android:id="@+id/proposalStatusEmoji"

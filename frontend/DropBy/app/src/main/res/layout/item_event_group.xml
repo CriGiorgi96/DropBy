@@ -112,7 +112,10 @@
                 android:contentDescription="@string/add_to_favorites"
                 android:padding="6dp"
                 android:src="@drawable/ic_favorite_border"
-                android:visibility="gone" />
+                android:scaleType="centerInside"
+                android:adjustViewBounds="true"
+                android:visibility="gone"
+                app:tint="@color/favorite_empty_tint"/>
 
             <!-- Imposta promemoria -->
             <ImageButton
@@ -124,7 +127,8 @@
                 android:contentDescription="@string/set_reminder"
                 android:padding="6dp"
                 android:src="@drawable/ic_alarm"
-                android:visibility="gone" />
+                android:visibility="gone"
+                app:tint="@color/favorite_empty_tint"/>
 
             <!-- Proponi a un amico -->
             <ImageButton
@@ -136,7 +140,8 @@
                 android:contentDescription="@string/propose_to_friend"
                 android:padding="6dp"
                 android:src="@drawable/ic_send"
-                android:visibility="gone" />
+                android:visibility="gone"
+                app:tint="@color/favorite_empty_tint"/>
 
         </LinearLayout>
 

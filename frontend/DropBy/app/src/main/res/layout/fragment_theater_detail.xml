@@ -19,7 +19,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    android:background="#FFF8F5FC">
+    android:background="@color/db_background">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -49,8 +49,8 @@
                 android:background="#88000000"
                 android:gravity="center"
                 android:text="‹"
-                android:textColor="#FFFFFF"
-                android:textSize="24sp"
+                android:textColor="@color/white"
+                android:textSize="32sp"
                 android:visibility="gone" />
 
             <TextView
@@ -62,8 +62,8 @@
                 android:background="#88000000"
                 android:gravity="center"
                 android:text="›"
-                android:textColor="#FFFFFF"
-                android:textSize="24sp"
+                android:textColor="@color/white"
+                android:textSize="32sp"
                 android:visibility="gone" />
 
         </FrameLayout>
@@ -79,16 +79,16 @@
                 android:id="@+id/theaterNameText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="#1A1A2E"
+                android:textColor="@color/db_text_primary"
                 android:textSize="22sp"
-                android:textStyle="bold" />
+                style="@style/AppTitle" />
 
             <TextView
                 android:id="@+id/theaterAddressText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
-                android:textColor="#6A6274"
+                android:textColor="@color/db_text_secondary"
                 android:textSize="14sp" />
 
             <TextView
@@ -96,7 +96,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:textColor="#6A6274"
+                android:textColor="@color/db_text_secondary"
                 android:textSize="14sp" />
 
             <TextView
@@ -104,52 +104,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:textColor="#6A6274"
+                android:textColor="@color/db_text_secondary"
                 android:textSize="14sp" />
 
-<<<<<<< HEAD
             <TextView
                 android:id="@+id/theaterDescriptionText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:lineSpacingMultiplier="1.4"
-                android:textColor="#333333"
+                android:textColor="@color/db_text_primary"
                 android:textSize="14sp"
                 android:visibility="gone" />
-=======
-            <!-- Pulsanti azione -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/theaterFloorPlanButton"
-                    android:layout_width="0dp"
-                    android:layout_height="42dp"
-                    android:layout_weight="1"
-                    android:backgroundTint="#7B1FA2"
-                    android:text="Planimetria"
-                    android:textColor="#FFFFFF"
-                    android:textSize="13sp"
-                    android:visibility="gone" />
-
-                <Button
-                    android:id="@+id/theaterDirectionsButton"
-                    android:layout_width="0dp"
-                    android:layout_height="42dp"
-                    android:layout_weight="1"
-                    android:layout_marginStart="8dp"
-                    android:backgroundTint="#1565C0"
-                    android:text="Indicazioni"
-                    android:textColor="#FFFFFF"
-                    android:textSize="13sp"
-                    android:visibility="gone" />
-
-            </LinearLayout>
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 
             <!-- Pulsanti azione -->
             <LinearLayout
@@ -163,9 +129,9 @@
                     android:layout_width="0dp"
                     android:layout_height="42dp"
                     android:layout_weight="1"
-                    android:backgroundTint="#7B1FA2"
+                    android:backgroundTint="@color/db_accent_dark"
                     android:text="@string/floor_plan"
-                    android:textColor="#FFFFFF"
+                    android:textColor="@color/db_text_primary"
                     android:textSize="13sp"
                     android:visibility="gone" />
 
@@ -175,9 +141,9 @@
                     android:layout_height="42dp"
                     android:layout_weight="1"
                     android:layout_marginStart="8dp"
-                    android:backgroundTint="#1565C0"
+                    android:backgroundTint="@color/db_accent_light"
                     android:text="@string/directions"
-                    android:textColor="#FFFFFF"
+                    android:textColor="@color/db_text_primary"
                     android:textSize="13sp"
                     android:visibility="gone" />
 
@@ -195,7 +161,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/scheduled"
-                android:textColor="#1A1A2E"
+                android:textColor="@color/db_text_primary"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -205,7 +171,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:text="@string/show_past_events"
-                android:textColor="#6A6274"
+                android:textColor="@color/db_text_secondary"
                 android:textSize="14sp"
                 android:checked="false" />
 

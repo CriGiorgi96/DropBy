@@ -20,7 +20,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    android:background="#FFF8F5FC">
+    android:background="@color/db_background">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -44,7 +44,6 @@
                 android:id="@+id/btnFavorite"
                 android:layout_width="44dp"
                 android:layout_height="44dp"
-<<<<<<< HEAD
                 android:layout_gravity="bottom|end"
                 android:layout_margin="12dp"
                 android:background="@drawable/bg_circle_white"
@@ -53,14 +52,6 @@
                 android:src="@drawable/ic_favorite_border"
                 android:scaleType="centerInside"
                 android:adjustViewBounds="true"
-=======
-                android:layout_gravity="top|end"
-                android:layout_margin="12dp"
-                android:background="@drawable/bg_circle_white"
-                android:contentDescription="Aggiungi ai preferiti"
-                android:padding="8dp"
-                android:src="@drawable/ic_favorite_border"
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
                 android:visibility="gone" />
 
         </FrameLayout>
@@ -77,10 +68,10 @@
                 android:id="@+id/eventDetailCategory"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="#EDE7F6"
+                android:background="@color/db_accent"
                 android:paddingHorizontal="10dp"
                 android:paddingVertical="4dp"
-                android:textColor="#7B1FA2"
+                android:textColor="@color/db_accent_light"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
@@ -142,7 +133,7 @@
                 android:focusable="true"
                 android:background="?attr/selectableItemBackground"
                 android:paddingVertical="4dp"
-                android:textColor="#7B1FA2"
+                android:textColor="@color/db_accent_light"
                 android:textSize="14sp"
                 android:textStyle="bold"
                 android:visibility="gone" />
@@ -153,9 +144,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="52dp"
                 android:layout_marginTop="20dp"
-                android:backgroundTint="#7B1FA2"
+                android:backgroundTint="@color/db_accent_dark"
                 android:text="@string/buy_tickets"
-                android:textColor="@color/db_text_primary"
+                android:textColor="@color/white"
                 android:textSize="20sp"
                 android:visibility="gone" />
 
@@ -164,22 +155,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginVertical="14dp"
-                android:background="#E0E0E0" />
+                android:background="@color/db_surface" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-<<<<<<< HEAD
                 android:text="@string/reviews"
                 android:textColor="@color/db_text_primary"
                 android:textSize="20sp"
                 style="@style/AppTitle" />
-=======
-                android:text="Recensioni"
-                android:textColor="#1A1A2E"
-                android:textSize="18sp"
-                android:textStyle="bold" />
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/reviewsRecyclerView"
@@ -194,13 +178,8 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:padding="8dp"
-<<<<<<< HEAD
                 android:textColor="@color/db_text_hint"
                 android:textSize="14sp"
-=======
-                android:textColor="#9E9E9E"
-                android:textSize="13sp"
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
                 android:visibility="gone" />
 
             <!-- Form aggiunta recensione (solo per utenti loggati) -->
@@ -209,7 +188,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:background="#F3E5F5"
+                android:background="@color/theater_gold"
                 android:orientation="vertical"
                 android:padding="14dp"
                 android:visibility="gone">
@@ -218,7 +197,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/write_review"
-<<<<<<< HEAD
                     android:textColor="@color/db_text_primary"
                     android:textSize="14sp"
                     android:textStyle="bold" />
@@ -229,7 +207,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:background="#FFFFFF"
+                    android:background="@color/db_surface"
                     android:orientation="vertical"
                     android:padding="12dp"
                     android:visibility="gone">
@@ -358,21 +336,11 @@
 
                 </LinearLayout>
 
-=======
-                    android:textColor="#6A1B9A"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
                 <RatingBar
                     android:id="@+id/reviewRatingBar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-<<<<<<< HEAD
                     android:layout_marginTop="14dp"
-=======
-                    android:layout_marginTop="8dp"
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
                     android:numStars="5"
                     android:stepSize="1"
                     android:rating="3" />
@@ -393,13 +361,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="44dp"
                     android:layout_marginTop="10dp"
-                    android:backgroundTint="#7B1FA2"
+                    android:backgroundTint="@color/db_accent_dark"
                     android:text="@string/submit"
-<<<<<<< HEAD
-                    android:textColor="@color/db_text_primary" />
-=======
-                    android:textColor="@android:color/white" />
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
+                    android:textColor="@color/white" />
 
             </LinearLayout>
 
