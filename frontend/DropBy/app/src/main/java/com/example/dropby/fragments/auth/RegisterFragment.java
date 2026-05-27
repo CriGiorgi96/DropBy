@@ -12,7 +12,9 @@ import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.util.Patterns;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -27,6 +29,7 @@ import java.util.Calendar;
 import java.util.Locale;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
@@ -51,48 +54,36 @@ import java.nio.charset.StandardCharsets;
 
 public class RegisterFragment extends Fragment {
 
-    private String birthdayIso = ""; // YYYY-MM-DD — set by DatePickerDialog
+    private String birthdayIso = "";
 
     public RegisterFragment() {
-        super(R.layout.fragment_register);
+        // Required empty public constructor
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_register, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        if (requireActivity() instanceof HomeActivity) {
-            ViewCompat.setOnApplyWindowInsetsListener(view, (v, insets) -> {
-                int statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top;
-                int toolbarHeight = getResources().getDimensionPixelSize(R.dimen.toolbar_height);
-
-                v.setPadding(
-                        v.getPaddingLeft(),
-                        toolbarHeight + statusBarHeight,
-                        v.getPaddingRight(),
-                        v.getPaddingBottom()
-                );
-
-                return insets;
-            });
-        }
 
         EditText etFirstName = view.findViewById(R.id.etFirstName);
         EditText etLastName  = view.findViewById(R.id.etLastName);
         EditText etUsername  = view.findViewById(R.id.etUsername);
         EditText etEmail     = view.findViewById(R.id.etEmail);
-        EditText etBirthday  = view.findViewById(R.id.etBirthday);
         EditText etPassword  = view.findViewById(R.id.etPassword);
+        EditText etBirthday  = view.findViewById(R.id.etBirthday);
 
-        // DatePickerDialog al tap sul campo data — età minima 13 anni
-        etBirthday.setFocusable(false);
-        etBirthday.setClickable(true);
         etBirthday.setOnClickListener(v -> {
-            // Data di default: 20 anni fa
             Calendar defaultCal = Calendar.getInstance();
+            // Data di default: 20 anni fa
             defaultCal.add(Calendar.YEAR, -20);
 
-            // Data massima selezionabile: 13 anni fa (vincolo età minima)
+            // Data massima: oggi - 13 anni (limite minimo età per molti servizi)
             Calendar maxCal = Calendar.getInstance();
             maxCal.add(Calendar.YEAR, -13);
 
@@ -128,48 +119,47 @@ public class RegisterFragment extends Fragment {
             if (requireActivity() instanceof HomeActivity) {
                 requireActivity().getSupportFragmentManager().popBackStack();
             } else if (requireActivity() instanceof AuthActivity) {
-                requireActivity().getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.auth_fragment_container, new StartFragment())
-                        .commit();
+                requireActivity().getSupportFragmentManager().popBackStack();
             }
         });
 
         btnGoLogin.setOnClickListener(v -> {
-            if (getActivity() instanceof AuthActivity) {
-                ((AuthActivity) getActivity()).openLogin();
-            }
+            requireActivity().getSupportFragmentManager().popBackStack();
         });
 
         btnRegister.setOnClickListener(v -> {
-
             String firstName = etFirstName.getText().toString().trim();
             String lastName  = etLastName.getText().toString().trim();
             String username  = etUsername.getText().toString().trim();
             String email     = etEmail.getText().toString().trim();
-            String password  = etPassword.getText().toString();
-            int genderId     = rgGender.getCheckedRadioButtonId();
+            String password  = etPassword.getText().toString().trim();
 
-            if (TextUtils.isEmpty(firstName)) { etFirstName.setError(getString(R.string.insert_name)); return; }
-            if (TextUtils.isEmpty(lastName))  { etLastName.setError(getString(R.string.insert_last_name)); return; }
-            if (TextUtils.isEmpty(username))  { etUsername.setError(getString(R.string.insert_username)); return; }
+            int selectedGenderId = rgGender.getCheckedRadioButtonId();
+            String gender = "";
+            if (selectedGenderId == R.id.rbMale) gender = "M";
+            else if (selectedGenderId == R.id.rbFemale) gender = "F";
+            else if (selectedGenderId == R.id.rbOther) gender = "O";
 
-            if (TextUtils.isEmpty(email) || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                etEmail.setError(getString(R.string.invalid_email)); return;
+            boolean isValid = true;
+
+            if (TextUtils.isEmpty(firstName)) { etFirstName.setError(getString(R.string.insert_name)); isValid = false; }
+            if (TextUtils.isEmpty(lastName))  { etLastName.setError(getString(R.string.insert_last_name)); isValid = false; }
+            if (TextUtils.isEmpty(username))  { etUsername.setError(getString(R.string.insert_username)); isValid = false; }
+            if (TextUtils.isEmpty(birthdayIso)) { etBirthday.setError(getString(R.string.insert_birthday)); isValid = false; }
+
+            if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                etEmail.setError(getString(R.string.invalid_email));
+                isValid = false;
             }
 
-            if (birthdayIso.isEmpty()) {
-                etBirthday.setError(getString(R.string.insert_birthday));
-                return;
+            if (password.length() < 6) {
+                etPassword.setError(getString(R.string.min_6_char));
+                isValid = false;
             }
 
-            if (TextUtils.isEmpty(password) || password.length() < 6) {
-                etPassword.setError(getString(R.string.min_6_char)); return;
-            }
-
-            if (genderId == -1) {
+            if (gender.isEmpty()) {
                 Toast.makeText(getContext(), R.string.select_gender, Toast.LENGTH_SHORT).show();
-                return;
+                isValid = false;
             }
 
             if (!cbPrivacy.isChecked()) {
@@ -177,56 +167,43 @@ public class RegisterFragment extends Fragment {
                 Toast.makeText(getContext(),
                         R.string.accept_terms,
                         Toast.LENGTH_SHORT).show();
-                return;
+                isValid = false;
             }
 
-            String gender = genderId == R.id.rbMale ? "male"
-                    : genderId == R.id.rbFemale ? "female"
-                    : "other";
+            if (isValid) {
+                progressBar.setVisibility(View.VISIBLE);
+                btnRegister.setEnabled(false);
 
-            progressBar.setVisibility(View.VISIBLE);
-            btnRegister.setEnabled(false);
+                RegisterRequest request = new RegisterRequest(
+                        firstName, lastName, username, email, password, birthdayIso, gender
+                );
 
-            RegisterRequest req = new RegisterRequest(
-                    username, email, password,
-                    firstName, lastName, birthdayIso, gender
-            );
+                ApiClient.getApiService().register(request).enqueue(new Callback<RegisterResponse>() {
+                    @Override
+                    public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
+                        progressBar.setVisibility(View.GONE);
+                        btnRegister.setEnabled(true);
 
-            ApiClient.getApiService().register(req)
-                    .enqueue(new Callback<RegisterResponse>() {
-                        @Override
-                        public void onResponse(@NonNull Call<RegisterResponse> call,
-                                               @NonNull Response<RegisterResponse> response) {
-
-                            if (!isAdded()) return;
-
-                            progressBar.setVisibility(View.GONE);
-                            btnRegister.setEnabled(true);
-
-                            if (response.isSuccessful() && response.body() != null) {
-                                RegisterResponse body = response.body();
-                                openVerification(body.userId, body.email);
-                            } else {
-                                Toast.makeText(getContext(),
-                                        getString(R.string.error_while_signing_up, response.code()),
-                                        Toast.LENGTH_LONG).show();
-                            }
+                        if (response.isSuccessful() && response.body() != null) {
+                            RegisterResponse res = response.body();
+                            openVerification(res.getUserId(), email);
+                        } else {
+                            String errorMsg = "Unknown error";
+                            try {
+                                errorMsg = response.errorBody().string();
+                            } catch (Exception e) {}
+                            Toast.makeText(getContext(), getString(R.string.error_while_signing_up, errorMsg), Toast.LENGTH_LONG).show();
                         }
+                    }
 
-                        @Override
-                        public void onFailure(@NonNull Call<RegisterResponse> call,
-                                              @NonNull Throwable t) {
-
-                            if (!isAdded()) return;
-
-                            progressBar.setVisibility(View.GONE);
-                            btnRegister.setEnabled(true);
-
-                            Toast.makeText(getContext(),
-                                    R.string.no_connection_server,
-                                    Toast.LENGTH_LONG).show();
-                        }
-                    });
+                    @Override
+                    public void onFailure(Call<RegisterResponse> call, Throwable t) {
+                        progressBar.setVisibility(View.GONE);
+                        btnRegister.setEnabled(true);
+                        Toast.makeText(getContext(), "Network Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
         });
     }
 
@@ -243,7 +220,8 @@ public class RegisterFragment extends Fragment {
         String fullText = getString(R.string.validation);
         String linkText = getString(R.string.terms_conditions);
 
-        int start = fullText.indexOf(linkText);
+        // Ricerca case-insensitive per evitare problemi con le traduzioni
+        int start = fullText.toLowerCase().indexOf(linkText.toLowerCase());
         int end = start + linkText.length();
 
         if (start != -1) {

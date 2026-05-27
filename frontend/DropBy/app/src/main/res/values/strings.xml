@@ -18,7 +18,7 @@
     <string name="password_hint">Password</string>
     <string name="go_to_register">Non hai un account? Registrati</string>
     <string name="go_to_login">Hai già un account? Accedi</string>
-    <string name="validation">Accetto termini e condizioni</string>
+    <string name="validation">Accetto i termini e condizioni</string>
     <string name="invalid_email">Email invalida</string>
     <string name="min_6_char">Minimo 6 caratteri</string>
     <string name="email_not_verified">Email non verificata. Controlla la tua casella.</string>
