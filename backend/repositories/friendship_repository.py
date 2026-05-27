@@ -15,7 +15,6 @@ class FriendshipRepository:
 
     @staticmethod
     def create_request(sender_id, receiver_id):
-        # sender → user_id_1, receiver → user_id_2: convenzione usata da get_pending_requests
         db = Database()
         conn = db.get_connection()
         conn.run(
@@ -31,11 +30,7 @@ class FriendshipRepository:
         conn = db.get_connection()
         rows = conn.run(
             """SELECT f.id AS friendship_id, f.status,
-<<<<<<< HEAD
                       u.id AS user_id, u.username, u.email, u.profile_image
-=======
-                      u.id AS user_id, u.username, u.email
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
                FROM friendships f
                JOIN users u ON f.user_id_1 = u.id
                WHERE f.user_id_2 = :uid AND f.status = 'pending'""",
@@ -49,11 +44,7 @@ class FriendshipRepository:
         conn = db.get_connection()
         rows = conn.run(
             """SELECT f.id AS friendship_id, f.status,
-<<<<<<< HEAD
                       u.id AS user_id, u.username, u.email, u.profile_image
-=======
-                      u.id AS user_id, u.username, u.email
->>>>>>> 7712ff0 (aggiunti endpoint x i punti)
                FROM friendships f
                JOIN users u ON (CASE WHEN f.user_id_1 = :uid
                                      THEN f.user_id_2 ELSE f.user_id_1 END) = u.id

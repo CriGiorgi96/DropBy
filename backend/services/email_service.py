@@ -49,3 +49,24 @@ class EmailService:
         except Exception as e:
             print(f"[EmailService] Errore invio email: {e}")
             return False
+
+    @staticmethod
+    def send_coupon_email(recipient_email: str, username: str,
+                          coupon_code: str, discount: str, html_body: str) -> bool:
+        """Invia l'email con il coupon riscattato via Gmail SMTP."""
+        try:
+            msg = MIMEMultipart("alternative")
+            msg["Subject"] = f"DropBy – Il tuo coupon {coupon_code}"
+            msg["From"]    = Config.EMAIL_ADDRESS
+            msg["To"]      = recipient_email
+            msg.attach(MIMEText(html_body, "html"))
+
+            with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+                server.login(Config.EMAIL_ADDRESS, Config.EMAIL_PASSWORD)
+                server.sendmail(Config.EMAIL_ADDRESS, recipient_email, msg.as_string())
+
+            return True
+
+        except Exception as e:
+            print(f"[EmailService] Errore invio coupon email: {e}")
+            return False

@@ -11,29 +11,48 @@ events_bp = Blueprint('events', __name__)
 
 @events_bp.route('/', methods=['GET'], strict_slashes=False)
 def get_events():
-    """Dashboard — lista eventi con filtri opzionali (title, city, category)."""
+    """Dashboard — lista eventi con tutti i campi schema + repliche aggregate."""
     try:
-        conn  = Database().get_connection()
-        sql   = """
+        conn = Database().get_connection()
+        sql  = """
             SELECT
-                e.id, e.slug, e.title, e.category,
-                COALESCE(
-                    NULLIF(e.city, ''),
-                    (SELECT li.city FROM event_replicas eri
-                     JOIN locations li ON li.id = eri.location_id
-                     WHERE eri.event_id = e.id ORDER BY eri.show_date LIMIT 1)
-                ) AS city,
-                COALESCE(
-                    (SELECT to_char(MIN(eri.show_date), 'YYYY-MM-DD')
-                     FROM event_replicas eri
-                     WHERE eri.event_id = e.id AND eri.show_date >= NOW()),
-                    NULLIF(e.event_date::TEXT, '')
-                ) AS date,
-                e.duration, e.description,
+                e.id,
+                e.slug,
+                e.title,
+                e.title_eng,
+                e.category,
+                e.description,
+                e.description_eng,
+                e.duration,
+                e.info_url_it,
+                e.info_url_eng,
                 e.location_id,
-                l.name AS location_name
+                e.event_date,
+                COALESCE((
+                    SELECT json_agg(json_build_object(
+                        'id',            eri.id,
+                        'show_date',     to_char(eri.show_date, 'YYYY-MM-DD HH24:MI'),
+                        'ticket_url',    eri.ticket_url,
+                        'location_id',   eri.location_id,
+                        'location_name', li.name,
+                        'location_city', li.city,
+                        'is_past',       eri.show_date < NOW()
+                    ) ORDER BY eri.show_date ASC)
+                    FROM event_replicas eri
+                    JOIN locations li ON li.id = eri.location_id
+                    WHERE eri.event_id = e.id
+                ), '[]'::json) AS replicas,
+                (SELECT to_char(MIN(eri.show_date), 'YYYY-MM-DD HH24:MI')
+                 FROM event_replicas eri
+                 WHERE eri.event_id = e.id AND eri.show_date >= NOW()
+                ) AS next_show_date,
+                (SELECT li.name
+                 FROM event_replicas eri
+                 JOIN locations li ON li.id = eri.location_id
+                 WHERE eri.event_id = e.id AND eri.show_date >= NOW()
+                 ORDER BY eri.show_date ASC LIMIT 1
+                ) AS next_location_name
             FROM events e
-            LEFT JOIN locations l ON l.id = e.location_id
             WHERE 1=1
         """
         params   = {}
@@ -42,16 +61,31 @@ def get_events():
         category = request.args.get('category')
 
         if title:
-            sql += " AND LOWER(e.title) LIKE LOWER(:title)"
+            sql += """ AND (
+                LOWER(e.title) LIKE LOWER(:title)
+                OR LOWER(COALESCE(e.title_eng, '')) LIKE LOWER(:title)
+            )"""
             params['title'] = f'%{title}%'
         if city:
-            sql += " AND LOWER(e.city) = LOWER(:city)"
+            sql += """ AND (
+                LOWER(e.city) = LOWER(:city)
+                OR EXISTS (
+                    SELECT 1 FROM event_replicas eri
+                    JOIN locations li ON li.id = eri.location_id
+                    WHERE eri.event_id = e.id AND LOWER(li.city) = LOWER(:city)
+                )
+            )"""
             params['city'] = city
         if category:
             sql += " AND LOWER(e.category) = LOWER(:category)"
             params['category'] = category
 
-        sql += " ORDER BY e.event_date DESC"
+        sql += """
+            ORDER BY (
+                SELECT MIN(eri.show_date) FROM event_replicas eri
+                WHERE eri.event_id = e.id AND eri.show_date >= NOW()
+            ) ASC NULLS LAST, e.event_date DESC"""
+
         rows   = conn.run(sql, **params)
         events = dict_format(conn, rows)
         return jsonify({'events': events}), 200
@@ -64,57 +98,91 @@ def get_events():
 
 @events_bp.route('/', methods=['POST'], strict_slashes=False)
 def create_event():
-    """Dashboard — crea un nuovo evento."""
+    """Dashboard — crea un evento con tutti i campi schema e le sue repliche."""
     try:
         data = request.get_json()
         if not data:
             return jsonify({'error': 'Body JSON obbligatorio'}), 400
 
-        required = ('title', 'slug', 'category', 'date', 'description', 'location_id')
-        missing  = [f for f in required if not data.get(f) and data.get(f) != 0]
+        required = ('title', 'slug', 'category', 'description')
+        missing  = [f for f in required if not data.get(f)]
         if missing:
             return jsonify({'error': f'Campi obbligatori: {", ".join(missing)}'}), 400
 
+        replicas = data.get('replicas') or []
+        # backward-compat: corpo piatto con date/location_id
+        if not replicas and data.get('date') and data.get('location_id'):
+            replicas = [{
+                'location_id': data['location_id'],
+                'date':        data['date'],
+                'time':        data.get('time') or '00:00',
+                'ticket_url':  data.get('ticket_url'),
+            }]
+
         conn = Database().get_connection()
 
-        id_row = conn.run("SELECT COALESCE(MAX(id), 0) + 1 FROM events")
-        new_id = id_row[0][0]
-
-        prod_row = conn.run("SELECT id FROM productions LIMIT 1")
+        id_row          = conn.run("SELECT COALESCE(MAX(id), 0) + 1 FROM events")
+        new_id          = id_row[0][0]
+        prod_row        = conn.run("SELECT id FROM productions LIMIT 1")
         default_prod_id = prod_row[0][0] if prod_row else 1
 
-        loc_row = conn.run("SELECT city FROM locations WHERE id = :id",
-                           id=int(data['location_id']))
-        if not loc_row:
-            return jsonify({'error': 'Location non trovata'}), 404
-        city = loc_row[0][0]
+        primary_loc_id = int(replicas[0]['location_id']) if replicas else (
+            int(data['location_id']) if data.get('location_id') else None
+        )
+        city = ''
+        if primary_loc_id:
+            loc_row = conn.run("SELECT city FROM locations WHERE id = :id", id=primary_loc_id)
+            if not loc_row:
+                return jsonify({'error': 'Location non trovata'}), 404
+            city = loc_row[0][0]
+
+        primary_date = replicas[0]['date'] if replicas else data.get('date') or None
 
         conn.run(
             """
             INSERT INTO events
-                (id, slug, production_id, location_id, title, description,
-                 category, city, event_date, duration,
-                 title_eng, description_eng, info_url_it, info_url_eng)
+                (id, slug, production_id, location_id, title, title_eng,
+                 description, description_eng, category, city, event_date,
+                 duration, info_url_it, info_url_eng)
             VALUES
-                (:id, :slug, :production_id, :location_id, :title, :description,
-                 :category, :city, :event_date, :duration,
-                 :title_eng, :description_eng, :info_url_it, :info_url_eng)
+                (:id, :slug, :production_id, :location_id, :title, :title_eng,
+                 :description, :description_eng, :category, :city, :event_date,
+                 :duration, :info_url_it, :info_url_eng)
             """,
             id=new_id,
             slug=data['slug'],
             production_id=data.get('production_id') or default_prod_id,
-            location_id=int(data['location_id']),
+            location_id=primary_loc_id,
             title=data['title'],
+            title_eng=data.get('title_eng')       or None,
             description=data['description'],
+            description_eng=data.get('description_eng') or None,
             category=data['category'],
             city=city,
-            event_date=data['date'],
-            duration=data.get('duration') or None,
-            title_eng=data.get('title_eng') or None,
-            description_eng=data.get('description_eng') or None,
-            info_url_it=data.get('info_url_it') or None,
+            event_date=primary_date,
+            duration=data.get('duration')         or None,
+            info_url_it=data.get('info_url_it')   or None,
             info_url_eng=data.get('info_url_eng') or None,
         )
+
+        if replicas:
+            r_id_row  = conn.run("SELECT COALESCE(MAX(id), 0) + 1 FROM event_replicas")
+            next_r_id = r_id_row[0][0]
+            for i, rep in enumerate(replicas):
+                time_part = rep.get('time') or '00:00'
+                show_dt   = f"{rep['date']} {time_part}:00"
+                conn.run(
+                    """
+                    INSERT INTO event_replicas (id, event_id, location_id, show_date, ticket_url)
+                    VALUES (:id, :event_id, :location_id, :show_date, :ticket_url)
+                    """,
+                    id=next_r_id + i,
+                    event_id=new_id,
+                    location_id=int(rep['location_id']),
+                    show_date=show_dt,
+                    ticket_url=rep.get('ticket_url') or None,
+                )
+
         conn.run("COMMIT")
         return jsonify({'message': 'Evento creato', 'id': new_id}), 201
     except Exception:
@@ -126,23 +194,22 @@ def create_event():
 
 @events_bp.route('/<int:event_id>', methods=['PUT'])
 def update_event(event_id):
-    """Dashboard — aggiorna i campi di un evento esistente."""
+    """Dashboard — aggiorna campi base evento; se 'replicas' presente, sostituisce tutte le repliche."""
     try:
         data = request.get_json()
         if not data:
             return jsonify({'error': 'Body JSON obbligatorio'}), 400
 
-        # Mappa campo HTML → colonna DB
         field_map = {
             'title':           'title',
+            'title_eng':       'title_eng',
             'slug':            'slug',
             'category':        'category',
             'date':            'event_date',
             'duration':        'duration',
             'description':     'description',
-            'location_id':     'location_id',
-            'title_eng':       'title_eng',
             'description_eng': 'description_eng',
+            'location_id':     'location_id',
             'info_url_it':     'info_url_it',
             'info_url_eng':    'info_url_eng',
         }
@@ -156,20 +223,39 @@ def update_event(event_id):
                 sets.append(f"{col} = :{pk}")
                 params[pk] = data[html_key] if data[html_key] != '' else None
 
-        if not sets:
-            return jsonify({'error': 'Nessun campo da aggiornare'}), 400
-
         conn = Database().get_connection()
 
-        # Aggiorna anche city se cambia location_id
-        if 'v_location_id' in params and params['v_location_id']:
-            loc_row = conn.run("SELECT city FROM locations WHERE id = :id",
-                               id=int(params['v_location_id']))
-            if loc_row:
-                sets.append("city = :v_city")
-                params['v_city'] = loc_row[0][0]
+        if sets:
+            if 'v_location_id' in params and params['v_location_id']:
+                loc_row = conn.run("SELECT city FROM locations WHERE id = :id",
+                                   id=int(params['v_location_id']))
+                if loc_row:
+                    sets.append("city = :v_city")
+                    params['v_city'] = loc_row[0][0]
+            conn.run(f"UPDATE events SET {', '.join(sets)} WHERE id = :ev_id", **params)
 
-        conn.run(f"UPDATE events SET {', '.join(sets)} WHERE id = :ev_id", **params)
+        # Se 'replicas' è presente, sostituisce interamente le repliche (delete + re-insert)
+        replicas = data.get('replicas')
+        if replicas is not None:
+            conn.run("DELETE FROM event_replicas WHERE event_id = :id", id=event_id)
+            if replicas:
+                r_id_row  = conn.run("SELECT COALESCE(MAX(id), 0) + 1 FROM event_replicas")
+                next_r_id = r_id_row[0][0]
+                for i, rep in enumerate(replicas):
+                    time_part = rep.get('time') or '00:00'
+                    show_dt   = f"{rep['date']} {time_part}:00"
+                    conn.run(
+                        """
+                        INSERT INTO event_replicas (id, event_id, location_id, show_date, ticket_url)
+                        VALUES (:id, :event_id, :location_id, :show_date, :ticket_url)
+                        """,
+                        id=next_r_id + i,
+                        event_id=event_id,
+                        location_id=int(rep['location_id']),
+                        show_date=show_dt,
+                        ticket_url=rep.get('ticket_url') or None,
+                    )
+
         conn.run("COMMIT")
         return jsonify({'message': 'Evento aggiornato'}), 200
     except Exception:
@@ -181,19 +267,20 @@ def update_event(event_id):
 
 @events_bp.route('/<int:event_id>', methods=['DELETE'])
 def delete_event(event_id):
-    """Dashboard — elimina un evento con pulizia manuale delle tabelle senza CASCADE."""
+    """Dashboard — elimina evento e pulizia tabelle senza CASCADE."""
     try:
         conn = Database().get_connection()
-        # event_proposals non ha ON DELETE CASCADE su events(id)
         conn.run("DELETE FROM event_proposals WHERE event_id = :id", id=event_id)
-        # reviews, favorites, event_reminders, event_images hanno CASCADE → auto
-        conn.run("DELETE FROM events WHERE id = :id", id=event_id)
+        conn.run("DELETE FROM event_replicas  WHERE event_id = :id", id=event_id)
+        conn.run("DELETE FROM events          WHERE id       = :id", id=event_id)
         conn.run("COMMIT")
         return jsonify({'message': 'Evento eliminato'}), 200
     except Exception:
         traceback.print_exc()
         return jsonify({'error': "Errore nell'eliminazione evento"}), 500
 
+
+# ── APP: search + detail (usati dall'app mobile) ─────────────────────────────
 
 @events_bp.route('/search', methods=['GET'])
 def search_events():

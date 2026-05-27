@@ -192,7 +192,7 @@
     <string name="filter_on">Filtra per…</string>
     <string name="filter_using_category">Filtra per genere</string>
     <string name="filter_using_date">Filtra per data</string>
-    <string name="theatre_capacity">Capienza: %1$d posti</string>
+    <string name="theatre_capacity">Capienza: %1$s posti</string>
     <string name="services_not_available">Servizi non indicati</string>
     <string name="services_label">Servizi: %1$s</string>
 

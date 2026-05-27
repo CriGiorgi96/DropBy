@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, send_from_directory, request
+from flask import Flask, jsonify, send_from_directory, request, redirect, url_for
 from flask_cors import CORS
 from database import init_db
 from config import Config
@@ -75,6 +75,18 @@ app.register_blueprint(reminders_bp, url_prefix='/api/reminders')
 
 from controllers.users_controller import users_bp
 app.register_blueprint(users_bp, url_prefix='/api/users')
+
+from controllers.coupons_controller import coupons_bp
+app.register_blueprint(coupons_bp, url_prefix='/api/coupons')
+
+@app.route('/')
+def index():
+    return redirect(url_for('dashboard'))
+
+@app.route('/dashboard')
+def dashboard():
+    here = os.path.dirname(os.path.abspath(__file__))
+    return send_from_directory(os.path.join(here, 'static'), 'dashboard.html')
 
 @app.route('/api/endpoints')
 def home():
