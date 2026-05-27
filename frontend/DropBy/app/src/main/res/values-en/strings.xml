@@ -264,7 +264,7 @@
     <string name="choose_future_date">Choose a future date</string>
     <string name="reminder_set">Reminder set!</string>
     <string name="reminder_set_error">Error setting reminder</string>
-    <string name="propose_event_to">Propose %1$d to: </string>
+    <string name="propose_event_to">Propose %1$s to: </string>
 
     <string name="loading_reminders">Loading reminders…</string>
     <string name="no_active_reminders">No active reminders</string>
@@ -304,5 +304,7 @@
     <string name="user_not_found">User not found</string>
     <string name="error_loading_profile">Unable to load profile</string>
     <string name="user_fallback">User</string>
+
+    <string name="review_not_available">Review not available</string>
 
 </resources>

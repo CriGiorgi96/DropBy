@@ -9,11 +9,16 @@ reviews_bp = Blueprint('reviews', __name__)
 def add_review(current_user):
     try:
         data = request.get_json()
+        replica_id = data.get('replica_id')
+        # -1 è il valore sentinella del client per "legacy / nessuna replica selezionata"
+        if replica_id == -1:
+            replica_id = None
         result = ReviewsService.add_review(
             current_user['user_id'],
             data['event_id'],
             data['rating'],
-            data.get('comment') or ''
+            data.get('comment') or '',
+            replica_id=replica_id,
         )
         return jsonify(result), 201
     except ValueError as e:

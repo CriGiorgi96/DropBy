@@ -4,7 +4,11 @@
       "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\ifoa\\\\Desktop\\\\Project_work - Copia\\\\backend\" -Recurse -Filter \"*.py\")",
       "Bash(Select-Object -ExpandProperty FullName)",
       "PowerShell(New-Item *)",
-      "Bash(python -c ' *)"
+      "Bash(python -c ' *)",
+      "Bash(./gradlew clean *)",
+      "Bash(where java *)",
+      "Read(//c/Program Files/**)",
+      "Read(//c/Program Files/Eclipse Adoptium/**)"
     ]
   }
 }

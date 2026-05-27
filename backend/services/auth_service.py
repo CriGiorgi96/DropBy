@@ -43,6 +43,7 @@ class AuthService:
                       first_name=None, last_name=None,
                       birthday=None, gender=None):
 
+        email = email.strip().lower()
         now = datetime.now(timezone.utc)
 
         last_call = AuthService._register_lock.get(email)
@@ -189,6 +190,7 @@ class AuthService:
     @staticmethod
     def login_user(email, password):
 
+        email = email.strip().lower()
         now = datetime.now(timezone.utc)
 
         attempts = AuthService._login_attempts.get(email, {

@@ -19,7 +19,7 @@ class AuthRepository:
     @staticmethod
     def find_by_email(email):
         conn = Database().get_connection()
-        rows = conn.run("SELECT * FROM users WHERE email = :email", email=email)
+        rows = conn.run("SELECT * FROM users WHERE LOWER(email) = LOWER(:email)", email=email)
         return dict_format_single(conn, rows)
 
     @staticmethod

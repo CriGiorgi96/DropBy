@@ -7,13 +7,12 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.content.SharedPreferences;
 import android.widget.ImageButton;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.core.os.LocaleListCompat;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.example.dropby.HomeActivity;
+import com.example.dropby.LanguageManager;
 import com.example.dropby.R;
 import com.example.dropby.views.VideoBackgroundView;
 
@@ -112,26 +111,13 @@ public class StartFragment extends Fragment {
 
     // Change language
     private void setLanguage(String languageTag) {
-        requireActivity()
-                .getSharedPreferences("app_settings", requireContext().MODE_PRIVATE)
-                .edit()
-                .putString("language", languageTag)
-                .apply();
-
-        AppCompatDelegate.setApplicationLocales(
-                LocaleListCompat.forLanguageTags(languageTag)
-        );
-
-        requireActivity().recreate();
+        // saveAndApply gestisce sia il salvataggio che la ricreazione via AppCompatDelegate.
+        // Non chiamare recreate() separatamente: causerebbe una doppia ricreazione.
+        LanguageManager.saveAndApply(requireContext(), languageTag);
     }
 
     private void updateLanguageButtons(ImageButton btnIt, ImageButton btnEn) {
-        SharedPreferences prefs = requireActivity()
-                .getSharedPreferences("app_settings", requireContext().MODE_PRIVATE);
-
-        String language = prefs.getString("language", "it");
-
-        if ("en-GB".equals(language)) {
+        if (LanguageManager.isEnglish(requireContext())) {
             btnEn.setBackgroundResource(R.drawable.bg_language_selected);
             btnIt.setBackgroundResource(R.drawable.bg_language_normal);
         } else {

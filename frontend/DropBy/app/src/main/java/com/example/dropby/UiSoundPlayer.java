@@ -19,25 +19,16 @@ public final class UiSoundPlayer {
     public static synchronized void init(Context context) {
         if (soundPool != null) return;
 
-        AudioAttributes attributes = new AudioAttributes.Builder()
-                .setUsage(AudioAttributes.USAGE_ASSISTANCE_SONIFICATION)
-                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                .build();
+        // Log per debug
+        android.util.Log.d("SoundPlayer", "Inizializzazione in corso...");
 
-        soundPool = new SoundPool.Builder()
-                .setAudioAttributes(attributes)
-                .setMaxStreams(4)
-                .build();
+        // ... (resto del codice)
 
-        soundPool.setOnLoadCompleteListener((pool, sampleId, status) -> {
-            if (status != 0) return;
-            if (sampleId == menuOpenSoundId) menuOpenLoaded = true;
-            if (sampleId == buttonClickSoundId) buttonClickLoaded = true;
-        });
-
-        Context appContext = context.getApplicationContext();
         menuOpenSoundId = soundPool.load(appContext, R.raw.apertura_menu, 1);
         buttonClickSoundId = soundPool.load(appContext, R.raw.button_click, 1);
+
+        // Log per verificare se l'ID è stato assegnato
+        android.util.Log.d("SoundPlayer", "Menu Sound ID: " + menuOpenSoundId);
     }
 
     public static void playMenuOpen(Context context) {

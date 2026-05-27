@@ -133,19 +133,23 @@ public class Event implements Serializable {
         public String getLocationImageInt()  { return locationImageInt; }
         public boolean isPast()              { return past; }
 
-        /** Parte data dell'ISO timestamp: "2026-06-15T20:00:00" → "2026-06-15" */
+        /** Parte data del timestamp: "2026-06-15T20:00:00" o "2026-06-15 20:00:00" → "2026-06-15" */
         public String getDatePart() {
             if (showDate == null) return "";
             int t = showDate.indexOf('T');
-            return t > 0 ? showDate.substring(0, t) : showDate;
+            if (t > 0) return showDate.substring(0, t);
+            int s = showDate.indexOf(' ');
+            if (s > 0) return showDate.substring(0, s);
+            return showDate;
         }
 
-        /** Parte orario dell'ISO timestamp: "2026-06-15T20:00:00" → "20:00" */
+        /** Parte orario del timestamp: "2026-06-15T20:00:00" o "2026-06-15 20:00" → "20:00" */
         public String getTimePart() {
             if (showDate == null) return "";
-            int t = showDate.indexOf('T');
-            if (t < 0 || t + 1 >= showDate.length()) return "";
-            String time = showDate.substring(t + 1);
+            int sep = showDate.indexOf('T');
+            if (sep < 0) sep = showDate.indexOf(' ');
+            if (sep < 0 || sep + 1 >= showDate.length()) return "";
+            String time = showDate.substring(sep + 1);
             return time.length() >= 5 ? time.substring(0, 5) : time;
         }
     }

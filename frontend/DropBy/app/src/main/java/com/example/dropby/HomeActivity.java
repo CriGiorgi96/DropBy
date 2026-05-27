@@ -19,10 +19,8 @@ import android.view.MotionEvent;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
-import androidx.core.os.LocaleListCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
@@ -30,6 +28,7 @@ import androidx.fragment.app.FragmentManager;
 
 import com.example.dropby.fragments.auth.LoginFragment;
 import com.example.dropby.fragments.auth.RegisterFragment;
+import com.example.dropby.LanguageManager;
 import com.example.dropby.fragments.main.EventsFragment;
 import com.example.dropby.fragments.main.FaqFragment;
 import com.example.dropby.fragments.main.FavoritesFragment;
@@ -61,12 +60,7 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        SharedPreferences settings = getSharedPreferences("app_settings", MODE_PRIVATE);
-        String language = settings.getString("language", "it");
-
-        AppCompatDelegate.setApplicationLocales(
-                LocaleListCompat.forLanguageTags(language)
-        );
+        LanguageManager.apply(this);
 
         setContentView(R.layout.activity_home);
         UiSoundPlayer.init(this);
@@ -216,18 +210,15 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void setAppLanguage(String languageTag) {
-        SharedPreferences settings = getSharedPreferences("app_settings", MODE_PRIVATE);
-        String current = settings.getString("language", "it");
+        String current = LanguageManager.get(this);
         if (current.equals(languageTag)) return;
-        settings.edit().putString("language", languageTag).apply();
-        recreate();
+        LanguageManager.saveAndApply(this, languageTag);
+        // Non chiamare recreate(): saveAndApply/AppCompatDelegate lo gestisce già.
     }
 
     private void updateDrawerLanguageButtons(ImageButton btnIt, ImageButton btnEn) {
         if (btnIt == null || btnEn == null) return;
-        String lang = getSharedPreferences("app_settings", MODE_PRIVATE)
-                .getString("language", "it");
-        boolean en = lang.startsWith("en");
+        boolean en = LanguageManager.isEnglish(this);
         btnIt.setBackgroundResource(en ? R.drawable.bg_language_normal : R.drawable.bg_language_selected);
         btnEn.setBackgroundResource(en ? R.drawable.bg_language_selected : R.drawable.bg_language_normal);
     }

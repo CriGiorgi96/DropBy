@@ -656,6 +656,20 @@ public class EventDetailFragment extends Fragment {
 
         submitBtn.setEnabled(false);
 
+        // Stato iniziale di caricamento: tutto disabilitato e dimmerato.
+        // Verrà sbloccato solo dopo aver verificato l'esistenza di repliche passate.
+        ratingBar.setEnabled(false);
+        ratingBar.setAlpha(0.5f);
+        commentInput.setEnabled(false);
+        commentInput.setAlpha(0.5f);
+        locationSpinner.setEnabled(false);
+        locationSpinner.setAlpha(0.5f);
+        submitBtn.setAlpha(0.5f);
+
+        // Traccia quale replica (id) è selezionata dai due spinner.
+        // Aggiornato da loadReplicasForSpinners; -1 = nessuna selezione / modalità legacy.
+        final int[] selectedReplicaId = {-1};
+
         submitBtn.setOnClickListener(v -> {
             int    rating  = (int) ratingBar.getRating();
             String comment = commentInput.getText().toString().trim();
@@ -668,8 +682,10 @@ public class EventDetailFragment extends Fragment {
                 return;
             }
             submitBtn.setEnabled(false);
+            ReviewRequest req = new ReviewRequest(event.getId(), rating, comment,
+                    selectedReplicaId[0]);
             ApiClient.getApiService()
-                    .addReview(new ReviewRequest(event.getId(), rating, comment))
+                    .addReview(req)
                     .enqueue(new Callback<GenericResponse>() {
                         @Override
                         public void onResponse(@NonNull Call<GenericResponse> call,
@@ -680,6 +696,7 @@ public class EventDetailFragment extends Fragment {
                                 commentInput.setText("");
                                 ratingBar.setRating(3);
                                 locationSpinner.setSelection(0);
+                                selectedReplicaId[0] = -1;
                                 submitBtn.setEnabled(false);
                                 Toast.makeText(requireContext(),
                                         R.string.review_sent, Toast.LENGTH_SHORT).show();
@@ -703,16 +720,19 @@ public class EventDetailFragment extends Fragment {
                     });
         });
 
-        loadReplicasForSpinners(view, locationSpinner, dateSpinner, dateLabel, submitBtn);
+        loadReplicasForSpinners(view, locationSpinner, dateSpinner, dateLabel,
+                submitBtn, selectedReplicaId);
     }
 
     /**
      * Carica le repliche passate (include_past=true) e popola gli spinner del form.
+     * Aggiorna selectedReplicaId[0] ad ogni selezione.
      * Decide anche se mostrare il future-info-box (nessuna replica passata + evento futuro)
      * o abilitare il submit diretto (evento legacy senza repliche).
      */
     private void loadReplicasForSpinners(View parentView, Spinner locationSpinner,
-                                         Spinner dateSpinner, View dateLabel, Button submitBtn) {
+                                         Spinner dateSpinner, View dateLabel, Button submitBtn,
+                                         int[] selectedReplicaId) {
         ApiClient.getApiService()
                 .getEventDetail(event.getId(), true)
                 .enqueue(new Callback<ApiService.EventWrapper>() {
@@ -721,13 +741,28 @@ public class EventDetailFragment extends Fragment {
                                            @NonNull Response<ApiService.EventWrapper> response) {
                         if (!isAdded()) return;
 
-                        // Estrai solo le repliche già avvenute
+                        // Verifica immediatamente che la chiamata API sia riuscita.
+                        boolean callSucceeded = response.isSuccessful()
+                                && response.body() != null
+                                && response.body().event != null;
+                        if (!callSucceeded) {
+                            Toast.makeText(requireContext(),
+                                    R.string.network_error_retry, Toast.LENGTH_SHORT).show();
+                            submitBtn.setText(R.string.review_not_available);
+                            return;
+                        }
+
+                        // Filtra le repliche già avvenute con doppio controllo:
+                        // is_past (dal backend, basato su NOW()) e confronto ISO 8601 lato client.
                         List<Event.EventReplica> pastReplicas = new ArrayList<>();
-                        if (response.isSuccessful() && response.body() != null
-                                && response.body().event != null
-                                && response.body().event.getReplicas() != null) {
+                        String today = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US)
+                                .format(new java.util.Date());
+                        if (response.body().event.getReplicas() != null) {
                             for (Event.EventReplica r : response.body().event.getReplicas()) {
-                                if (r.isPast()) pastReplicas.add(r);
+                                String datePart = r.getDatePart();
+                                boolean pastByDate = !datePart.isEmpty()
+                                        && datePart.compareTo(today) < 0;
+                                if (r.isPast() || pastByDate) pastReplicas.add(r);
                             }
                         }
 
@@ -750,12 +785,27 @@ public class EventDetailFragment extends Fragment {
                                 if (futureBoxCity     != null && next != null)
                                     futureBoxCity.setText(safe(next.getLocationCity()));
                             } else {
-                                // Nessuna replica passata e nessun futuro: evento legacy,
-                                // consenti la recensione direttamente.
+                                // Nessuna replica nel DB: evento legacy senza spettacoli registrati.
+                                // Abilita il form direttamente (selectedReplicaId resta -1).
+                                View rbL = parentView.findViewById(R.id.reviewRatingBar);
+                                View ciL = parentView.findViewById(R.id.reviewCommentInput);
+                                if (rbL != null) { rbL.setEnabled(true); rbL.setAlpha(1.0f); }
+                                if (ciL != null) { ciL.setEnabled(true); ciL.setAlpha(1.0f); }
                                 submitBtn.setEnabled(true);
+                                submitBtn.setAlpha(1.0f);
                             }
                             return;
                         }
+
+                        // Sblocca gli elementi interattivi: esiste almeno una replica già avvenuta.
+                        View rbP = parentView.findViewById(R.id.reviewRatingBar);
+                        View ciP = parentView.findViewById(R.id.reviewCommentInput);
+                        if (rbP != null) { rbP.setEnabled(true); rbP.setAlpha(1.0f); }
+                        if (ciP != null) { ciP.setEnabled(true); ciP.setAlpha(1.0f); }
+                        locationSpinner.setEnabled(true);
+                        locationSpinner.setAlpha(1.0f);
+                        submitBtn.setAlpha(1.0f);
+                        // submitBtn.setEnabled rimane false fino alla selezione dello spinner
 
                         // Raggruppa per location_id
                         LinkedHashMap<Integer, List<Event.EventReplica>> byLoc = new LinkedHashMap<>();
@@ -787,6 +837,7 @@ public class EventDetailFragment extends Fragment {
                             @Override
                             public void onItemSelected(AdapterView<?> p, View v, int pos, long id) {
                                 if (pos == 0) {
+                                    selectedReplicaId[0] = -1;
                                     submitBtn.setEnabled(false);
                                     dateSpinner.setVisibility(View.GONE);
                                     dateLabel.setVisibility(View.GONE);
@@ -796,10 +847,12 @@ public class EventDetailFragment extends Fragment {
                                 if (dates == null || dates.isEmpty()) return;
 
                                 if (dates.size() == 1) {
+                                    selectedReplicaId[0] = dates.get(0).getId();
                                     submitBtn.setEnabled(true);
                                     dateSpinner.setVisibility(View.GONE);
                                     dateLabel.setVisibility(View.GONE);
                                 } else {
+                                    selectedReplicaId[0] = -1;
                                     submitBtn.setEnabled(false);
                                     List<String> dLabels = new ArrayList<>();
                                     dLabels.add(getString(R.string.select_date));
@@ -821,7 +874,13 @@ public class EventDetailFragment extends Fragment {
                                                 @Override
                                                 public void onItemSelected(AdapterView<?> p2,
                                                                            View v2, int pos2, long id2) {
-                                                    submitBtn.setEnabled(pos2 > 0);
+                                                    if (pos2 > 0) {
+                                                        selectedReplicaId[0] = dates.get(pos2 - 1).getId();
+                                                        submitBtn.setEnabled(true);
+                                                    } else {
+                                                        selectedReplicaId[0] = -1;
+                                                        submitBtn.setEnabled(false);
+                                                    }
                                                 }
                                                 @Override
                                                 public void onNothingSelected(AdapterView<?> p2) {}
@@ -837,7 +896,10 @@ public class EventDetailFragment extends Fragment {
 
                     @Override
                     public void onFailure(@NonNull Call<ApiService.EventWrapper> call, @NonNull Throwable t) {
-                        if (isAdded()) submitBtn.setEnabled(true);
+                        if (!isAdded()) return;
+                        Toast.makeText(requireContext(), R.string.network_error_retry, Toast.LENGTH_SHORT).show();
+                        submitBtn.setText(R.string.review_not_available);
+                        // Form rimane disabilitato (enabled=false, alpha=0.5)
                     }
                 });
     }

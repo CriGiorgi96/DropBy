@@ -192,7 +192,7 @@
     <string name="filter_on">Filtra per…</string>
     <string name="filter_using_category">Filtra per genere</string>
     <string name="filter_using_date">Filtra per data</string>
-    <string name="theatre_capacity">Capienza: %1$s posti</string>
+    <string name="theatre_capacity">Capienza: %1$d posti</string>
     <string name="services_not_available">Servizi non indicati</string>
     <string name="services_label">Servizi: %1$s</string>
 
@@ -275,7 +275,7 @@
     <string name="choose_future_date">Scegli una data futura</string>
     <string name="reminder_set">Promemoria impostato!</string>
     <string name="reminder_set_error">Errore impostazione promemoria</string>
-    <string name="propose_event_to">Proponi %1$d a: </string>
+    <string name="propose_event_to">Proponi %1$s a: </string>
 
     <string name="loading_reminders">Caricamento promemoria…</string>
     <string name="no_active_reminders">Nessun promemoria attivo</string>
@@ -315,5 +315,7 @@
     <string name="user_not_found">Utente non trovato</string>
     <string name="error_loading_profile">Impossibile caricare il profilo</string>
     <string name="user_fallback">Utente</string>
+
+    <string name="review_not_available">Recensione non disponibile</string>
 
 </resources>
